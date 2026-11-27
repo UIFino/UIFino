@@ -1,0 +1,185 @@
+/* uifino Design System Tokens — Derived from live getdesign.md & shadcn.io architectural grid */
+:root {
+  color-scheme: dark;
+
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "Geist Mono", "SFMono-Regular", Consolas, Menlo, monospace;
+  --font-pixel: "Silkscreen", "Geist Mono", monospace;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+
+  /* Exact getdesign.md dark charcoal ramp */
+  --bg-canvas: #161618;
+  --bg-surface: #1d1d20;
+  --bg-elevated: #232327;
+  --bg-code: #111113;
+
+  --gray-100: #26262a;
+  --gray-200: #2b2b30;
+  --gray-300: #333338;
+  --gray-400: #3a3a40;
+  --gray-500: #4d4d55;
+
+  --border-hairline: #29292e;
+  --border-strong: #34343a;
+  --stripe-line: rgba(255, 255, 255, 0.048);
+  --surface-hover: rgba(255, 255, 255, 0.035);
+
+  --text-primary: #ececee;
+  --text-body: #b8b8bf;
+  --text-muted: #a0a0a8;
+  --text-subtle: #82828b;
+
+  /* Signature chartreuse ribbon & text accent */
+  --accent-fill: #ceff00;
+  --accent-ink: #111113;
+  --accent-text: #ceff00;
+  --accent-soft: rgba(206, 255, 0, 0.12);
+  --accent-border: rgba(206, 255, 0, 0.42);
+
+  --contrast-bg: #ffffff;
+  --contrast-fg: #000000;
+  --contrast-hover: #e5e5e5;
+
+  --status-green: #4ade80;
+  --star-amber: #f5a623;
+
+  /* Global quick-customizer defaults */
+  --stage-radius-default: 6px;
+  --stage-density-scale: 1;
+
+  /* Spacing & sizing tokens */
+  --header-h: 56px;
+  --container-max: 1280px;
+  --container-narrow: 1120px;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-canvas: #f5f4f0;
+  --bg-surface: #ffffff;
+  --bg-elevated: #eae8e1;
+  --bg-code: #eeece5;
+
+  --gray-100: #e6e3db;
+  --gray-200: #dad6cc;
+  --gray-300: #cbc6ba;
+  --gray-400: #b8b2a5;
+  --gray-500: #969083;
+
+  --border-hairline: #d8d4ca;
+  --border-strong: #c2bdb0;
+  --stripe-line: rgba(27, 26, 23, 0.045);
+  --surface-hover: rgba(27, 26, 23, 0.035);
+
+  --text-primary: #1b1a17;
+  --text-body: #3c3a34;
+  --text-muted: #646058;
+  --text-subtle: #7a756c;
+
+  /* Ribbons stay high-contrast lime+black; inline text accent uses accessible deepberry (#8c145d >= 6.2:1 on #f5f4f0) */
+  --accent-fill: #ceff00;
+  --accent-ink: #111113;
+  --accent-text: #8c145d;
+  --accent-soft: rgba(140, 20, 93, 0.1);
+  --accent-border: rgba(140, 20, 93, 0.36);
+
+  --contrast-bg: #1b1a17;
+  --contrast-fg: #ffffff;
+  --contrast-hover: #33312b;
+
+  --status-green: #15803d;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: -2px;
+}
+
+/* Typography Scale */
+.font-mono-ui {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.font-pixel-brand {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.1em;
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+.eyebrow-mono {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.heading-hero {
+  margin: 0;
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  color: var(--text-primary);
+}
+
+.heading-page {
+  margin: 0;
+  font-size: clamp(24px, 2.5vw, 32px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.022em;
+  color: var(--text-primary);
+}
+
+.heading-section {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+}

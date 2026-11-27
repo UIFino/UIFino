@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>uifino — Design System Protocols &amp; Progressive UI Registry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles/tokens.css" />
+  <link rel="stylesheet" href="./styles/components.css" />
+</head>
+<body>
+  <!-- Top Announcement Strip (getdesign.md #232327 bar) -->
+  <aside id="announce-bar" class="announce-bar" aria-label="Announcement">
+    <span id="i18n-announce-tag" class="badge-sharp" style="border-color:var(--accent-border);color:var(--accent-text);">MCP 协议</span>
+    <span id="i18n-announce-text" class="truncate-1" style="color:var(--text-body);">在 Claude Code 与 Cursor 中按风格、布局与标签直接检索 DESIGN.md 与组件源码。</span>
+    <button id="i18n-announce-action" type="button" data-go="mcp" class="font-mono-ui" style="background:none;border:0;padding:0;font-size:12px;font-weight:600;color:var(--accent-text);cursor:pointer;flex-shrink:0;">接入配置 →</button>
+    <button id="dismiss-announce-btn" type="button" aria-label="Close announcement" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--text-subtle);cursor:pointer;font-size:14px;">✕</button>
+  </aside>
+
+  <!-- Sticky Architectural Header (getdesign.md sharp chrome + shadcn.io flat direct links) -->
+  <header class="site-header">
+    <div class="site-header-inner" style="position:relative;">
+      <div style="display:flex;align-items:center;gap:14px;min-width:0;">
+        <button type="button" data-go="home" class="font-pixel-brand" style="background:none;border:0;padding:0 6px 0 0;font-size:18px;font-weight:700;cursor:pointer;color:var(--text-primary);">
+          ui<span style="color:var(--accent-text);">fino</span>
+        </button>
+
+        <!-- Flat direct channel links (NO hover mega-menus; Components houses Section/Block/Page/Motion) -->
+        <nav aria-label="Primary" style="display:flex;align-items:center;overflow-x:auto;">
+          <button id="i18n-nav-catalog" type="button" data-go="catalog-index" data-nav-channel="catalog" class="nav-flat-link">设计图鉴</button>
+          <button id="i18n-nav-components" type="button" data-go="components-index" data-nav-channel="components" class="nav-flat-link">组件与动效</button>
+          <button id="i18n-nav-tools" type="button" data-go="tools:background" data-nav-channel="tools" class="nav-flat-link">参数工具</button>
+          <button id="i18n-nav-mcp" type="button" data-go="mcp" data-nav-channel="mcp" class="nav-flat-link">MCP 接入</button>
+        </nav>
+      </div>
+
+      <!-- Right Controls: Search (⌘K) + Customize + GitHub + Lang + Theme -->
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <button id="cmdk-open-btn" type="button" class="btn-hairline" style="height:32px;padding:0 10px;color:var(--text-muted);">
+          <span>⌕</span>
+          <span class="font-mono-ui" style="font-size:11.5px;">⌘K</span>
+        </button>
+
+        <button id="customize-open-btn" type="button" class="btn-hairline" style="height:32px;padding:0 10px;">
+          <span style="color:var(--accent-text);">◈</span>
+          <span id="i18n-customize-label">令牌预设</span>
+        </button>
+
+        <button id="github-star-btn" type="button" style="display:inline-flex;align-items:stretch;height:32px;padding:0;border:1px solid var(--border-hairline);background:var(--bg-surface);cursor:pointer;">
+          <span style="display:inline-flex;align-items:center;padding:0 8px;background:var(--gray-100);font-size:12px;">★</span>
+          <span id="gh-star-num" class="font-mono-ui" style="display:inline-flex;align-items:center;padding:0 8px;border-left:1px solid var(--border-hairline);font-size:11.5px;">12.8k</span>
+        </button>
+
+        <button id="lang-toggle-btn" type="button" class="btn-hairline font-mono-ui" style="height:32px;padding:0 9px;font-size:11.5px;">中文</button>
+        <button id="theme-toggle-btn" type="button" class="btn-hairline font-mono-ui" style="height:32px;padding:0 9px;font-size:11.5px;">◐ Dark</button>
+      </div>
+
+      <!-- Global Token Preset Popover -->
+      <div id="customizer-popover" class="customizer-popover" hidden></div>
+    </div>
+  </header>
+
+  <!-- Main Route Container -->
+  <div id="app-root"></div>
+
+  <!-- Architectural Footer (getdesign.md 5-column directory footer) -->
+  <footer style="border-top:1px solid var(--border-hairline);background:var(--bg-canvas);">
+    <div class="shell-wrap" style="padding:36px 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:24px;">
+      <div>
+        <div class="font-pixel-brand" style="font-size:17px;font-weight:700;">ui<span style="color:var(--accent-text);">fino</span></div>
+        <p style="margin:10px 0 0;font-size:12.5px;color:var(--text-muted);line-height:1.55;">
+          DESIGN.md protocols &amp; progressive UI engineering for humans and AI coding agents.
+        </p>
+      </div>
+
+      <div>
+        <div class="eyebrow-mono" style="margin-bottom:10px;">CATALOG</div>
+        <div style="display:grid;gap:6px;font-size:13px;color:var(--text-muted);">
+          <button type="button" data-go="catalog-detail:linear" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Linear DESIGN.md</button>
+          <button type="button" data-go="catalog-detail:claude" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Claude DESIGN.md</button>
+          <button type="button" data-go="catalog-detail:vercel" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Vercel DESIGN.md</button>
+          <button type="button" data-go="catalog-detail:flighty" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Flighty iOS Spec</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="eyebrow-mono" style="margin-bottom:10px;">COMPONENTS &amp; MOTION</div>
+        <div style="display:grid;gap:6px;font-size:13px;color:var(--text-muted);">
+          <button type="button" data-go="components-cat:hero" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Sections · Hero</button>
+          <button type="button" data-go="components-cat:auth" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Blocks · Authentication</button>
+          <button type="button" data-go="components-cat:landing-pages" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Pages · Product Landing</button>
+          <button type="button" data-go="components-cat:counters-tickers" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Motion · Tabular Counters</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="eyebrow-mono" style="margin-bottom:10px;">TOOLS &amp; MCP</div>
+        <div style="display:grid;gap:6px;font-size:13px;color:var(--text-muted);">
+          <button type="button" data-go="tools:background" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Background Generator</button>
+          <button type="button" data-go="tools:shadow" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">Shadow &amp; Token Lab</button>
+          <button type="button" data-go="mcp" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;">MCP Server Setup</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Global Search Modal (⌘K, shadcn.io category filter tabs) -->
+  <div id="cmdk-modal" class="modal-backdrop" hidden>
+    <div class="cmdk-dialog" role="dialog" aria-modal="true" aria-label="Global Search">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border-hairline);">
+        <span style="color:var(--text-subtle);">⌕</span>
+        <input id="cmdk-input" type="search" placeholder="Search…" style="width:100%;border:0;background:transparent;outline:none;font-size:14px;" />
+        <button id="cmdk-close-btn" type="button" class="badge-sharp" style="cursor:pointer;">ESC</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;padding:8px 12px;border-bottom:1px solid var(--border-hairline);background:var(--bg-code);">
+        <button type="button" data-cmdk-filter="all" class="seg-btn is-active" style="border:1px solid var(--border-hairline);height:26px;">All</button>
+        <button type="button" data-cmdk-filter="catalog" class="seg-btn" style="border:1px solid var(--border-hairline);height:26px;">Catalog</button>
+        <button type="button" data-cmdk-filter="section" class="seg-btn" style="border:1px solid var(--border-hairline);height:26px;">Sections</button>
+        <button type="button" data-cmdk-filter="block" class="seg-btn" style="border:1px solid var(--border-hairline);height:26px;">Blocks</button>
+        <button type="button" data-cmdk-filter="page" class="seg-btn" style="border:1px solid var(--border-hairline);height:26px;">Pages</button>
+        <button type="button" data-cmdk-filter="motion" class="seg-btn" style="border:1px solid var(--border-hairline);height:26px;">Motion</button>
+        <button type="button" data-cmdk-filter="tools" class="seg-btn" style="border:1px solid var(--border-hairline);height:26px;">Tools &amp; MCP</button>
+      </div>
+      <div id="cmdk-results" style="max-height:340px;overflow-y:auto;padding:6px;"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

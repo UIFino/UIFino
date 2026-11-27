@@ -7,8 +7,6 @@ export const stripeSpec: CatalogBrandSpec = {
   kind: "website",
   platformLabel: "Web · Payments",
   category: "Fintech",
-  installs: "31.2K",
-  bookmarks: "1,650",
   tags: ["fintech", "clean", "pricing", "light", "indigo"],
   summaryZh: "深海蓝黑正文（#0A2540）配清透灰白卡片与标志性电光蓝紫主按钮（#635BFF），数字账单层级极清晰。",
   summaryEn:

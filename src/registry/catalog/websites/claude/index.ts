@@ -7,8 +7,6 @@ export const claudeSpec: CatalogBrandSpec = {
   kind: "website",
   platformLabel: "Web · AI Workspace",
   category: "AI & LLM",
-  installs: "53.1K",
-  bookmarks: "3,420",
   tags: ["ai", "warm", "editorial", "serif", "minimal"],
   summaryZh: "温暖羊皮纸米白底色（#FAF9F5）搭配人文衬线标题与赤陶暖橙强调色（#C96442），去除冰冷科技感。",
   summaryEn:

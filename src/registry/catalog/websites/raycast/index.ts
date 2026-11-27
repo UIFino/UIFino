@@ -7,8 +7,6 @@ export const raycastSpec: CatalogBrandSpec = {
   kind: "website",
   platformLabel: "Web · Launcher",
   category: "DevTools",
-  installs: "19.5K",
-  bookmarks: "1,190",
   tags: ["dark", "devtools", "cmdk", "crimson"],
   summaryZh: "深石墨玻璃层叠面板、顶部 1px 高光描边与高饱和珊瑚红（#FF6363）快捷键视觉锚点。",
   summaryEn:

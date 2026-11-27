@@ -7,8 +7,6 @@ export const notionSpec: CatalogBrandSpec = {
   kind: "website",
   platformLabel: "Web · Docs & Wiki",
   category: "Productivity",
-  installs: "24.6K",
-  bookmarks: "1,520",
   tags: ["light", "minimal", "productivity", "clean"],
   summaryZh: "暖调纯白画布、柔和灰阶树形侧栏与克制科技蓝动作色（#0075DE），文档阅读零视觉压迫。",
   summaryEn:

@@ -7,8 +7,6 @@ export const vercelSpec: CatalogBrandSpec = {
   kind: "website",
   platformLabel: "Web · Cloud Infra",
   category: "DevTools",
-  installs: "46.8K",
-  bookmarks: "2,910",
   tags: ["devtools", "monochrome", "grid", "sharp", "dark"],
   summaryZh: "纯粹黑白灰建筑网格，通栏 1px 结构线加等宽遥测数字，按钮采用极致反差黑白实心块。",
   summaryEn:

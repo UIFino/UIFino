@@ -7,8 +7,6 @@ export const flightySpec: CatalogBrandSpec = {
   kind: "app",
   platformLabel: "iOS · Aviation",
   category: "Consumer & Travel",
-  installs: "18.7K",
-  bookmarks: "1,310",
   tags: ["mobile", "ios", "dark", "telemetry", "emerald"],
   summaryZh: "驾驶舱仪表级暗黑卡片、等宽航班倒计时牌与高辨识状态绿（#22C55E），高密度实时信息排版典范。",
   summaryEn:

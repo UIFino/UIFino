@@ -1,7 +1,10 @@
 import type { ResolvedWorkbenchTokens } from "@/core/tokens";
+import { compileBrandTokensCss } from "./css-compiler";
 import { serializeDesignMdFrontmatter } from "./frontmatter";
 import { buildDesignMdSections } from "./sections";
 import type { CatalogBrandSpec } from "./types";
+
+export { compileBrandTokensCss };
 
 export function compileBrandDesignMd(spec: CatalogBrandSpec): string {
   return `${serializeDesignMdFrontmatter(spec)}\n\n${buildDesignMdSections(spec)}`;

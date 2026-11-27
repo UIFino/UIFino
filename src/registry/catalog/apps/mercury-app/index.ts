@@ -7,8 +7,6 @@ export const mercuryAppSpec: CatalogBrandSpec = {
   kind: "app",
   platformLabel: "iOS · Treasury",
   category: "Fintech",
-  installs: "13.9K",
-  bookmarks: "890",
   tags: ["mobile", "fintech", "minimal", "light"],
   summaryZh: "冷静银灰金融卡片、超大等宽账户余额与零噪音交易流水列表，机构级移动财务端质感。",
   summaryEn:

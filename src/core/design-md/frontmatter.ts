@@ -1,14 +1,25 @@
 import type { CatalogBrandSpec } from "./types";
 
 export function serializeDesignMdFrontmatter(spec: CatalogBrandSpec): string {
+  const siteUrl = spec.siteUrl ?? (spec.kind === "website" ? `https://${spec.slug}` : "");
+  const goodFor = (spec.goodForEn ?? ["Product Marketing", "Developer Console"])
+    .map((s) => `"${s}"`)
+    .join(", ");
+  const avoidFor = (spec.notForEn ?? ["Flash-Sale E-Commerce", "Dense Ad Portals"])
+    .map((s) => `"${s}"`)
+    .join(", ");
+
   return `---
-protocol: uifino/design-md@1.0
+protocol: uifino/design-md@2.0
 name: "${spec.name} Design System"
 slug: "${spec.slug}"
-platform: "${spec.kind}"
+${siteUrl ? `url: "${siteUrl}"\n` : ""}platform: "${spec.kind}"
 category: "${spec.category}"
+fit_for: [${goodFor}]
+avoid_for: [${avoidFor}]
 typography:
   display: "${spec.fonts.display}"
+  open_alternative: "${spec.openFontAlt ?? "Inter / Geist"}"
   body: "${spec.fonts.body}"
   mono: "${spec.fonts.mono}"
   headline_tracking: "${spec.fonts.tracking}"

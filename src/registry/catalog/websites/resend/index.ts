@@ -7,8 +7,6 @@ export const resendSpec: CatalogBrandSpec = {
   kind: "website",
   platformLabel: "Web · Email API",
   category: "DevTools",
-  installs: "16.8K",
-  bookmarks: "980",
   tags: ["dark", "devtools", "minimal", "code"],
   summaryZh: "纯黑舞台配银灰字阶、高反差白胶囊主动作与多语言 SDK 代码卡片，极简开发者体验。",
   summaryEn:

@@ -7,8 +7,6 @@ export const supabaseSpec: CatalogBrandSpec = {
   kind: "website",
   platformLabel: "Web · Postgres Cloud",
   category: "DevTools",
-  installs: "22.9K",
-  bookmarks: "1,410",
   tags: ["devtools", "dark", "emerald", "code"],
   summaryZh: "炭绿冷灰深色基底（#121212）配翠绿终端高亮（#3ECF8E），数据库表结构与代码块高对比呈现。",
   summaryEn:

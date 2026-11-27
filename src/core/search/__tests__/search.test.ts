@@ -15,8 +15,6 @@ const MOCK_SNAPSHOT: McpRegistrySnapshot = {
       kind: "website",
       platformLabel: "Web · SaaS",
       category: "Productivity",
-      installs: "27.4K",
-      bookmarks: "1,840",
       tags: ["dark", "minimal", "hairline", "saas"],
       summaryZh: "深色极简",
       summaryEn: "Dark minimal hairline SaaS",

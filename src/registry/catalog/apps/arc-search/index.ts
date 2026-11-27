@@ -7,8 +7,6 @@ export const arcSearchSpec: CatalogBrandSpec = {
   kind: "app",
   platformLabel: "iOS · AI Browser",
   category: "AI & LLM",
-  installs: "14.2K",
-  bookmarks: "920",
   tags: ["mobile", "ios", "ai", "thumb-nav", "clean"],
   summaryZh: "底部拇指优先搜索栏、大圆角叠层摘要卡片（20px）与清亮钴蓝焦点色，移动端单手操控标杆。",
   summaryEn:

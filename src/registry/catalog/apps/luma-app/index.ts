@@ -7,8 +7,6 @@ export const lumaAppSpec: CatalogBrandSpec = {
   kind: "app",
   platformLabel: "iOS & Web · Events",
   category: "Content & Community",
-  installs: "15.4K",
-  bookmarks: "1,040",
   tags: ["mobile", "clean", "cards", "minimal"],
   summaryZh: "毛玻璃半透顶栏、柔和方形活动海报框与清爽日程时间轴，兼顾社交温度与工具克制。",
   summaryEn:

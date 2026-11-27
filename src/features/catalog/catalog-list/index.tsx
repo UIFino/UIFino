@@ -122,7 +122,7 @@ export function CatalogListView() {
             onReset={handleReset}
           />
         ) : (
-          <div className="grid grid-cols-1 gap-x-[22px] gap-y-7 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-x-[22px] gap-y-7 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5">
             {filtered.map((item) => (
               <Link
                 key={item.id}

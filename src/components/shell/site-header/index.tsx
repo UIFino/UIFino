@@ -121,7 +121,7 @@ export function SiteHeader() {
           openMenu ? "border-b border-transparent" : "border-b border-hairline"
         )}
       >
-        <div className="mx-auto flex h-full max-w-[var(--container-max)] items-center justify-between gap-3 border-x border-hairline px-6">
+        <div className="flex h-full w-full items-center justify-between gap-3 px-6">
           <div className="flex min-w-0 items-center gap-6">
             <Link
               href="/"

@@ -130,7 +130,7 @@ export function TemplatesListView() {
             }}
           />
         ) : (
-          <div className="lined-grid-2">
+          <div className="lined-grid-3">
             {filtered.map((tpl) => {
               const cliCmd = `npx uifino@latest create ${tpl.id}`;
               const skinHref = findCatalogBrandById(tpl.skinId)

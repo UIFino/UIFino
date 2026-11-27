@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { chromium } from "playwright";
+import { chromium } from "playwright-core";
 
 const CHROME_PATH = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const PROXY_SERVER = process.env.HTTPS_PROXY || "http://127.0.0.1:7897";
@@ -105,15 +105,21 @@ async function run() {
       if (pg.id === "home") {
         // Crop Header, Hero, 3-Column Pillars, Intake Showcase, Quotes, Footer
         const bands = await dPage.evaluate(() => {
+          const totalH = Math.max(document.documentElement.scrollHeight, 1);
+          const pct = (px) => Number(((px / totalH) * 100).toFixed(2));
           const hdr = document.querySelector("header");
           const ftr = document.querySelector("footer");
           const headings = Array.from(document.querySelectorAll("h1, h2")).map((h) => {
-            let box = h.closest("section") || h.parentElement?.parentElement || h;
+            const box = h.closest("section") || h.parentElement?.parentElement || h;
             const r = box.getBoundingClientRect();
+            const top = Math.max(0, Math.round(r.top + window.scrollY));
+            const height = Math.round(r.height);
             return {
               text: (h.textContent || "").replace(/\s+/g, " ").trim().slice(0, 56),
-              top: Math.round(r.top + window.scrollY),
-              height: Math.round(r.height),
+              top,
+              height,
+              topPct: pct(top),
+              heightPct: pct(height),
               tag: box.tagName.toLowerCase()
             };
           });

@@ -171,7 +171,7 @@ export function StylesListView() {
             onModeSettingChange={(next) => void setMode(next)}
           />
         ) : (
-          <div className="grid grid-cols-1 gap-x-6 gap-y-8 px-6 py-7 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-8 px-6 py-7 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {filtered.map((item) => {
               const cardMode: ThemeMode =
                 modeSetting === "auto" ? item.primaryTone : modeSetting;

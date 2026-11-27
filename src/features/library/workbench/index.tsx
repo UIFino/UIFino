@@ -84,32 +84,34 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
           onSelectFile={handleSelectFile}
         />
 
-        <main className="order-1 grid min-w-0 content-start gap-6 px-5 pt-6 pb-12 lg:order-2">
-          <WorkbenchToolbar
-            category={category}
-            item={item}
-            stageTab={stageTab}
-            viewport={viewport}
-            stageMode={stageMode}
-            canvasPreviewHref={canvasPreviewHref}
-            onStageTabChange={(next) => void setTabQuery(next)}
-            onViewportChange={(next) => void setVpQuery(next)}
-            onStageModeChange={setStageMode}
-            onReplay={() => setReplayKey((k) => k + 1)}
-          />
+        <main className="order-1 min-w-0 px-6 pt-6 pb-12 lg:order-2">
+          <div className="mx-auto grid w-full max-w-[1060px] content-start gap-6">
+            <WorkbenchToolbar
+              category={category}
+              item={item}
+              stageTab={stageTab}
+              viewport={viewport}
+              stageMode={stageMode}
+              canvasPreviewHref={canvasPreviewHref}
+              onStageTabChange={(next) => void setTabQuery(next)}
+              onViewportChange={(next) => void setVpQuery(next)}
+              onStageModeChange={setStageMode}
+              onReplay={() => setReplayKey((k) => k + 1)}
+            />
 
-          <WorkbenchStagePanel
-            item={item}
-            category={category}
-            tokens={tokens}
-            stageTab={stageTab}
-            viewport={viewport}
-            files={files}
-            activeFile={activeFile}
-            codeOutput={codeOutput}
-            replayKey={replayKey}
-            onSelectFile={handleSelectFile}
-          />
+            <WorkbenchStagePanel
+              item={item}
+              category={category}
+              tokens={tokens}
+              stageTab={stageTab}
+              viewport={viewport}
+              files={files}
+              activeFile={activeFile}
+              codeOutput={codeOutput}
+              replayKey={replayKey}
+              onSelectFile={handleSelectFile}
+            />
+          </div>
         </main>
 
         <WorkbenchParamsPanel

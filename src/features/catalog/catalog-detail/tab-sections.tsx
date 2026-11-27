@@ -44,13 +44,13 @@ export function CatalogSectionsTab({
               <span className="font-mono-ui text-[11.5px] text-subtle">{slice.bbox}</span>
             </div>
 
-            <div className="bg-code p-3">
+            <div className="bg-code p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={slice.img}
                 alt={`${item.name} ${slice.nameEn}`}
                 loading="lazy"
-                className="block h-auto w-full border border-hairline"
+                className="mx-auto block h-auto w-full max-w-[1440px] border border-hairline"
               />
             </div>
 

@@ -1,8 +1,8 @@
 /* Architectural container & grid sizing tokens */
 :root {
   --header-h: 56px;
-  --container-max: 1280px;
-  --container-narrow: 1120px;
+  --container-max: 1380px;
+  --container-detail: 1180px;
   --stage-radius-default: 6px;
   --stage-density-scale: 1;
 }

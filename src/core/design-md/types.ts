@@ -9,6 +9,11 @@ export type CatalogDomainCategory =
   | "Content & Community"
   | "Consumer & Travel";
 
+export interface CatalogPercentBounds {
+  readonly topPct: number;
+  readonly heightPct: number;
+}
+
 export interface CatalogPageSectionAnatomy {
   readonly index: string;
   readonly nameZh: string;
@@ -17,6 +22,10 @@ export interface CatalogPageSectionAnatomy {
   readonly layoutEn: string;
   readonly noteZh: string;
   readonly noteEn: string;
+  readonly bounds?: {
+    readonly desktop: CatalogPercentBounds;
+    readonly mobile: CatalogPercentBounds;
+  };
 }
 
 export interface CatalogPageCapture {

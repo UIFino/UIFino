@@ -20,7 +20,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "单行三段式",
           layoutEn: "3-Zone Bar",
           noteZh: "高度 73px，20px 背景模糊配 8% 透明度细底边，右侧放置实心银白胶囊注册按钮。",
-          noteEn: "73px height, blur(20px) backdrop, 1px rgba(255,255,255,0.08) bottom rule, silver-white pill CTA."
+          noteEn: "73px height, blur(20px) backdrop, 1px rgba(255,255,255,0.08) bottom rule, silver-white pill CTA.",
+          bounds: {
+            desktop: { topPct: 0, heightPct: 0.78 },
+            mobile: { topPct: 0, heightPct: 1.15 }
+          }
         },
         {
           index: "02",
@@ -29,7 +33,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "上下叠层",
           layoutEn: "Stacked Stage",
           noteZh: "64px Inter Variable 紧凑主标题（字重 510），下方紧接带侧边栏与 Agent 浮窗的真实软件界面框。",
-          noteEn: "64px Inter Variable headline (510 weight, -1.4px tracking) above a framed dark workspace + Agent PR drawer."
+          noteEn: "64px Inter Variable headline (510 weight, -1.4px tracking) above a framed dark workspace + Agent PR drawer.",
+          bounds: {
+            desktop: { topPct: 2.5, heightPct: 10.6 },
+            mobile: { topPct: 3.1, heightPct: 12.2 }
+          }
         },
         {
           index: "03",
@@ -38,7 +46,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "7 标 + 3 等列",
           layoutEn: "7 Logos + 3-Col",
           noteZh: "纯白单色客户标志居中横排，下方以细线线框插画呈现三列产品哲学。",
-          noteEn: "Monochrome white customer logos followed by a 3-column architectural wireframe illustration grid."
+          noteEn: "Monochrome white customer logos followed by a 3-column architectural wireframe illustration grid.",
+          bounds: {
+            desktop: { topPct: 13.1, heightPct: 12.2 },
+            mobile: { topPct: 15.4, heightPct: 16.5 }
+          }
         },
         {
           index: "04",
@@ -47,7 +59,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "双栏错位 + 叠卡",
           layoutEn: "2-Col Header + Cards",
           noteZh: "上左 48px 章节标题、上右正文导语，下方并排叠放 Slack 对话流与看板视图卡片。",
-          noteEn: "2-column header (48px title left, copy right) above layered Slack thread and issue board surfaces."
+          noteEn: "2-column header (48px title left, copy right) above layered Slack thread and issue board surfaces.",
+          bounds: {
+            desktop: { topPct: 25.49, heightPct: 24.67 },
+            mobile: { topPct: 31.99, heightPct: 19.66 }
+          }
         },
         {
           index: "05",
@@ -56,7 +72,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "双栏对比",
           layoutEn: "2-Col Split",
           noteZh: "采用 Berkeley Mono 等宽字体渲染红绿行级代码差异与 PR 状态。",
-          noteEn: "Renders syntax-highlighted code review diffs and agent task timelines in Berkeley Mono."
+          noteEn: "Renders syntax-highlighted code review diffs and agent task timelines in Berkeley Mono.",
+          bounds: {
+            desktop: { topPct: 50.26, heightPct: 24.64 },
+            mobile: { topPct: 51.82, heightPct: 19.47 }
+          }
         },
         {
           index: "06",
@@ -65,7 +85,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "居中主行动 + 6 列",
           layoutEn: "Centered + 6-Col",
           noteZh: "收尾仅保留一句主标题与双胶囊按钮，页脚按品牌标 + 5 组纯文字链接网格对齐。",
-          noteEn: "Minimal closing headline with dual pill buttons, anchored by a 6-column muted sitemap footer."
+          noteEn: "Minimal closing headline with dual pill buttons, anchored by a 6-column muted sitemap footer.",
+          bounds: {
+            desktop: { topPct: 90.23, heightPct: 9.77 },
+            mobile: { topPct: 79.77, heightPct: 20.23 }
+          }
         }
       ]
     },
@@ -85,7 +109,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "4 等列竖线",
           layoutEn: "4-Col Divided",
           noteZh: "Free / Basic / Business / Enterprise 四列仅靠 1px 竖向细线分隔，主推档采用实心浅白按钮与靛紫开关。",
-          noteEn: "4 equal columns separated by 1px vertical hairlines; Business tier highlighted strictly via inverse white CTA."
+          noteEn: "4 equal columns separated by 1px vertical hairlines; Business tier highlighted strictly via inverse white CTA.",
+          bounds: {
+            desktop: { topPct: 1.15, heightPct: 15.7 },
+            mobile: { topPct: 0.83, heightPct: 31.91 }
+          }
         },
         {
           index: "02",
@@ -94,7 +122,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "5 列吸顶对账表",
           layoutEn: "5-Col Matrix",
           noteZh: "左侧功能分组名，右侧四列勾选圆点对齐，无花哨背景底色干扰。",
-          noteEn: "Clean 5-column check/cross feature table grouped by Core, AI Agents, Integrations, and Security."
+          noteEn: "Clean 5-column check/cross feature table grouped by Core, AI Agents, Integrations, and Security.",
+          bounds: {
+            desktop: { topPct: 17.49, heightPct: 66.8 },
+            mobile: { topPct: 33.13, heightPct: 51.2 }
+          }
         },
         {
           index: "03",
@@ -103,7 +135,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "居中 + 6 列",
           layoutEn: "Centered + 6-Col",
           noteZh: "与首页保持完全一致的底部转化区与六栏站点地图。",
-          noteEn: "Consistent closing conversion band and 6-column architectural footer."
+          noteEn: "Consistent closing conversion band and 6-column architectural footer.",
+          bounds: {
+            desktop: { topPct: 84.42, heightPct: 15.58 },
+            mobile: { topPct: 84.43, heightPct: 15.57 }
+          }
         }
       ]
     },
@@ -123,7 +159,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "单栏左对齐",
           layoutEn: "Single-Col Header",
           noteZh: "简洁大号标题配极淡分割线，直入最近版本动态。",
-          noteEn: "Clean editorial header leading directly into chronological product releases."
+          noteEn: "Clean editorial header leading directly into chronological product releases.",
+          bounds: {
+            desktop: { topPct: 0, heightPct: 1.2 },
+            mobile: { topPct: 0, heightPct: 1.2 }
+          }
         },
         {
           index: "02",
@@ -132,7 +172,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "左窄右宽双栏",
           layoutEn: "2-Col Timeline",
           noteZh: "左侧固定等宽发布日期，右侧展示 16:10 功能配图与精炼更新正文。",
-          noteEn: "Left monospace release date rail paired with wide dark product screenshots and release notes."
+          noteEn: "Left monospace release date rail paired with wide dark product screenshots and release notes.",
+          bounds: {
+            desktop: { topPct: 1.2, heightPct: 96.6 },
+            mobile: { topPct: 1.2, heightPct: 94.8 }
+          }
         }
       ]
     },
@@ -152,7 +196,11 @@ export const linearScrapedData: CatalogScrapedData = {
           layoutZh: "单列 320px 居中",
           layoutEn: "Centered 320px",
           noteZh: "零外框卡片，纯 #08090A 背景正中纵向排列品牌图标、标题与 4 枚全圆角登录胶囊按钮（主项采用 #5E6AD2 靛紫）。",
-          noteEn: "Zero outer card box; centered logo + 4 stacked full-pill buttons (#5E6AD2 Google primary + 3 #1A1C20 secondary options)."
+          noteEn: "Zero outer card box; centered logo + 4 stacked full-pill buttons (#5E6AD2 Google primary + 3 #1A1C20 secondary options).",
+          bounds: {
+            desktop: { topPct: 24, heightPct: 52 },
+            mobile: { topPct: 22, heightPct: 56 }
+          }
         }
       ]
     }

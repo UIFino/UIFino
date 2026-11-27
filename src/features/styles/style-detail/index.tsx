@@ -56,7 +56,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
 
   return (
     <div className="band-full">
-      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[236px_minmax(0,1fr)]">
+      <div className="shell-full grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)]">
         {/* Left Contextual Styles Rail */}
         <aside className="order-2 border-t border-hairline bg-canvas px-2.5 py-4 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
           <Link
@@ -129,7 +129,8 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
 
         {/* Main Style Protocol Content */}
         <div className="order-1 min-w-0 lg:order-2">
-          <div className="border-b border-hairline px-7 pt-7 pb-6">
+          <div className="detail-center-frame">
+            <div className="border-b border-hairline px-7 pt-7 pb-6">
             <nav className="font-mono-ui flex flex-wrap items-center gap-1.5 text-xs text-muted">
               <Link href="/styles" className="hover:text-ink">
                 {tCommon("navStyles")}
@@ -311,6 +312,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
                 </ul>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>

@@ -44,7 +44,7 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
 
   return (
     <div className="band-full">
-      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[232px_minmax(0,1fr)]">
+      <div className="shell-full grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)]">
         {/* Left Contextual Catalog Rail */}
         <aside className="order-2 border-t border-hairline bg-canvas px-2.5 py-4 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
           <Link
@@ -112,48 +112,50 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
           })}
         </aside>
 
-        {/* Main Brand Spec Content */}
+        {/* Main Brand Spec Content — Centered Readable Blueprint Frame inside Full-Bleed Workspace */}
         <div className="order-1 min-w-0 lg:order-2">
-          <CatalogDetailHeader
-            item={item}
-            isZh={isZh}
-            onCopyCss={() => void copy(rawCss, `Copied ${item.name} CSS tokens`)}
-            onCopyMd={() => void copy(rawMd, `Copied ${item.name} DESIGN.md`)}
-            onDownloadMd={() => downloadText(`${item.id}-DESIGN.md`, rawMd)}
-            onApplySkin={handleApplyToWorkbench}
-          />
+          <div className="detail-center-frame">
+            <CatalogDetailHeader
+              item={item}
+              isZh={isZh}
+              onCopyCss={() => void copy(rawCss, `Copied ${item.name} CSS tokens`)}
+              onCopyMd={() => void copy(rawMd, `Copied ${item.name} DESIGN.md`)}
+              onDownloadMd={() => downloadText(`${item.id}-DESIGN.md`, rawMd)}
+              onApplySkin={handleApplyToWorkbench}
+            />
 
-          {/* 4 Primary Tabs */}
-          <div className="grid gap-5 px-7 py-6">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
-              <SegmentedControl
-                options={[
-                  { value: "pages" as CatalogDetailTab, label: t("tabPages") },
-                  { value: "sections" as CatalogDetailTab, label: t("tabSections") },
-                  { value: "tokens" as CatalogDetailTab, label: t("tabTokens") },
-                  { value: "guardrails" as CatalogDetailTab, label: t("tabGuardrails") }
-                ]}
-                value={tab}
-                onChange={setTab}
-              />
+            {/* 4 Primary Tabs */}
+            <div className="grid gap-5 px-7 py-6">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
+                <SegmentedControl
+                  options={[
+                    { value: "pages" as CatalogDetailTab, label: t("tabPages") },
+                    { value: "sections" as CatalogDetailTab, label: t("tabSections") },
+                    { value: "tokens" as CatalogDetailTab, label: t("tabTokens") },
+                    { value: "guardrails" as CatalogDetailTab, label: t("tabGuardrails") }
+                  ]}
+                  value={tab}
+                  onChange={setTab}
+                />
 
-              {item.scraped ? (
-                <span className="font-mono-ui text-xs text-muted">
-                  Captured {item.scraped.capturedAt} · {item.scraped.pages.length} pages ·{" "}
-                  {item.scraped.sections.length} slices
-                </span>
-              ) : null}
+                {item.scraped ? (
+                  <span className="font-mono-ui text-xs text-muted">
+                    Captured {item.scraped.capturedAt} · {item.scraped.pages.length} pages ·{" "}
+                    {item.scraped.sections.length} slices
+                  </span>
+                ) : null}
+              </div>
+
+              {tab === "pages" ? (
+                <CatalogPagesTab item={item} isZh={isZh} />
+              ) : tab === "sections" ? (
+                <CatalogSectionsTab item={item} isZh={isZh} />
+              ) : tab === "tokens" ? (
+                <CatalogTokensCssTab item={item} rawCss={rawCss} isZh={isZh} />
+              ) : (
+                <CatalogGuardrailsTab item={item} rawMd={rawMd} isZh={isZh} />
+              )}
             </div>
-
-            {tab === "pages" ? (
-              <CatalogPagesTab item={item} isZh={isZh} />
-            ) : tab === "sections" ? (
-              <CatalogSectionsTab item={item} isZh={isZh} />
-            ) : tab === "tokens" ? (
-              <CatalogTokensCssTab item={item} rawCss={rawCss} isZh={isZh} />
-            ) : (
-              <CatalogGuardrailsTab item={item} rawMd={rawMd} isZh={isZh} />
-            )}
           </div>
         </div>
       </div>

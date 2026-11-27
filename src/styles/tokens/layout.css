@@ -1,8 +1,7 @@
-/* Architectural container & grid sizing tokens */
+/* Architectural container & grid sizing tokens (getdesign.md full-bleed pattern) */
 :root {
   --header-h: 56px;
-  --container-max: 1380px;
-  --container-detail: 1180px;
+  --container-max: 2000px;
   --stage-radius-default: 6px;
   --stage-density-scale: 1;
 }

@@ -162,7 +162,7 @@ export function CatalogPagesTab({
       </div>
 
       {/* Left Real Full-Page Screenshot with Interactive Red Bounds | Right Clickable Section Anatomy */}
-      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_356px]">
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div
           ref={scrollBoxRef}
           className="relative max-h-[840px] overflow-y-auto border border-hairline bg-code p-4"

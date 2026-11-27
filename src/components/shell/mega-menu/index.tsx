@@ -23,7 +23,7 @@ export function MegaMenuViewport({ activeMenu, locale, onClose }: MegaMenuViewpo
       aria-label="Global navigation submenu"
       className="absolute inset-x-0 top-full z-50 border-b border-hairline bg-canvas"
     >
-      <div className="w-full px-6 pt-9 pb-14">
+      <div className="w-full px-6 pt-9 pb-14 min-[2200px]:mx-auto min-[2200px]:max-w-[var(--container-max)]">
         <div className="flex flex-wrap items-start gap-y-8">
           {/* Column 1: Elevated Primary Group */}
           <div className="mr-14 min-w-[210px] lg:mr-24">

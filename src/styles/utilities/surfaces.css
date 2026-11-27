@@ -2,9 +2,7 @@
 @layer components {
   .shell-wrap {
     width: 100%;
-    max-width: var(--container-max);
     margin-inline: auto;
-    border-inline: 1px solid var(--border-hairline);
   }
 
   .shell-full {
@@ -14,13 +12,13 @@
 
   .detail-center-frame {
     width: 100%;
-    max-width: var(--container-detail);
-    margin-inline: auto;
     min-height: 100%;
   }
 
-  @media (min-width: 1520px) {
-    .detail-center-frame {
+  @media (min-width: 2200px) {
+    .shell-wrap,
+    .wireframe-spacer-inner {
+      max-width: var(--container-max);
       border-inline: 1px solid var(--border-hairline);
     }
   }
@@ -37,9 +35,7 @@
   .wireframe-spacer-inner {
     height: 16px;
     width: 100%;
-    max-width: var(--container-max);
     margin-inline: auto;
-    border-inline: 1px solid var(--border-hairline);
     background-image: repeating-linear-gradient(
       -45deg,
       transparent 0px,

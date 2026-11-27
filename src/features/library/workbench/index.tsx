@@ -85,7 +85,7 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
         />
 
         <main className="order-1 min-w-0 px-6 pt-6 pb-12 lg:order-2">
-          <div className="mx-auto grid w-full max-w-[1060px] content-start gap-6">
+          <div className="grid w-full content-start gap-6">
             <WorkbenchToolbar
               category={category}
               item={item}

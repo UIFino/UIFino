@@ -1,4 +1,4 @@
-/* Architectural container & grid sizing tokens (getdesign.md full-bleed pattern) */
+/* Architectural container & grid sizing tokens (unified shell-wrap: 100% up to 2199px, 2000px centered >= 2200px) */
 :root {
   --header-h: 56px;
   --container-max: 2000px;

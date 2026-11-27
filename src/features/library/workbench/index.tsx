@@ -74,7 +74,7 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
 
   return (
     <div className="band-full">
-      <div className="workbench-grid">
+      <div className="workbench-grid shell-wrap">
         <WorkbenchTreeSidebar
           category={category}
           item={item}

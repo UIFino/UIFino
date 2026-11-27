@@ -44,9 +44,9 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
 
   return (
     <div className="band-full">
-      <div className="shell-full grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)]">
+      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)]">
         {/* Left Contextual Catalog Rail */}
-        <aside className="order-2 border-t border-hairline bg-canvas px-2.5 py-4 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
+        <aside className="order-2 border-t border-hairline bg-canvas px-3.5 py-4 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
           <Link
             href="/catalog"
             className="font-mono-ui mb-2.5 flex items-center px-2.5 py-1.5 text-[11.5px] text-muted hover:bg-surface-hover hover:text-ink"

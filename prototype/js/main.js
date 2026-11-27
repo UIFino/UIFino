@@ -1,4 +1,4 @@
-// Main Application Controller — Hash Router, Global Search (⌘K), Customizer, Live Sliders & Event Delegation
+// Main Application Controller — Hash Router, Hover Mega-Menu, Global Search (⌘K), Customizer & Live Sliders
 import {
   computeWorkbenchTokens,
   generateBackgroundOutput,
@@ -10,6 +10,7 @@ import {
 } from "./core/generators.js";
 import { CATALOG_ITEMS } from "./data/catalog-data.js";
 import { findAssetByPath, getAllAssetsFlat } from "./data/components-data.js";
+import { TEMPLATE_ITEMS } from "./data/nav-templates-data.js";
 import { BG_PRESETS, MCP_CLIENTS, SHADOW_PRESETS } from "./data/tools-mcp-data.js";
 import { t } from "./i18n.js";
 import { renderCatalogDetailView, renderCatalogIndexView } from "./views/catalog-views.js";
@@ -19,6 +20,8 @@ import {
   renderComponentsCategoryView,
   renderComponentsIndexView
 } from "./views/library-views.js";
+import { renderMegaMenuPanel } from "./views/mega-menu-view.js";
+import { renderTemplatesIndexView } from "./views/templates-views.js";
 import { renderMcpView, renderToolsView } from "./views/tools-mcp-views.js";
 
 const state = {
@@ -28,6 +31,7 @@ const state = {
   theme: "dark",
   starred: false,
   starCount: 12800,
+  openNavMenu: "",
 
   // Home state
   heroStep: 1,
@@ -49,6 +53,10 @@ const state = {
   libCardSize: "small",
   catSubfilter: "All",
   catCols: 3,
+
+  // Templates state
+  templateCategory: "All",
+  templateSearch: "",
 
   // Level 3 Workbench state
   wbFramework: "react",
@@ -78,8 +86,11 @@ const state = {
 
   // Global Search Modal
   cmdkFilter: "all",
-  cmdkQuery: ""
+  cmdkQuery: "",
+  cmdkIndex: 0
 };
+
+let megaCloseTimer = null;
 
 function showToast(msg) {
   const stack = document.getElementById("toast-stack");
@@ -132,6 +143,72 @@ function downloadTextFile(filename, content) {
   showToast(`Downloaded ${filename}`);
 }
 
+// =========================================================
+// shadcn.io Style Hover Navigation Mega-Menu Controller
+// =========================================================
+function cancelCloseMegaMenu() {
+  if (megaCloseTimer) {
+    clearTimeout(megaCloseTimer);
+    megaCloseTimer = null;
+  }
+}
+
+function scheduleCloseMegaMenu() {
+  cancelCloseMegaMenu();
+  megaCloseTimer = setTimeout(() => {
+    closeMegaMenu();
+  }, 135);
+}
+
+function syncMegaTriggers() {
+  document.querySelectorAll("[data-nav-menu]").forEach((btn) => {
+    const isOpen = btn.getAttribute("data-nav-menu") === state.openNavMenu;
+    btn.classList.toggle("is-menu-open", isOpen);
+    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+}
+
+function openMegaMenu(menuKey, triggerEl) {
+  cancelCloseMegaMenu();
+  const vp = document.getElementById("nav-mega-viewport");
+  const headerInner = document.getElementById("site-header-inner");
+  if (!vp || !headerInner) return;
+
+  toggleCustomizer(true);
+  state.openNavMenu = menuKey;
+  syncMegaTriggers();
+
+  const { width, html } = renderMegaMenuPanel(menuKey, state.lang);
+  vp.innerHTML = html;
+  vp.hidden = false;
+
+  const containerRect = headerInner.getBoundingClientRect();
+  const btn = triggerEl || document.querySelector(`[data-nav-menu="${menuKey}"]`);
+  const btnRect = btn ? btn.getBoundingClientRect() : containerRect;
+
+  const maxAvail = Math.max(280, containerRect.width - 32);
+  const finalW = Math.min(width, maxAvail);
+  let targetLeft = btnRect.left - containerRect.left;
+  if (targetLeft + finalW > containerRect.width - 16) {
+    targetLeft = Math.max(16, containerRect.width - finalW - 16);
+  }
+  targetLeft = Math.max(16, targetLeft);
+
+  vp.style.width = `${finalW}px`;
+  vp.style.left = `${Math.round(targetLeft)}px`;
+}
+
+function closeMegaMenu() {
+  cancelCloseMegaMenu();
+  if (!state.openNavMenu) return;
+  state.openNavMenu = "";
+  syncMegaTriggers();
+  const vp = document.getElementById("nav-mega-viewport");
+  if (vp) {
+    vp.hidden = true;
+  }
+}
+
 function parseRouteTarget(raw) {
   const clean = String(raw || "home").replace(/^#/, "");
   const idx = clean.indexOf(":");
@@ -142,6 +219,7 @@ function parseRouteTarget(raw) {
 }
 
 function navigate(target, pushHash = true) {
+  closeMegaMenu();
   const { view, param } = parseRouteTarget(target);
   state.view = view;
   state.param = param;
@@ -175,6 +253,7 @@ function syncHeaderChrome() {
   setTxt("i18n-announce-action", "announceAction");
   setTxt("i18n-nav-catalog", "navCatalog");
   setTxt("i18n-nav-components", "navComponents");
+  setTxt("i18n-nav-templates", "navTemplates");
   setTxt("i18n-nav-tools", "navTools");
   setTxt("i18n-nav-mcp", "navMcp");
   setTxt("i18n-customize-label", "customizeBtn");
@@ -189,15 +268,21 @@ function syncHeaderChrome() {
     ? "catalog"
     : state.view.startsWith("components")
       ? "components"
-      : state.view === "tools"
-        ? "tools"
-        : state.view === "mcp"
-          ? "mcp"
-          : "";
+      : state.view.startsWith("templates")
+        ? "templates"
+        : state.view === "tools"
+          ? "tools"
+          : state.view === "mcp"
+            ? "mcp"
+            : "";
 
   document.querySelectorAll("[data-nav-channel]").forEach((btn) => {
     btn.classList.toggle("is-active", btn.getAttribute("data-nav-channel") === activeChannel);
   });
+
+  if (state.openNavMenu) {
+    openMegaMenu(state.openNavMenu);
+  }
 }
 
 function runCounters() {
@@ -249,6 +334,7 @@ function bindLiveInputs(focusRestoreId, cursorPos) {
 
   bindSearch("catalog-search-input", "catalogSearch");
   bindSearch("lib-search-input", "libSearch");
+  bindSearch("template-search-input", "templateSearch");
   bindSearch("wb-tree-filter-input", "wbTreeFilter");
   bindSearch("mcp-query-inp", "mcpQuery");
 
@@ -265,7 +351,7 @@ function bindLiveInputs(focusRestoreId, cursorPos) {
     replayBtn.addEventListener("click", runCounters);
   }
 
-  // Tools Studio Live Sliders (smooth in-place DOM update during drag, full sync on change)
+  // Tools Studio Live Sliders
   const bgSample = document.getElementById("bg-sample-toggle");
   if (bgSample) {
     bgSample.addEventListener("change", (e) => {
@@ -278,7 +364,7 @@ function bindLiveInputs(focusRestoreId, cursorPos) {
     const root = document.getElementById("app-root");
     if (!root) return;
     const res = generateBackgroundOutput(state.bgParams, state.toolCodeFormat);
-    const stageBox = root.querySelector("[style*='height:300px']");
+    const stageBox = root.querySelector("#bg-live-stage");
     if (stageBox) {
       stageBox.style.cssText = `height:300px;${res.inlineStyle}display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;`;
     }
@@ -309,7 +395,7 @@ function bindLiveInputs(focusRestoreId, cursorPos) {
     const root = document.getElementById("app-root");
     if (!root) return;
     const res = generateShadowOutput(state.shadowParams, state.toolCodeFormat);
-    const stageOuter = root.querySelector("[style*='height:300px']");
+    const stageOuter = root.querySelector("#shadow-live-stage");
     if (stageOuter) {
       stageOuter.style.background = res.canvasBg;
       const specimen = stageOuter.firstElementChild;
@@ -348,6 +434,7 @@ export function renderApp(focusRestoreId = "", cursorPos = 0) {
   else if (state.view === "components-index") root.innerHTML = renderComponentsIndexView(state);
   else if (state.view === "components-cat") root.innerHTML = renderComponentsCategoryView(state);
   else if (state.view === "components-detail") root.innerHTML = renderComponentWorkbenchView(state);
+  else if (state.view === "templates-index") root.innerHTML = renderTemplatesIndexView(state);
   else if (state.view === "tools") root.innerHTML = renderToolsView(state);
   else if (state.view === "mcp") root.innerHTML = renderMcpView(state);
   else root.innerHTML = renderHomeView(state);
@@ -359,7 +446,7 @@ export function renderApp(focusRestoreId = "", cursorPos = 0) {
 }
 
 // =========================================================
-// Global Search Modal (⌘K) with shadcn.io Category Tabs
+// Global Search Modal (⌘K) with Keyboard Navigation
 // =========================================================
 function buildSearchItems() {
   const entries = [];
@@ -381,6 +468,15 @@ function buildSearchItems() {
       go: `components-detail:${a.categoryId}/${a.id}`
     });
   }
+  for (const tpl of TEMPLATE_ITEMS) {
+    entries.push({
+      group: "templates",
+      badge: "TEMPLATE",
+      label: tpl.name,
+      meta: tpl.stack,
+      go: "templates-index"
+    });
+  }
   entries.push(
     { group: "tools", badge: "TOOL", label: "Parameterized Background Studio", meta: "Grid · Aurora · Grain", go: "tools:background" },
     { group: "tools", badge: "TOOL", label: "Shadow & Surface Token Lab", meta: "Elevation & Rim Light", go: "tools:shadow" },
@@ -389,30 +485,36 @@ function buildSearchItems() {
   return entries;
 }
 
+function getFilteredCmdkItems() {
+  const q = state.cmdkQuery.trim().toLowerCase();
+  return buildSearchItems()
+    .filter((x) => {
+      const fOk = state.cmdkFilter === "all" || x.group === state.cmdkFilter;
+      const qOk = !q || `${x.label} ${x.meta} ${x.badge}`.toLowerCase().includes(q);
+      return fOk && qOk;
+    })
+    .slice(0, 18);
+}
+
 function renderCmdkResults() {
   const listEl = document.getElementById("cmdk-results");
   if (!listEl) return;
-  const q = state.cmdkQuery.trim().toLowerCase();
-  const all = buildSearchItems().filter((x) => {
-    const fOk = state.cmdkFilter === "all" || x.group === state.cmdkFilter;
-    const qOk = !q || `${x.label} ${x.meta} ${x.badge}`.toLowerCase().includes(q);
-    return fOk && qOk;
-  });
+  const visible = getFilteredCmdkItems();
+  if (state.cmdkIndex >= visible.length) state.cmdkIndex = 0;
 
   document.querySelectorAll("[data-cmdk-filter]").forEach((btn) => {
     btn.classList.toggle("is-active", btn.getAttribute("data-cmdk-filter") === state.cmdkFilter);
   });
 
-  if (!all.length) {
+  if (!visible.length) {
     listEl.innerHTML = `<div style="padding:28px;text-align:center;font-size:13px;color:var(--text-muted);">${t(state.lang, "emptyResult")}</div>`;
     return;
   }
 
-  listEl.innerHTML = all
-    .slice(0, 18)
+  listEl.innerHTML = visible
     .map(
-      (item) => `
-      <button type="button" data-go="${item.go}" class="tree-row" style="padding:8px 12px;">
+      (item, idx) => `
+      <button type="button" data-go="${item.go}" class="tree-row ${idx === state.cmdkIndex ? "is-active" : ""}" style="padding:8px 12px;">
         <span style="display:flex;align-items:center;gap:8px;min-width:0;">
           <span class="badge-sharp">${item.badge}</span>
           <span class="truncate-1" style="color:var(--text-primary);font-weight:500;">${item.label}</span>
@@ -424,10 +526,12 @@ function renderCmdkResults() {
 }
 
 function openCmdk() {
+  closeMegaMenu();
   const modal = document.getElementById("cmdk-modal");
   if (!modal) return;
   modal.hidden = false;
   state.cmdkQuery = "";
+  state.cmdkIndex = 0;
   const inp = document.getElementById("cmdk-input");
   if (inp) {
     inp.value = "";
@@ -449,6 +553,7 @@ function toggleCustomizer(forceClose = false) {
     pop.hidden = true;
     return;
   }
+  closeMegaMenu();
   pop.hidden = !pop.hidden;
   if (!pop.hidden) renderCustomizerPopover();
 }
@@ -518,6 +623,37 @@ function init() {
     renderApp();
   });
 
+  // Hover Mega-Menu wiring
+  const primaryNav = document.getElementById("primary-nav");
+  const megaViewport = document.getElementById("nav-mega-viewport");
+
+  document.querySelectorAll("[data-nav-menu]").forEach((btn) => {
+    btn.addEventListener("pointerenter", (e) => {
+      if (e.pointerType === "touch") return;
+      const menuKey = btn.getAttribute("data-nav-menu");
+      if (menuKey) openMegaMenu(menuKey, btn);
+    });
+  });
+
+  primaryNav?.addEventListener("pointerleave", (e) => {
+    if (e.pointerType === "touch") return;
+    scheduleCloseMegaMenu();
+  });
+
+  megaViewport?.addEventListener("pointerenter", (e) => {
+    if (e.pointerType === "touch") return;
+    cancelCloseMegaMenu();
+  });
+
+  megaViewport?.addEventListener("pointerleave", (e) => {
+    if (e.pointerType === "touch") return;
+    scheduleCloseMegaMenu();
+  });
+
+  window.addEventListener("resize", () => {
+    if (state.openNavMenu) openMegaMenu(state.openNavMenu);
+  });
+
   document.getElementById("dismiss-announce-btn")?.addEventListener("click", () => {
     const bar = document.getElementById("announce-bar");
     if (bar) bar.style.display = "none";
@@ -549,6 +685,7 @@ function init() {
   });
   document.getElementById("cmdk-input")?.addEventListener("input", (e) => {
     state.cmdkQuery = e.target.value;
+    state.cmdkIndex = 0;
     renderCmdkResults();
   });
 
@@ -558,12 +695,41 @@ function init() {
   });
 
   document.addEventListener("keydown", (e) => {
+    const cmdkModal = document.getElementById("cmdk-modal");
+    const cmdkOpen = cmdkModal && !cmdkModal.hidden;
+
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
       e.preventDefault();
       openCmdk();
-    } else if (e.key === "Escape") {
+      return;
+    }
+
+    if (e.key === "Escape") {
       closeCmdk();
       toggleCustomizer(true);
+      closeMegaMenu();
+      return;
+    }
+
+    if (cmdkOpen) {
+      const items = getFilteredCmdkItems();
+      if (!items.length) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        state.cmdkIndex = (state.cmdkIndex + 1) % items.length;
+        renderCmdkResults();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        state.cmdkIndex = (state.cmdkIndex - 1 + items.length) % items.length;
+        renderCmdkResults();
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const chosen = items[state.cmdkIndex];
+        if (chosen) {
+          closeCmdk();
+          navigate(chosen.go);
+        }
+      }
     }
   });
 
@@ -575,6 +741,10 @@ function init() {
       toggleCustomizer(true);
     }
 
+    if (!target.closest("#nav-mega-viewport") && !target.closest("[data-nav-menu]")) {
+      closeMegaMenu();
+    }
+
     if (target.closest("[data-close-customizer]")) {
       toggleCustomizer(true);
       return;
@@ -583,20 +753,51 @@ function init() {
     const cmdkFilter = target.closest("[data-cmdk-filter]");
     if (cmdkFilter) {
       state.cmdkFilter = cmdkFilter.getAttribute("data-cmdk-filter") || "all";
+      state.cmdkIndex = 0;
       renderCmdkResults();
-      return;
-    }
-
-    const goBtn = target.closest("[data-go]");
-    if (goBtn) {
-      closeCmdk();
-      navigate(goBtn.getAttribute("data-go"));
       return;
     }
 
     const copyBtn = target.closest("[data-copy]");
     if (copyBtn) {
       copyText(copyBtn.getAttribute("data-copy") || "", "Copied to clipboard");
+      return;
+    }
+
+    // Pre-apply mega-menu targeted filter states before navigating
+    const goBtn = target.closest("[data-go]");
+    if (goBtn) {
+      if (goBtn.hasAttribute("data-mega-reset-catalog")) {
+        state.catalogKind = "all";
+        state.catalogCategory = "All";
+        state.catalogSearch = "";
+      }
+      if (goBtn.hasAttribute("data-mega-cat-kind")) {
+        state.catalogKind = goBtn.getAttribute("data-mega-cat-kind") || "all";
+      }
+      if (goBtn.hasAttribute("data-mega-cat-domain")) {
+        state.catalogCategory = goBtn.getAttribute("data-mega-cat-domain") || "All";
+      }
+      if (goBtn.hasAttribute("data-mega-lib-type")) {
+        state.libAssetType = goBtn.getAttribute("data-mega-lib-type") || "all";
+      }
+      if (goBtn.hasAttribute("data-mega-tpl-cat")) {
+        state.templateCategory = goBtn.getAttribute("data-mega-tpl-cat") || "All";
+      }
+      if (goBtn.hasAttribute("data-mega-mcp-client")) {
+        state.mcpClient = goBtn.getAttribute("data-mega-mcp-client") || "claude-code";
+      }
+      if (goBtn.hasAttribute("data-mega-bg-preset")) {
+        const pr = BG_PRESETS.find((x) => x.id === goBtn.getAttribute("data-mega-bg-preset"));
+        if (pr) state.bgParams = { ...pr };
+      }
+      if (goBtn.hasAttribute("data-mega-sh-preset")) {
+        const sp = SHADOW_PRESETS.find((x) => x.id === goBtn.getAttribute("data-mega-sh-preset"));
+        if (sp) state.shadowParams = { ...sp };
+      }
+
+      closeCmdk();
+      navigate(goBtn.getAttribute("data-go"));
       return;
     }
 
@@ -669,6 +870,13 @@ function init() {
     if (csb) { state.catSubfilter = csb.getAttribute("data-cat-sub"); renderApp(); return; }
     const ccol = target.closest("[data-cat-cols]");
     if (ccol) { state.catCols = Number(ccol.getAttribute("data-cat-cols")); renderApp(); return; }
+
+    // Templates switches
+    const tplCat = target.closest("[data-tpl-cat]");
+    if (tplCat) { state.templateCategory = tplCat.getAttribute("data-tpl-cat"); renderApp(); return; }
+    if (target.closest("[data-reset-templates]")) {
+      state.templateCategory = "All"; state.templateSearch = ""; renderApp(); return;
+    }
 
     // Level 3 Workbench switches
     const wbTab = target.closest("[data-wb-tab]");

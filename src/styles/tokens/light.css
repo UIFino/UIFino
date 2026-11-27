@@ -1,0 +1,39 @@
+/* Warm low-glare paper ramp with accessible deepberry inline accent */
+html[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-canvas: #f5f4f0;
+  --bg-surface: #ffffff;
+  --bg-elevated: #eae8e1;
+  --bg-code: #eeece5;
+
+  --gray-100: #e6e3db;
+  --gray-200: #dad6cc;
+  --gray-300: #cbc6ba;
+  --gray-400: #b8b2a5;
+  --gray-500: #969083;
+
+  --border-hairline: #d8d4ca;
+  --border-strong: #c2bdb0;
+  --stripe-line: rgba(27, 26, 23, 0.045);
+  --surface-hover: rgba(27, 26, 23, 0.035);
+
+  --text-primary: #1b1a17;
+  --text-body: #3c3a34;
+  --text-muted: #646058;
+  --text-subtle: #7a756c;
+
+  --accent-fill: #ceff00;
+  --accent-ink: #111113;
+  --accent-text: #8c145d;
+  --accent-soft: rgba(140, 20, 93, 0.1);
+  --accent-border: rgba(140, 20, 93, 0.36);
+
+  --contrast-bg: #1b1a17;
+  --contrast-fg: #ffffff;
+  --contrast-hover: #33312b;
+
+  --status-green: #15803d;
+  --star-amber: #f5a623;
+  --floating-shadow: 0 20px 48px rgba(27, 26, 23, 0.14);
+}

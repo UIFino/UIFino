@@ -1,20 +1,20 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { ViewportSize } from "@/components/patterns/viewport-frame";
 import { Button } from "@/components/primitives/button";
+import { DualSwatch } from "@/components/primitives/dual-swatch";
 import { SegmentedControl } from "@/components/primitives/segmented";
-import type { TargetFramework } from "@/core/codegen";
 import type { DensityMode, RadiusStop, ResolvedWorkbenchTokens } from "@/core/tokens";
 import { cn } from "@/lib/cn";
 import { CATALOG_ITEMS } from "@/registry/catalog";
+import { STYLE_ITEMS } from "@/registry/styles";
 
 export interface WorkbenchParamsPanelProps {
   readonly tokens: ResolvedWorkbenchTokens;
   readonly radius: RadiusStop;
   readonly density: DensityMode;
   readonly skin: string;
-  readonly framework: TargetFramework;
   readonly viewport: ViewportSize;
   readonly onRadiusChange: (r: RadiusStop) => void;
   readonly onDensityChange: (d: DensityMode) => void;
@@ -28,7 +28,6 @@ export function WorkbenchParamsPanel({
   radius,
   density,
   skin,
-  framework,
   viewport,
   onRadiusChange,
   onDensityChange,
@@ -37,11 +36,13 @@ export function WorkbenchParamsPanel({
   onCopyCode
 }: WorkbenchParamsPanelProps) {
   const t = useTranslations("library");
+  const locale = useLocale();
+  const isZh = locale === "zh";
 
-  const skinChoices = [
-    ["default", "uifino"],
+  const brandChoices = [
+    ["default", "uifino"] as const,
     ...CATALOG_ITEMS.slice(0, 5).map((b) => [b.id, b.name] as const)
-  ] as const;
+  ];
 
   const tocItems = [
     ["#wb-overview", "Overview & Stack"],
@@ -100,7 +101,7 @@ export function WorkbenchParamsPanel({
         <div>
           <div className="mb-1.5 text-xs text-muted">{t("wbBrandSkin")}</div>
           <div className="grid grid-cols-2 gap-[5px]">
-            {skinChoices.map(([id, name]) => (
+            {brandChoices.map(([id, name]) => (
               <button
                 key={id}
                 type="button"
@@ -118,13 +119,35 @@ export function WorkbenchParamsPanel({
           </div>
         </div>
 
+        <div>
+          <div className="mb-1.5 text-xs text-muted">{isZh ? "风格流派" : "UI Styles"}</div>
+          <div className="grid grid-cols-2 gap-[5px]">
+            {STYLE_ITEMS.slice(0, 6).map((st) => (
+              <button
+                key={st.id}
+                type="button"
+                onClick={() => onSkinChange(st.id)}
+                className={cn(
+                  "flex h-7 cursor-pointer items-center gap-1.5 border px-2 text-[11.5px] font-medium transition-colors",
+                  skin === st.id
+                    ? "border-accent-border bg-accent-soft text-accent-text"
+                    : "border-hairline bg-surface text-ink hover:bg-gray-100"
+                )}
+              >
+                <DualSwatch swatch={st.swatch} />
+                <span className="truncate">{isZh ? st.nameZh : st.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <Button
           variant="contrast"
           size="md"
           onClick={onCopyCode}
           className="h-[34px] w-full text-xs"
         >
-          {t("wbCopyCode")} ({framework})
+          {t("wbCopyCode")}
         </Button>
       </div>
 

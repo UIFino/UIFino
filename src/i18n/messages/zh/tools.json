@@ -1,7 +1,9 @@
 {
-  "bannerTitle": "参数化背景与表面令牌工具",
-  "bannerDesc": "可视化微调网格、点阵、极光与颗粒背景及多层内高光阴影，实时导出 CSS 或 Tailwind 代码。",
-  "studioBg": "背景生成器",
-  "studioShadow": "阴影与表面令牌",
+  "bannerTitle": "参数化视觉与令牌工具箱",
+  "bannerDesc": "可视化调节背景纹理、多层阴影、无障碍色阶对比与字号排版阶梯，一键导出 CSS 变量或 Tailwind 代码。",
+  "studioBg": "背景纹理",
+  "studioShadow": "多层阴影",
+  "studioColors": "配色对比",
+  "studioType": "字号排版",
   "sampleOverlay": "叠加示例内容"
 }

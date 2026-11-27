@@ -37,19 +37,37 @@ export function SiteFooter() {
         </div>
 
         <div>
+          <div className="eyebrow-mono mb-2.5">STYLES</div>
+          <div className="grid gap-1.5 text-[13px] text-muted">
+            <Link href="/styles?view=compare" className="hover:text-ink">
+              Style Playground
+            </Link>
+            <Link href="/styles/hairline-grid" className="hover:text-ink">
+              Hairline Grid
+            </Link>
+            <Link href="/styles/frosted-glass" className="hover:text-ink">
+              Frosted Glass
+            </Link>
+            <Link href="/styles/neo-brutalism" className="hover:text-ink">
+              Neo-Brutalism
+            </Link>
+          </div>
+        </div>
+
+        <div>
           <div className="eyebrow-mono mb-2.5">COMPONENTS</div>
           <div className="grid gap-1.5 text-[13px] text-muted">
             <Link href="/components/hero" className="hover:text-ink">
-              Hero Sections
+              Hero
             </Link>
             <Link href="/components/auth" className="hover:text-ink">
-              Authentication
+              Auth
             </Link>
-            <Link href="/components/landing-pages" className="hover:text-ink">
-              Product Landing
+            <Link href="/components/tables" className="hover:text-ink">
+              Tables
             </Link>
-            <Link href="/components/counters-tickers" className="hover:text-ink">
-              Motion &amp; Counters
+            <Link href="/components/counters" className="hover:text-ink">
+              Counters
             </Link>
           </div>
         </div>

@@ -98,13 +98,20 @@ const MOCK_SNAPSHOT: McpRegistrySnapshot = {
 };
 
 describe("core/search", () => {
-  it("builds and filters global cmdk search items", () => {
-    const items = buildGlobalSearchItems(MOCK_SNAPSHOT.brands, MOCK_SNAPSHOT.assets, [
-      { id: "obsidian-saas", name: "Obsidian SaaS", nameZh: "SaaS 模板", stack: "Next.js 15" }
-    ]);
+  it("builds and filters global cmdk search items including styles", () => {
+    const items = buildGlobalSearchItems(
+      MOCK_SNAPSHOT.brands,
+      MOCK_SNAPSHOT.assets,
+      [{ id: "obsidian-saas", name: "Obsidian SaaS", nameZh: "黑曜石官网", stack: "Next.js 15" }],
+      [{ slug: "frosted-glass", name: "Glass", nameZh: "毛玻璃", defaultRadius: 16 }]
+    );
     const filtered = filterGlobalSearchItems(items, "catalog", "linear");
     expect(filtered).toHaveLength(1);
     expect(filtered[0]?.href).toBe("/catalog/linear");
+
+    const styleFiltered = filterGlobalSearchItems(items, "styles", "毛玻璃");
+    expect(styleFiltered).toHaveLength(1);
+    expect(styleFiltered[0]?.href).toBe("/styles/frosted-glass");
   });
 
   it("queries MCP sandbox and emits structured protocol JSON", () => {

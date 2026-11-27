@@ -6,8 +6,8 @@ import { heroTelemetryCounterMeta } from "./hero-telemetry-counter/meta";
 export const heroCategory: RegisteredComponentCategory = {
   id: "hero",
   assetType: "section",
-  name: "Hero Sections",
-  nameZh: "首屏区块 (Hero)",
+  name: "Hero",
+  nameZh: "首屏",
   totalCount: 28,
   miniKind: "hero",
   descEn: "Above-the-fold sections with telemetry counters, split CLI stages, and editorial typography.",

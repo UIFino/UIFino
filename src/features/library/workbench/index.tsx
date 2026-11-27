@@ -6,13 +6,12 @@ import type { ViewportSize } from "@/components/patterns/viewport-frame";
 import {
   type ComponentAssetMeta,
   type ComponentCategoryMeta,
-  generateFrameworkSource,
-  getComponentVirtualFiles,
-  normalizeFramework
+  generateComponentSource,
+  getComponentVirtualFiles
 } from "@/core/codegen";
 import { resolveWorkbenchTokens } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
-import { CATALOG_ITEMS } from "@/registry/catalog";
+import { ALL_WORKBENCH_SKINS } from "@/registry/skins";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
 import { WorkbenchParamsPanel } from "./params-panel";
 import { WorkbenchStagePanel } from "./stage-panel";
@@ -37,7 +36,6 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
   const setStageMode = useWorkbenchPresetStore((s) => s.setStageMode);
   const resetPreset = useWorkbenchPresetStore((s) => s.resetPreset);
 
-  const [fwRaw, setFrameworkQuery] = useQueryState("fw", parseAsString.withDefault("react"));
   const [tabRaw, setTabQuery] = useQueryState("tab", parseAsString.withDefault("preview"));
   const [vpRaw, setVpQuery] = useQueryState("vp", parseAsString.withDefault("desktop"));
   const [fileQuery, setFileQuery] = useQueryState("file", parseAsString.withDefault(""));
@@ -51,7 +49,6 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
     }
   }, [skinQuery, skin, setSkin]);
 
-  const framework = normalizeFramework(fwRaw);
   const stageTab: WorkbenchStageTab = tabRaw === "code" ? "code" : "preview";
   const viewport: ViewportSize =
     vpRaw === "mobile" || vpRaw === "tablet" ? vpRaw : "desktop";
@@ -61,12 +58,12 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
     density,
     skinId: skin,
     mode: stageMode,
-    brands: CATALOG_ITEMS
+    brands: ALL_WORKBENCH_SKINS
   });
 
-  const files = getComponentVirtualFiles(item, framework);
+  const files = getComponentVirtualFiles(item);
   const activeFile = files.includes(fileQuery) ? fileQuery : (files[0] ?? "Stage.tsx");
-  const codeOutput = generateFrameworkSource(item, category, framework, tokens, activeFile);
+  const codeOutput = generateComponentSource(item, category, tokens, activeFile);
 
   const canvasPreviewHref = `/preview/components/${category.id}/${item.id}?skin=${skin}&radius=${radius}&density=${density}&mode=${stageMode}`;
 
@@ -92,12 +89,10 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
             category={category}
             item={item}
             stageTab={stageTab}
-            framework={framework}
             viewport={viewport}
             stageMode={stageMode}
             canvasPreviewHref={canvasPreviewHref}
             onStageTabChange={(next) => void setTabQuery(next)}
-            onFrameworkChange={(next) => void setFrameworkQuery(next)}
             onViewportChange={(next) => void setVpQuery(next)}
             onStageModeChange={setStageMode}
             onReplay={() => setReplayKey((k) => k + 1)}
@@ -109,7 +104,6 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
             tokens={tokens}
             stageTab={stageTab}
             viewport={viewport}
-            framework={framework}
             files={files}
             activeFile={activeFile}
             codeOutput={codeOutput}
@@ -123,7 +117,6 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
           radius={radius}
           density={density}
           skin={skin}
-          framework={framework}
           viewport={viewport}
           onRadiusChange={setRadius}
           onDensityChange={setDensity}

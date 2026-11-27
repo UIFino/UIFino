@@ -86,7 +86,7 @@ export function WorkflowRail() {
           <div className="grid gap-2.5">
             <div className="flex items-center justify-between font-mono text-[11px] text-muted">
               <span>hero-telemetry-counter</span>
-              <span className="text-accent-text">React · Vue · Svelte · Solid</span>
+              <span className="text-accent-text">React · Tailwind</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="border border-hairline bg-code p-2.5">
@@ -125,10 +125,10 @@ guardrails:
           <div className="grid gap-2 font-mono text-[11.5px]">
             <div className="border border-hairline bg-code px-3 py-[9px] text-body">
               <span className="text-accent-text">Prompt ▸</span> Build a dark SaaS telemetry hero
-              &amp; passkey login matching Linear DESIGN.md in Vue 3.
+              &amp; passkey login matching Linear DESIGN.md.
             </div>
             <div className="flex items-center justify-between border border-accent-border bg-code px-3 py-[9px] text-ink">
-              <span>✓ MCP matched linear.app + 2 tuned Vue SFCs (14ms)</span>
+              <span>✓ MCP matched linear.app + 2 tuned React blocks (14ms)</span>
               <Link href="/mcp" className="text-accent-text hover:underline">
                 MCP →
               </Link>

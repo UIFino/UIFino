@@ -17,10 +17,10 @@ export const CATALOG_CATEGORY_LABELS: Record<
   { readonly zh: string; readonly en: string }
 > = {
   All: { zh: "全部", en: "All" },
-  "AI & LLM": { zh: "AI 与大模型", en: "AI & LLM" },
-  DevTools: { zh: "开发者工具", en: "Developer Tools" },
-  Productivity: { zh: "效率与协作", en: "Productivity" },
-  Fintech: { zh: "金融与账单", en: "Fintech & Billing" },
-  "Content & Community": { zh: "内容与社区", en: "Content & Community" },
-  "Consumer & Travel": { zh: "消费与出行", en: "Consumer & Travel" }
+  "AI & LLM": { zh: "人工智能", en: "AI" },
+  DevTools: { zh: "开发工具", en: "DevTools" },
+  Productivity: { zh: "效率办公", en: "Productivity" },
+  Fintech: { zh: "金融支付", en: "Fintech" },
+  "Content & Community": { zh: "内容社区", en: "Community" },
+  "Consumer & Travel": { zh: "生活出行", en: "Travel" }
 };

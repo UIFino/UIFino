@@ -6,9 +6,9 @@ import type { ShadowPreset } from "@/core/studios/shadow";
 export type CmdkFilterGroup =
   | "all"
   | "catalog"
+  | "styles"
   | "section"
   | "block"
-  | "page"
   | "motion"
   | "templates"
   | "tools";
@@ -18,6 +18,13 @@ export interface FlattenedComponentEntry extends ComponentAssetMeta {
   readonly categoryName: string;
   readonly categoryNameZh: string;
   readonly assetType: AssetType;
+}
+
+export interface StyleSummaryEntry {
+  readonly slug: string;
+  readonly name: string;
+  readonly nameZh: string;
+  readonly defaultRadius: number;
 }
 
 export interface TemplateSummaryEntry {
@@ -32,6 +39,7 @@ export interface SearchableItem {
   readonly group: Exclude<CmdkFilterGroup, "all">;
   readonly badge: string;
   readonly label: string;
+  readonly keywords?: string;
   readonly meta: string;
   readonly href: string;
 }

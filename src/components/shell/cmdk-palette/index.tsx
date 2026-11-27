@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/components/primitives/badge";
 import { Dialog, DialogContent, DialogTitle } from "@/components/primitives/dialog";
 import { type CmdkFilterGroup, filterGlobalSearchItems } from "@/core/search";
@@ -12,19 +12,25 @@ import { cn } from "@/lib/cn";
 import { getAllSearchableItems } from "@/registry";
 import { useShellUiStore } from "@/stores/shell-ui.store";
 
-const FILTER_TABS: readonly { readonly id: CmdkFilterGroup; readonly label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "catalog", label: "Catalog" },
-  { id: "section", label: "Sections" },
-  { id: "block", label: "Blocks" },
-  { id: "page", label: "Pages" },
-  { id: "motion", label: "Motion" },
-  { id: "templates", label: "Templates" },
-  { id: "tools", label: "Tools & MCP" }
+const FILTER_TABS: readonly {
+  readonly id: CmdkFilterGroup;
+  readonly labelEn: string;
+  readonly labelZh: string;
+}[] = [
+  { id: "all", labelEn: "All", labelZh: "全部" },
+  { id: "catalog", labelEn: "Catalog", labelZh: "图鉴" },
+  { id: "styles", labelEn: "Styles", labelZh: "风格" },
+  { id: "section", labelEn: "Sections", labelZh: "区块" },
+  { id: "block", labelEn: "Blocks", labelZh: "模块" },
+  { id: "motion", labelEn: "Motion", labelZh: "动效" },
+  { id: "templates", labelEn: "Templates", labelZh: "模板" },
+  { id: "tools", labelEn: "Tools", labelZh: "工具" }
 ];
 
 export function CmdkPalette() {
   const t = useTranslations("common");
+  const locale = useLocale();
+  const isZh = locale === "zh";
   const router = useRouter();
   const open = useShellUiStore((s) => s.cmdkOpen);
   const setOpen = useShellUiStore((s) => s.setCmdkOpen);
@@ -117,7 +123,7 @@ export function CmdkPalette() {
                   : "bg-transparent text-muted hover:bg-surface-hover hover:text-ink"
               )}
             >
-              {tab.label}
+              {isZh ? tab.labelZh : tab.labelEn}
             </button>
           ))}
         </div>

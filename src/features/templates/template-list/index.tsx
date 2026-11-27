@@ -10,13 +10,21 @@ import { SearchInput } from "@/components/primitives/input";
 import { SegmentedControl } from "@/components/primitives/segmented";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { Link, useRouter } from "@/i18n/navigation";
+import { findCatalogBrandById } from "@/registry/catalog";
 import {
-  TEMPLATE_CATEGORIES,
+  PAGE_SCENES,
+  STARTER_SCENES,
   TEMPLATE_ITEMS,
-  type TemplateCategoryFilter,
-  TemplatePreviewFrame
+  TEMPLATE_KIND_LABELS,
+  TEMPLATE_SCENE_LABELS,
+  type TemplateKindFilter,
+  TemplatePreviewFrame,
+  type TemplateScene,
+  type TemplateSceneFilter
 } from "@/registry/templates";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
+
+const ALL_SCENES: readonly TemplateScene[] = [...STARTER_SCENES, ...PAGE_SCENES];
 
 export function TemplatesListView() {
   const t = useTranslations("templates");
@@ -27,18 +35,27 @@ export function TemplatesListView() {
   const { copy } = useClipboard();
   const applyBrandSkin = useWorkbenchPresetStore((s) => s.applyBrandSkin);
 
-  const [catRaw, setCategory] = useQueryState("category", parseAsString.withDefault("All"));
+  const [kindRaw, setKind] = useQueryState("kind", parseAsString.withDefault("all"));
+  const [sceneRaw, setScene] = useQueryState("scene", parseAsString.withDefault("all"));
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
 
-  const category: TemplateCategoryFilter = TEMPLATE_CATEGORIES.includes(
-    catRaw as TemplateCategoryFilter
-  )
-    ? (catRaw as TemplateCategoryFilter)
-    : "All";
+  const kind: TemplateKindFilter =
+    kindRaw === "starter" || kindRaw === "page" ? kindRaw : "all";
+  const scene: TemplateSceneFilter = ALL_SCENES.includes(sceneRaw as TemplateScene)
+    ? (sceneRaw as TemplateScene)
+    : "all";
+
+  const sceneOptions: readonly TemplateSceneFilter[] =
+    kind === "starter"
+      ? ["all", ...STARTER_SCENES]
+      : kind === "page"
+        ? ["all", ...PAGE_SCENES]
+        : ["all", "saas", "ai-studio", "admin", "docs", "landing", "pricing"];
 
   const q = search.trim().toLowerCase();
   const filtered = TEMPLATE_ITEMS.filter((item) => {
-    const catOk = category === "All" || item.category === category;
+    const kindOk = kind === "all" || item.kind === kind;
+    const sceneOk = scene === "all" || item.scene === scene;
     const qOk =
       !q ||
       [
@@ -54,12 +71,12 @@ export function TemplatesListView() {
         .join(" ")
         .toLowerCase()
         .includes(q);
-    return catOk && qOk;
+    return kindOk && sceneOk && qOk;
   });
 
   const handleOpenInWorkbench = (skinId: string) => {
     applyBrandSkin(skinId);
-    router.push(`/components/landing-pages/page-devtools-launch?skin=${skinId}`);
+    router.push(`/components/hero/hero-telemetry-counter?skin=${skinId}`);
   };
 
   return (
@@ -69,15 +86,29 @@ export function TemplatesListView() {
           left={
             <>
               <SegmentedControl
-                options={TEMPLATE_CATEGORIES.map((c) => ({ value: c, label: c }))}
-                value={category}
-                onChange={(v) => void setCategory(v)}
+                options={(["all", "starter", "page"] as const).map((k) => ({
+                  value: k,
+                  label: isZh ? TEMPLATE_KIND_LABELS[k].zh : TEMPLATE_KIND_LABELS[k].en
+                }))}
+                value={kind}
+                onChange={(nextKind) => {
+                  void setKind(nextKind);
+                  void setScene("all");
+                }}
+              />
+              <SegmentedControl
+                options={sceneOptions.map((s) => ({
+                  value: s,
+                  label: isZh ? TEMPLATE_SCENE_LABELS[s].zh : TEMPLATE_SCENE_LABELS[s].en
+                }))}
+                value={sceneOptions.includes(scene) ? scene : "all"}
+                onChange={(v) => void setScene(v)}
               />
               <SearchInput
                 value={search}
                 onChange={(e) => void setSearch(e.target.value)}
                 placeholder={t("searchPlaceholder")}
-                wrapperClassName="w-[220px]"
+                wrapperClassName="w-[200px]"
               />
             </>
           }
@@ -93,7 +124,8 @@ export function TemplatesListView() {
             title={tCommon("emptyResult")}
             actionLabel={tCommon("resetFilter")}
             onReset={() => {
-              void setCategory("All");
+              void setKind("all");
+              void setScene("all");
               void setSearch("");
             }}
           />
@@ -101,6 +133,9 @@ export function TemplatesListView() {
           <div className="lined-grid-2">
             {filtered.map((tpl) => {
               const cliCmd = `npx uifino@latest create ${tpl.id}`;
+              const skinHref = findCatalogBrandById(tpl.skinId)
+                ? `/catalog/${tpl.skinId}`
+                : `/styles/${tpl.skinId}`;
               return (
                 <div
                   key={tpl.id}
@@ -131,7 +166,7 @@ export function TemplatesListView() {
 
                   <div className="flex flex-wrap items-center justify-between gap-2.5 border-t border-hairline pt-3">
                     <Link
-                      href={`/catalog/${tpl.skinId}`}
+                      href={skinHref}
                       className="font-mono-ui text-xs text-muted hover:text-ink"
                     >
                       Skin: <span className="text-accent-text">{tpl.skinLabel}</span> →

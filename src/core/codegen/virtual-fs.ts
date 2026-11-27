@@ -1,5 +1,5 @@
 import type { SupportedCodeLang } from "@/lib/shiki";
-import type { ComponentAssetMeta, TargetFramework } from "./types";
+import type { ComponentAssetMeta } from "./types";
 
 export function toPascalCase(kebabId: string): string {
   return kebabId
@@ -10,18 +10,14 @@ export function toPascalCase(kebabId: string): string {
 }
 
 export function getComponentVirtualFiles(
-  item: Pick<ComponentAssetMeta, "id">,
-  framework: TargetFramework = "react"
+  item: Pick<ComponentAssetMeta, "id">
 ): readonly string[] {
-  const ext = framework === "vue" ? "vue" : framework === "svelte" ? "svelte" : "tsx";
   const pascal = toPascalCase(item.id);
-  return [`${pascal}.${ext}`, "tokens.css", "DESIGN.md"];
+  return [`${pascal}.tsx`, "tokens.css", "DESIGN.md"];
 }
 
-export function resolveFileCodeLang(filename: string, framework: TargetFramework): SupportedCodeLang {
+export function resolveFileCodeLang(filename: string): SupportedCodeLang {
   if (filename.endsWith(".css")) return "css";
   if (filename.endsWith(".md")) return "markdown";
-  if (framework === "vue") return "vue";
-  if (framework === "svelte") return "svelte";
   return "tsx";
 }

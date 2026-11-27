@@ -11,10 +11,23 @@ import {
 } from "./block-specimens";
 import { CategoryMiniStack } from "./category-mini-stack";
 import {
+  AiChatThreadSpecimen,
+  CtaBannerSpecimen,
+  FaqAccordionSpecimen,
+  FooterGridSpecimen,
+  FormDialogSpecimen,
+  HoverCardSpecimen,
+  NavbarBarSpecimen,
+  QuotesWallSpecimen,
+  SidebarNavSpecimen,
+  SpotlightCardSpecimen,
+  StatsKpiSpecimen
+} from "./extended-specimens";
+import {
   SplitCliOrEditorialHeroSpecimen,
   TelemetryHeroSpecimen
 } from "./hero-specimens";
-import { MotionLabSpecimen, PageShellSpecimen } from "./page-motion-specimens";
+import { MotionLabSpecimen } from "./page-motion-specimens";
 
 export { CategoryMiniStack };
 
@@ -44,16 +57,36 @@ export function AssetStage({
       return <SplitCliOrEditorialHeroSpecimen {...shared} />;
     case "pricing-tiers":
       return <PricingTiersSpecimen {...shared} />;
+    case "quotes-wall":
+      return <QuotesWallSpecimen {...shared} />;
+    case "faq-accordion":
+      return <FaqAccordionSpecimen {...shared} />;
+    case "cta-banner":
+      return <CtaBannerSpecimen {...shared} />;
+    case "footer-grid":
+      return <FooterGridSpecimen {...shared} />;
+    case "navbar-bar":
+      return <NavbarBarSpecimen {...shared} />;
+    case "sidebar-nav":
+      return <SidebarNavSpecimen {...shared} />;
+    case "ai-chat-thread":
+      return <AiChatThreadSpecimen {...shared} />;
     case "auth-card":
       return <AuthCardSpecimen {...shared} />;
-    case "cmdk-palette":
-      return <CmdkPaletteSpecimen {...shared} />;
     case "data-table":
       return <DataTableSpecimen {...shared} />;
+    case "stats-kpi":
+      return <StatsKpiSpecimen {...shared} />;
+    case "form-dialog":
+      return <FormDialogSpecimen {...shared} />;
+    case "cmdk-palette":
+      return <CmdkPaletteSpecimen {...shared} />;
     case "empty-state":
       return <EmptyStateSpecimen {...shared} />;
-    case "page-shell":
-      return <PageShellSpecimen {...shared} />;
+    case "spotlight-card":
+      return <SpotlightCardSpecimen {...shared} />;
+    case "hover-card":
+      return <HoverCardSpecimen {...shared} />;
     case "motion-lab":
       return <MotionLabSpecimen {...shared} />;
     default:

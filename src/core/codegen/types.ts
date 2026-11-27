@@ -1,7 +1,6 @@
 import type { ResolvedWorkbenchTokens } from "@/core/tokens";
 
-export type AssetType = "section" | "block" | "page" | "motion";
-export type TargetFramework = "react" | "vue" | "svelte" | "solid";
+export type AssetType = "section" | "block" | "motion";
 
 export type ComponentArchetype =
   | "telemetry-hero"
@@ -9,27 +8,49 @@ export type ComponentArchetype =
   | "editorial-hero"
   | "bento-grid"
   | "pricing-tiers"
+  | "quotes-wall"
+  | "faq-accordion"
+  | "cta-banner"
+  | "footer-grid"
+  | "navbar-bar"
+  | "sidebar-nav"
+  | "ai-chat-thread"
   | "auth-card"
-  | "cmdk-palette"
   | "data-table"
+  | "stats-kpi"
+  | "form-dialog"
+  | "cmdk-palette"
   | "empty-state"
-  | "page-shell"
-  | "motion-lab";
+  | "motion-lab"
+  | "spotlight-card"
+  | "hover-card";
 
 export type CategoryMiniKind =
   | "hero"
   | "bento"
   | "pricing"
   | "quotes"
+  | "faq"
+  | "cta"
+  | "footer"
+  | "navbar"
+  | "sidebar"
+  | "chat"
   | "auth"
-  | "cmdk"
   | "table"
-  | "page"
-  | "motion";
+  | "stats"
+  | "form"
+  | "cmdk"
+  | "empty"
+  | "motion"
+  | "spotlight"
+  | "hover"
+  | "accordion";
 
 export interface ComponentAssetMeta {
   readonly id: string;
   readonly name: string;
+  readonly nameZh?: string;
   readonly subcat: string;
   readonly layout: string;
   readonly archetype: ComponentArchetype;

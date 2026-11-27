@@ -50,8 +50,8 @@ export function TelemetryHeroSpecimen({
       </h3>
       {!compact ? (
         <p className="mx-auto mt-2.5 max-w-[480px] text-[13.5px]" style={{ color: tk.muted }}>
-          Synchronized color tokens, radius ladders, and tabular telemetry ready for React, Vue,
-          Svelte, and Solid.
+          Synchronized color tokens, radius ladders, and tabular telemetry ready for React &amp;
+          Tailwind CSS.
         </p>
       ) : null}
       <div

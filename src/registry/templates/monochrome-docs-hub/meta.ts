@@ -2,19 +2,20 @@ import type { StarterTemplateSpec } from "../_taxonomy";
 
 export const monochromeDocsHub: StarterTemplateSpec = {
   id: "monochrome-docs-hub",
-  name: "Protocol Docs & SDK Hub",
-  nameZh: "Protocol 三栏技术文档站",
+  kind: "starter",
+  scene: "docs",
   category: "Docs",
-  stack: "Astro 5 · MDX",
+  name: "Protocol Docs",
+  nameZh: "极简文档站",
+  stack: "Next.js 15 · MDX",
   skinId: "vercel",
   skinLabel: "Vercel DESIGN.md",
   accent: "#EDEDED",
-  canvas: "#050507",
-  surface: "#0F1014",
-  border: "#242424",
-  pagesCount: 7,
-  routes: ["Overview", "3-Col API Ref", "CLI Guides", "MCP Spec"],
-  descEn:
-    "Zero-clutter documentation portal with sticky file tree, multi-framework code tabs, and ⌘K search.",
-  descZh: "左目录树、中区可执行代码示例、右侧本页锚点联动的工程文档与更新日志模板。"
+  canvas: "#000000",
+  surface: "#0A0A0A",
+  border: "#262626",
+  pagesCount: 5,
+  routes: ["Quickstart", "CLI", "SDK Reference", "Changelog", "Search"],
+  descEn: "Pure monochrome developer documentation starter with 3-column API reference and ⌘K.",
+  descZh: "纯黑白极客风多页技术文档工程，带三栏接口参考、MDX 代码高亮与全局搜索。"
 };

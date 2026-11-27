@@ -1,7 +1,6 @@
 import type { FlattenedComponentEntry } from "@/core/search";
 import { BLOCK_CATEGORIES } from "./blocks";
 import { MOTION_CATEGORIES } from "./motion";
-import { PAGE_CATEGORIES } from "./pages";
 import { SECTION_CATEGORIES } from "./sections";
 import type { RegisteredComponentCategory } from "./_taxonomy";
 
@@ -11,7 +10,6 @@ export * from "./specimens";
 export const COMPONENT_CATEGORIES: readonly RegisteredComponentCategory[] = [
   ...SECTION_CATEGORIES,
   ...BLOCK_CATEGORIES,
-  ...PAGE_CATEGORIES,
   ...MOTION_CATEGORIES
 ];
 

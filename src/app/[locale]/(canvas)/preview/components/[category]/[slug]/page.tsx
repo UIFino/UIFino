@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { resolveWorkbenchTokens } from "@/core/tokens";
-import { CATALOG_ITEMS } from "@/registry/catalog";
 import { AssetStage, findComponentAsset } from "@/registry/components";
+import { ALL_WORKBENCH_SKINS } from "@/registry/skins";
 
 export default async function IsolatedComponentPreviewPage({
   params,
@@ -22,7 +22,7 @@ export default async function IsolatedComponentPreviewPage({
     density: typeof query.density === "string" ? query.density : "default",
     skinId: typeof query.skin === "string" ? query.skin : "linear",
     mode: typeof query.mode === "string" ? query.mode : "dark",
-    brands: CATALOG_ITEMS
+    brands: ALL_WORKBENCH_SKINS
   });
 
   return (

@@ -77,7 +77,7 @@ export function CatalogListView() {
                 options={[
                   { value: "all" as KindFilter, label: isZh ? "全部" : "All" },
                   { value: "website" as KindFilter, label: isZh ? "桌面网站" : "Websites" },
-                  { value: "app" as KindFilter, label: isZh ? "移动应用" : "Mobile Apps" }
+                  { value: "app" as KindFilter, label: isZh ? "移动应用" : "Apps" }
                 ]}
                 value={kind}
                 onChange={(v) => void setKind(v)}

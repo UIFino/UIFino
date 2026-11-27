@@ -8,8 +8,8 @@ import { Badge } from "@/components/primitives/badge";
 import { SegmentedControl } from "@/components/primitives/segmented";
 import { resolveWorkbenchTokens } from "@/core/tokens";
 import { Link } from "@/i18n/navigation";
-import { CATALOG_ITEMS } from "@/registry/catalog";
 import { AssetStage, type RegisteredComponentCategory } from "@/registry/components";
+import { ALL_WORKBENCH_SKINS } from "@/registry/skins";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
 
 export function LibraryCategoryView({
@@ -36,7 +36,7 @@ export function LibraryCategoryView({
     density: "compact",
     skinId: presetSkin,
     mode: resolvedTheme === "light" ? "light" : "dark",
-    brands: CATALOG_ITEMS
+    brands: ALL_WORKBENCH_SKINS
   });
 
   return (

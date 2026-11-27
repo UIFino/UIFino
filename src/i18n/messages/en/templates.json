@@ -1,8 +1,8 @@
 {
-  "bannerTitle": "Production-ready multi-page starter templates.",
-  "bannerDesc": "Pre-wired with multi-page routing, Light/Dark tokens, and matching DESIGN.md protocols.",
-  "searchPlaceholder": "Search templates or stack…",
-  "kitsCount": "{count} starter kits",
-  "openWorkbench": "Open Shell →",
-  "includedRoutes": "INCLUDED ROUTES"
+  "bannerTitle": "Multi-page starters & single-page templates.",
+  "bannerDesc": "Pre-wired with Light/Dark tokens, clean routes, and matching DESIGN.md protocols.",
+  "searchPlaceholder": "Search templates or routes…",
+  "kitsCount": "{count} templates",
+  "openWorkbench": "Preview Skin →",
+  "includedRoutes": "INCLUDED SECTIONS & ROUTES"
 }

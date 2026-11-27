@@ -6,8 +6,7 @@ import { Badge } from "@/components/primitives/badge";
 import {
   type ComponentAssetMeta,
   type ComponentCategoryMeta,
-  resolveFileCodeLang,
-  type TargetFramework
+  resolveFileCodeLang
 } from "@/core/codegen";
 import type { ResolvedWorkbenchTokens } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
@@ -21,7 +20,6 @@ export interface WorkbenchStagePanelProps {
   readonly tokens: ResolvedWorkbenchTokens;
   readonly stageTab: WorkbenchStageTab;
   readonly viewport: ViewportSize;
-  readonly framework: TargetFramework;
   readonly files: readonly string[];
   readonly activeFile: string;
   readonly codeOutput: string;
@@ -35,7 +33,6 @@ export function WorkbenchStagePanel({
   tokens,
   stageTab,
   viewport,
-  framework,
   files,
   activeFile,
   codeOutput,
@@ -43,7 +40,7 @@ export function WorkbenchStagePanel({
   onSelectFile
 }: WorkbenchStagePanelProps) {
   const { copy } = useClipboard();
-  const cliCmd = `npx uifino@latest add ${category.assetType}/${item.id} --framework ${framework} --radius ${tokens.radius}`;
+  const cliCmd = `npx uifino@latest add ${category.assetType}/${item.id} --radius ${tokens.radius}`;
 
   return (
     <>
@@ -60,7 +57,7 @@ export function WorkbenchStagePanel({
         ) : (
           <CodeViewer
             code={codeOutput}
-            lang={resolveFileCodeLang(activeFile, framework)}
+            lang={resolveFileCodeLang(activeFile)}
             title={activeFile}
             copyLabel={`Copy ${activeFile}`}
             headerRight={
@@ -91,9 +88,7 @@ export function WorkbenchStagePanel({
       <section id="wb-install" className="min-w-0 border border-hairline bg-surface p-[18px]">
         <div className="flex items-center justify-between gap-2.5">
           <h2 className="eyebrow-mono m-0 text-ink">INSTALLATION &amp; CLI</h2>
-          <span className="font-mono-ui text-[11px] text-subtle">
-            Framework: {framework.toUpperCase()}
-          </span>
+          <span className="font-mono-ui text-[11px] text-subtle">React · Tailwind</span>
         </div>
         <div className="mt-2.5 flex items-center justify-between gap-2.5 border border-hairline bg-code px-3 py-2.5 font-mono text-[12.5px]">
           <span className="truncate">

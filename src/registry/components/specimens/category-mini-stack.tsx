@@ -45,6 +45,92 @@ export function CategoryMiniStack({ miniKind }: { readonly miniKind: CategoryMin
         ))}
       </div>
     );
+  } else if (miniKind === "quotes") {
+    frontInner = (
+      <div className="grid grid-cols-2 gap-1.5 text-[8.5px]">
+        <div className="border border-hairline bg-surface p-1.5">
+          <div className="text-ink">“Zero token drift.”</div>
+          <div className="mt-1 font-mono text-[7.5px] text-subtle">— Staff UI</div>
+        </div>
+        <div className="border border-hairline bg-surface p-1.5">
+          <div className="text-ink">“14ms MCP sync.”</div>
+          <div className="mt-1 font-mono text-[7.5px] text-subtle">— Infra Lead</div>
+        </div>
+      </div>
+    );
+  } else if (miniKind === "faq" || miniKind === "accordion") {
+    frontInner = (
+      <div className="grid gap-1 text-[8.5px]">
+        <div className="flex justify-between border border-hairline bg-surface px-1.5 py-1">
+          <span className="font-medium text-ink">How does DESIGN.md sync?</span>
+          <span className="font-mono text-accent-text">−</span>
+        </div>
+        <div className="flex justify-between border border-hairline bg-surface px-1.5 py-1 text-muted">
+          <span>Custom radius scale?</span>
+          <span className="font-mono">+</span>
+        </div>
+      </div>
+    );
+  } else if (miniKind === "cta") {
+    frontInner = (
+      <div className="flex h-[74px] items-center justify-between gap-2 border border-hairline bg-surface px-2.5">
+        <div>
+          <div className="text-[10px] font-semibold text-ink">Ship faster today</div>
+          <div className="mt-0.5 font-mono text-[8px] text-subtle">$ npx uifino init</div>
+        </div>
+        <span className="bg-accent-fill px-2 py-1 text-[8px] font-bold text-accent-ink">
+          Start →
+        </span>
+      </div>
+    );
+  } else if (miniKind === "footer") {
+    frontInner = (
+      <div className="grid h-[74px] grid-cols-4 gap-1.5 border-t border-hairline pt-2 text-[8px]">
+        <div className="font-mono font-bold text-ink">uifino</div>
+        {[1, 2, 3].map((col) => (
+          <div key={col} className="grid content-start gap-1">
+            <div className="h-[3px] w-8 bg-gray-300" />
+            <div className="h-[3px] w-6 bg-gray-200" />
+            <div className="h-[3px] w-7 bg-gray-200" />
+          </div>
+        ))}
+      </div>
+    );
+  } else if (miniKind === "navbar") {
+    frontInner = (
+      <div className="grid gap-2">
+        <div className="flex items-center justify-between border border-hairline bg-surface px-2 py-1.5 text-[8.5px]">
+          <span className="font-mono font-bold text-ink">acme</span>
+          <span className="text-muted">Docs · Pricing</span>
+          <span className="bg-contrast-bg px-1.5 py-0.5 text-[7.5px] text-contrast-fg">Login</span>
+        </div>
+        <div className="h-8 border border-dashed border-hairline" />
+      </div>
+    );
+  } else if (miniKind === "sidebar") {
+    frontInner = (
+      <div className="grid h-[78px] grid-cols-[44px_1fr] gap-1.5">
+        <div className="flex flex-col gap-1 border-r border-hairline pr-1.5">
+          <div className="h-1.5 w-full bg-accent-fill" />
+          <div className="h-1 w-[80%] bg-gray-300" />
+          <div className="h-1 w-[65%] bg-gray-200" />
+        </div>
+        <div className="border border-hairline bg-surface p-1.5 font-mono text-[8px] text-subtle">
+          ⌘B Rail
+        </div>
+      </div>
+    );
+  } else if (miniKind === "chat") {
+    frontInner = (
+      <div className="grid gap-1.5 text-[8.5px]">
+        <div className="ml-auto border border-hairline bg-surface px-2 py-1 text-ink">
+          Generate pricing grid
+        </div>
+        <div className="border border-accent-border bg-code px-2 py-1 text-accent-text">
+          ● Matched DESIGN.md
+        </div>
+      </div>
+    );
   } else if (miniKind === "auth") {
     frontInner = (
       <div className="flex flex-col gap-[5px]">
@@ -93,27 +179,52 @@ export function CategoryMiniStack({ miniKind }: { readonly miniKind: CategoryMin
         ))}
       </div>
     );
-  } else if (miniKind === "page") {
+  } else if (miniKind === "stats") {
     frontInner = (
-      <div className="grid h-full grid-cols-[34px_1fr] gap-1.5">
-        <div className="flex flex-col gap-1 border-r border-hairline pr-1">
-          <div className="h-1 w-[80%] bg-accent-text" />
-          <div className="h-[3px] w-full bg-gray-300" />
-          <div className="h-[3px] w-[70%] bg-gray-300" />
+      <div className="grid h-[76px] grid-cols-2 gap-1.5">
+        <div className="border border-hairline bg-surface p-1.5">
+          <div className="text-[7.5px] text-subtle">MRR</div>
+          <div className="font-mono-ui mt-1 text-[11px] font-bold text-ink">$84.2k</div>
+          <div className="font-mono text-[7.5px] text-accent-text">+14.2%</div>
         </div>
-        <div className="flex flex-col gap-[5px]">
-          <div className="grid grid-cols-3 gap-1">
-            <div className="h-[18px] border border-hairline bg-surface" />
-            <div className="h-[18px] border border-hairline bg-surface" />
-            <div className="h-[18px] border border-hairline bg-surface" />
-          </div>
-          <div className="flex-1 border border-hairline bg-surface" />
+        <div className="border border-hairline bg-surface p-1.5">
+          <div className="text-[7.5px] text-subtle">P99</div>
+          <div className="font-mono-ui mt-1 text-[11px] font-bold text-ink">14ms</div>
+          <div className="font-mono text-[7.5px] text-accent-text">-3.1ms</div>
         </div>
+      </div>
+    );
+  } else if (miniKind === "form") {
+    frontInner = (
+      <div className="grid gap-1.5 border border-hairline bg-surface p-1.5 text-[8.5px]">
+        <div className="font-semibold text-ink">Create Endpoint</div>
+        <div className="border border-hairline bg-canvas px-1.5 py-0.5 font-mono text-[8px] text-subtle">
+          https://api.acme.dev
+        </div>
+        <div className="ml-auto bg-accent-fill px-2 py-0.5 text-[7.5px] font-bold text-accent-ink">
+          Save
+        </div>
+      </div>
+    );
+  } else if (miniKind === "empty") {
+    frontInner = (
+      <div className="flex h-[76px] flex-col items-center justify-center gap-1 border border-dashed border-hairline text-center">
+        <div className="font-mono text-[8px] text-subtle">0 ITEMS</div>
+        <div className="text-[9px] font-medium text-ink">No matching records</div>
+      </div>
+    );
+  } else if (miniKind === "spotlight" || miniKind === "hover") {
+    frontInner = (
+      <div className="relative flex h-[76px] flex-col justify-between overflow-hidden border border-accent-border bg-surface p-2">
+        <span className="font-mono text-[8px] text-accent-text">GPU COMPOSITED</span>
+        <span className="text-[10px] font-semibold text-ink">
+          {miniKind === "spotlight" ? "Radial Cursor Glow" : "160ms Spring Lift"}
+        </span>
       </div>
     );
   } else if (miniKind === "motion") {
     frontInner = (
-      <div className="flex h-[82px] flex-col justify-between">
+      <div className="flex h-[78px] flex-col justify-between">
         <div className="flex items-baseline justify-between">
           <span className="font-mono-ui text-base font-bold text-ink">
             99.9<span className="text-accent-text">%</span>
@@ -131,9 +242,9 @@ export function CategoryMiniStack({ miniKind }: { readonly miniKind: CategoryMin
     );
   } else {
     frontInner = (
-      <div className="grid h-[82px] grid-cols-[1.4fr_1fr] gap-[5px]">
+      <div className="grid h-[78px] grid-cols-[1.4fr_1fr] gap-[5px]">
         <div className="border border-hairline bg-surface p-1.5">
-          <div className="font-mono-ui text-[8.5px] text-accent-text">01 · SYNC</div>
+          <div className="font-mono-ui text-[8.5px] text-accent-text">01 · BENTO</div>
           <div className="mt-1.5 h-1 w-[85%] bg-gray-300" />
           <div className="mt-1 h-1 w-[60%] bg-gray-200" />
         </div>

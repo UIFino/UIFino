@@ -57,7 +57,7 @@ export function queryMcpSandbox(
 
   const payload = {
     protocol: "uifino-mcp/1.0",
-    scope: ["catalog", "sections", "blocks", "pages", "motion", "tools"],
+    scope: ["catalog", "styles", "sections", "blocks", "motion", "templates", "tools"],
     matched_design_md: brandsFinal.map((b) => ({
       slug: b.slug,
       platform: b.kind,

@@ -7,7 +7,7 @@ export function PricingTiersSpecimen({ tokens: tk, isMobile, compact }: Specimen
 
   const tiers = [
     { tier: "Starter", price: "$0", note: "Public DESIGN.md & core blocks", hot: false },
-    { tier: "Pro", price: "$24", note: "Full MCP server + 4 frameworks", hot: true },
+    { tier: "Pro", price: "$24", note: "Full MCP server + 10 UI style skins", hot: true },
     { tier: "Team", price: "$79", note: "Private brand tokens & CI sync", hot: false }
   ] as const;
 
@@ -380,10 +380,10 @@ export function BentoGridSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
             }}
           >
             <span className="font-mono-ui text-[10px]" style={{ color: tk.muted }}>
-              02 · FRAMEWORKS
+              02 · STACK
             </span>
             <div className="mt-1 font-mono text-xs font-semibold">
-              React · Vue · Svelte · Solid
+              React 19 · Tailwind v4
             </div>
           </div>
           <div

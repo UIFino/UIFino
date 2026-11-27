@@ -5,6 +5,7 @@ import { CodeViewer } from "@/components/patterns/code-viewer";
 import { Badge } from "@/components/primitives/badge";
 import { Button } from "@/components/primitives/button";
 import { Link, useRouter } from "@/i18n/navigation";
+import { findCatalogBrandById } from "@/registry/catalog";
 import { type StarterTemplateSpec, TemplatePreviewFrame } from "@/registry/templates";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
 
@@ -65,7 +66,11 @@ export function TemplateDetailView({ template }: { readonly template: StarterTem
 
             <div className="grid gap-2.5 border-t border-hairline pt-4">
               <Link
-                href={`/catalog/${template.skinId}`}
+                href={
+                  findCatalogBrandById(template.skinId)
+                    ? `/catalog/${template.skinId}`
+                    : `/styles/${template.skinId}`
+                }
                 className="font-mono-ui text-xs text-muted hover:text-ink"
               >
                 Protocol: <span className="text-accent-text">{template.skinLabel}</span> →
@@ -75,7 +80,7 @@ export function TemplateDetailView({ template }: { readonly template: StarterTem
                 size="lg"
                 onClick={() => {
                   applyBrandSkin(template.skinId);
-                  router.push(`/components/landing-pages/page-devtools-launch?skin=${template.skinId}`);
+                  router.push(`/components/hero/hero-telemetry-counter?skin=${template.skinId}`);
                 }}
                 className="w-full"
               >

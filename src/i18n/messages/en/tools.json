@@ -1,7 +1,9 @@
 {
-  "bannerTitle": "Parameterized surface & token studios.",
-  "bannerDesc": "Fine-tune grid, aurora, and grain backgrounds alongside layered rim-lit shadows with live CSS & Tailwind output.",
-  "studioBg": "Background Studio",
-  "studioShadow": "Shadow & Token Lab",
+  "bannerTitle": "Parameterized visual & token studios.",
+  "bannerDesc": "Tune background textures, layered shadows, WCAG color scales, and modular type ladders with live CSS & Tailwind output.",
+  "studioBg": "Backgrounds",
+  "studioShadow": "Shadows",
+  "studioColors": "Colors",
+  "studioType": "Typography",
   "sampleOverlay": "Sample hero overlay"
 }

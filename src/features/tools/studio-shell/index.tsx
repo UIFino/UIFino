@@ -10,7 +10,7 @@ import { useClipboard } from "@/hooks/use-clipboard";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 
-export type ActiveToolStudio = "background" | "shadow";
+export type ActiveToolStudio = "background" | "shadow" | "colors" | "typography";
 
 export interface StudioShellProps {
   readonly activeStudio: ActiveToolStudio;
@@ -30,34 +30,34 @@ export function StudioShell({
   const t = useTranslations("tools");
   const { copy } = useClipboard();
 
+  const tabs: readonly { readonly id: ActiveToolStudio; readonly num: string; readonly label: string }[] = [
+    { id: "background", num: "01", label: t("studioBg") },
+    { id: "shadow", num: "02", label: t("studioShadow") },
+    { id: "colors", num: "03", label: t("studioColors") },
+    { id: "typography", num: "04", label: t("studioType") }
+  ];
+
   return (
     <div className="band-full">
       <section className="shell-wrap">
         <FilterToolbar
           left={
-            <div className="inline-flex items-stretch border border-hairline bg-code">
-              <Link
-                href="/tools/background"
-                className={cn(
-                  "inline-flex h-[30px] items-center border-r border-hairline px-3 text-xs transition-colors",
-                  activeStudio === "background"
-                    ? "bg-gray-100 font-semibold text-ink"
-                    : "text-muted hover:bg-surface-hover hover:text-ink"
-                )}
-              >
-                01 · {t("studioBg")}
-              </Link>
-              <Link
-                href="/tools/shadow"
-                className={cn(
-                  "inline-flex h-[30px] items-center px-3 text-xs transition-colors",
-                  activeStudio === "shadow"
-                    ? "bg-gray-100 font-semibold text-ink"
-                    : "text-muted hover:bg-surface-hover hover:text-ink"
-                )}
-              >
-                02 · {t("studioShadow")}
-              </Link>
+            <div className="inline-flex flex-wrap items-stretch border border-hairline bg-code">
+              {tabs.map((tab, idx) => (
+                <Link
+                  key={tab.id}
+                  href={`/tools/${tab.id}`}
+                  className={cn(
+                    "inline-flex h-[30px] items-center px-3 text-xs transition-colors",
+                    idx < tabs.length - 1 && "border-r border-hairline",
+                    activeStudio === tab.id
+                      ? "bg-gray-100 font-semibold text-ink"
+                      : "text-muted hover:bg-surface-hover hover:text-ink"
+                  )}
+                >
+                  {tab.num} · {tab.label}
+                </Link>
+              ))}
             </div>
           }
           right={

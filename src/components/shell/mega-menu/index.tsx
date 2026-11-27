@@ -1,5 +1,6 @@
 "use client";
 
+import { DualSwatch } from "@/components/primitives/dual-swatch";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { getGlobalNavFlyouts, type NavChannelKey } from "@/registry/navigation/mega-menus";
@@ -71,9 +72,10 @@ export function MegaMenuViewport({ activeMenu, locale, onClose }: MegaMenuViewpo
                       <Link
                         href={link.href}
                         onClick={onClose}
-                        className="inline-block py-[3.5px] text-[13.5px] leading-[1.45] font-medium text-muted transition-colors duration-140 hover:text-ink"
+                        className="inline-flex items-center gap-2 py-[3.5px] text-[13.5px] leading-[1.45] font-medium text-muted transition-colors duration-140 hover:text-ink"
                       >
-                        {link.label}
+                        {link.swatch ? <DualSwatch swatch={link.swatch} /> : null}
+                        <span>{link.label}</span>
                       </Link>
                     </li>
                   ))}

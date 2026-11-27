@@ -1,10 +1,21 @@
 import type { AppLocale } from "@/i18n/routing";
+import { BLOCK_CATEGORIES } from "@/registry/components/blocks";
+import { MOTION_CATEGORIES } from "@/registry/components/motion";
+import { SECTION_CATEGORIES } from "@/registry/components/sections";
+import { EXPRESSIVE_STYLE_ITEMS, MINIMAL_STYLE_ITEMS } from "@/registry/styles";
 
-export type NavChannelKey = "catalog" | "components" | "templates" | "tools" | "mcp";
+export type NavChannelKey =
+  | "catalog"
+  | "styles"
+  | "components"
+  | "templates"
+  | "tools"
+  | "mcp";
 
 export interface GlobalNavLink {
   readonly label: string;
   readonly href: string;
+  readonly swatch?: readonly [string, string];
 }
 
 export interface GlobalNavPrimaryColumn {
@@ -31,33 +42,33 @@ export function getGlobalNavFlyouts(
   return {
     catalog: {
       primary: {
-        heading: isZh ? "探索设计图鉴" : "Explore Design Specs",
+        heading: isZh ? "探索" : "Explore",
         elevatedLinks: [
-          { label: isZh ? "浏览全部图鉴" : "Explore All Specs", href: "/catalog" },
+          { label: isZh ? "全部图鉴" : "All Specs", href: "/catalog" },
           { label: isZh ? "桌面网站" : "Websites", href: "/catalog?kind=website" },
-          { label: isZh ? "移动应用" : "Mobile Apps", href: "/catalog?kind=app" }
+          { label: isZh ? "移动应用" : "Apps", href: "/catalog?kind=app" }
         ]
       },
       columns: [
         {
-          heading: isZh ? "按行业领域" : "By Domain",
+          heading: isZh ? "领域" : "Domains",
           links: [
-            { label: isZh ? "AI 与大模型" : "AI & LLM", href: "/catalog?category=AI+%26+LLM" },
-            { label: isZh ? "开发者工具" : "Developer Tools", href: "/catalog?category=DevTools" },
-            { label: isZh ? "效率与协作" : "Productivity", href: "/catalog?category=Productivity" },
-            { label: isZh ? "金融与账单" : "Fintech & Billing", href: "/catalog?category=Fintech" },
+            { label: isZh ? "人工智能" : "AI", href: "/catalog?category=AI+%26+LLM" },
+            { label: isZh ? "开发工具" : "DevTools", href: "/catalog?category=DevTools" },
+            { label: isZh ? "效率办公" : "Productivity", href: "/catalog?category=Productivity" },
+            { label: isZh ? "金融支付" : "Fintech", href: "/catalog?category=Fintech" },
             {
-              label: isZh ? "内容与社区" : "Content & Community",
+              label: isZh ? "内容社区" : "Community",
               href: "/catalog?category=Content+%26+Community"
             },
             {
-              label: isZh ? "消费与出行" : "Consumer & Travel",
+              label: isZh ? "生活出行" : "Travel",
               href: "/catalog?category=Consumer+%26+Travel"
             }
           ]
         },
         {
-          heading: isZh ? "网站标杆" : "Featured Websites",
+          heading: isZh ? "网站精选" : "Websites",
           links: [
             { label: "Linear", href: "/catalog/linear" },
             { label: "Claude", href: "/catalog/claude" },
@@ -67,9 +78,9 @@ export function getGlobalNavFlyouts(
           ]
         },
         {
-          heading: isZh ? "应用标杆" : "Featured Apps",
+          heading: isZh ? "应用精选" : "Apps",
           links: [
-            { label: "Arc Search", href: "/catalog/arc-search" },
+            { label: "Arc", href: "/catalog/arc-search" },
             { label: "Flighty", href: "/catalog/flighty" },
             { label: "Luma", href: "/catalog/luma-app" },
             { label: "Mercury", href: "/catalog/mercury-app" }
@@ -78,83 +89,128 @@ export function getGlobalNavFlyouts(
       ]
     },
 
-    components: {
+    styles: {
       primary: {
-        heading: isZh ? "探索组件库" : "Explore Components",
+        heading: isZh ? "探索" : "Explore",
         elevatedLinks: [
-          { label: isZh ? "浏览全部分类" : "Explore All Components", href: "/components" },
-          {
-            label: isZh ? "三栏实时工作台" : "3-Column Workbench",
-            href: "/components/hero/hero-telemetry-counter"
-          },
-          { label: isZh ? "首屏区块" : "Hero Sections", href: "/components/hero" },
-          { label: isZh ? "特性与便当格" : "Bento & Features", href: "/components/bento-features" },
-          { label: isZh ? "定价与套餐" : "Pricing & Tiers", href: "/components/pricing" },
-          { label: isZh ? "登录与身份认证" : "Authentication", href: "/components/auth" },
-          { label: isZh ? "数据表格与日志" : "Data Tables & Logs", href: "/components/data-table" }
+          { label: isZh ? "全部风格" : "All Styles", href: "/styles" },
+          { label: isZh ? "换肤对比" : "Playground", href: "/styles?view=compare" },
+          { label: isZh ? "深色系" : "Dark", href: "/styles?tone=dark" },
+          { label: isZh ? "浅色系" : "Light", href: "/styles?tone=light" }
         ]
       },
       columns: [
         {
-          heading: isZh ? "区块与模块" : "Sections & Blocks",
-          links: [
-            { label: isZh ? "口碑与客户墙" : "Testimonials & Logos", href: "/components/social-proof" },
-            { label: isZh ? "底部转化与页脚" : "CTA & Footers", href: "/components/cta-footer" },
-            { label: isZh ? "全局命令面板" : "Command & Search", href: "/components/command-menu" },
-            { label: isZh ? "设置与密钥管理" : "Settings & API Keys", href: "/components/settings-billing" },
-            { label: isZh ? "空状态与异常恢复" : "Empty & Error States", href: "/components/empty-states" }
-          ]
+          heading: isZh ? "现代克制" : "Minimal",
+          links: MINIMAL_STYLE_ITEMS.map((item) => ({
+            label: isZh ? item.nameZh : item.name,
+            href: `/styles/${item.slug}`,
+            swatch: item.swatch
+          }))
         },
         {
-          heading: isZh ? "整页与动效" : "Pages & Motion",
-          links: [
-            { label: isZh ? "完整产品落地页" : "Product Landing Pages", href: "/components/landing-pages" },
-            { label: isZh ? "后台工作台整页" : "Workspace Dashboards", href: "/components/dashboard-pages" },
-            { label: isZh ? "文档与更新日志页" : "Docs & Changelog Pages", href: "/components/docs-changelog" },
-            { label: isZh ? "数字滚动与跳动" : "Counters & Tickers", href: "/components/counters-tickers" },
-            { label: isZh ? "光标聚光与微光" : "Spotlight & Sheen", href: "/components/pointer-surfaces" },
-            { label: isZh ? "序列入场与进度" : "Stagger & Progress", href: "/components/stagger-reveal" }
-          ]
+          heading: isZh ? "质感先锋" : "Expressive",
+          links: EXPRESSIVE_STYLE_ITEMS.map((item) => ({
+            label: isZh ? item.nameZh : item.name,
+            href: `/styles/${item.slug}`,
+            swatch: item.swatch
+          }))
         },
         {
-          heading: isZh ? "代码框架" : "Frameworks",
+          heading: isZh ? "适用场景" : "Scenes",
           links: [
-            { label: "React", href: "/components/hero/hero-telemetry-counter?fw=react" },
-            { label: "Vue", href: "/components/hero/hero-telemetry-counter?fw=vue" },
-            { label: "Svelte", href: "/components/hero/hero-telemetry-counter?fw=svelte" },
-            { label: "Solid", href: "/components/hero/hero-telemetry-counter?fw=solid" }
+            { label: isZh ? "宣传官网" : "Landing", href: "/styles?scenario=landing" },
+            { label: isZh ? "数据后台" : "Dashboard", href: "/styles?scenario=dashboard" },
+            { label: isZh ? "智能工作台" : "AI Studio", href: "/styles?scenario=ai-workspace" },
+            { label: isZh ? "文档阅读" : "Docs", href: "/styles?scenario=docs" }
           ]
+        }
+      ]
+    },
+
+    components: {
+      primary: {
+        heading: isZh ? "探索" : "Explore",
+        elevatedLinks: [
+          { label: isZh ? "全部组件" : "All", href: "/components" },
+          { label: isZh ? "官网区块" : "Sections", href: "/components?type=section" },
+          { label: isZh ? "功能模块" : "Blocks", href: "/components?type=block" },
+          { label: isZh ? "交互动效" : "Motion", href: "/components?type=motion" }
+        ]
+      },
+      columns: [
+        {
+          heading: isZh ? "官网区块" : "Sections",
+          links: SECTION_CATEGORIES.map((cat) => ({
+            label: isZh ? cat.nameZh : cat.name,
+            href: `/components/${cat.id}`
+          }))
+        },
+        {
+          heading: isZh ? "功能模块" : "Blocks",
+          links: BLOCK_CATEGORIES.map((cat) => ({
+            label: isZh ? cat.nameZh : cat.name,
+            href: `/components/${cat.id}`
+          }))
+        },
+        {
+          heading: isZh ? "交互动效" : "Motion",
+          links: MOTION_CATEGORIES.map((cat) => ({
+            label: isZh ? cat.nameZh : cat.name,
+            href: `/components/${cat.id}`
+          }))
         }
       ]
     },
 
     templates: {
       primary: {
-        heading: isZh ? "探索整站模板" : "Explore Templates",
+        heading: isZh ? "探索" : "Explore",
         elevatedLinks: [
-          { label: isZh ? "浏览全部模板" : "Explore All Templates", href: "/templates" },
-          { label: isZh ? "开发者 SaaS 整站" : "Obsidian SaaS Starter", href: "/templates/obsidian-saas-kit" },
-          { label: isZh ? "人文风 AI 工作台" : "Editorial AI Workspace", href: "/templates/parchment-agent-desk" },
-          { label: isZh ? "三栏技术文档站" : "Protocol Docs & SDK Hub", href: "/templates/monochrome-docs-hub" },
-          { label: isZh ? "账单与遥测监控后台" : "Fintech Telemetry Console", href: "/templates/ledger-telemetry-admin" }
+          { label: isZh ? "全部模板" : "All", href: "/templates" },
+          { label: isZh ? "整站工程" : "Starters", href: "/templates?kind=starter" },
+          { label: isZh ? "单页模板" : "Pages", href: "/templates?kind=page" }
         ]
       },
       columns: [
         {
-          heading: isZh ? "按场景分类" : "Categories",
+          heading: isZh ? "整站场景" : "Starters",
           links: [
-            { label: isZh ? "SaaS 与 AI 产品" : "SaaS & AI", href: "/templates?category=SaaS+%26+AI" },
-            { label: isZh ? "技术文档与 SDK" : "Docs & Changelog", href: "/templates?category=Docs" },
-            { label: isZh ? "监控与管理后台" : "Dashboards & Admin", href: "/templates?category=Dashboard" }
+            { label: isZh ? "产品官网" : "SaaS", href: "/templates?kind=starter&scene=saas" },
+            {
+              label: isZh ? "智能工作台" : "AI Studio",
+              href: "/templates?kind=starter&scene=ai-studio"
+            },
+            { label: isZh ? "数据后台" : "Admin", href: "/templates?kind=starter&scene=admin" },
+            { label: isZh ? "技术文档" : "Docs", href: "/templates?kind=starter&scene=docs" },
+            {
+              label: isZh ? "个人主页" : "Portfolio",
+              href: "/templates?kind=starter&scene=portfolio"
+            },
+            { label: isZh ? "博客周刊" : "Blog", href: "/templates?kind=starter&scene=blog" }
           ]
         },
         {
-          heading: isZh ? "设计规范联动" : "Design Skins",
+          heading: isZh ? "单页模板" : "Pages",
           links: [
-            { label: isZh ? "套用 Linear 皮肤预览" : "Preview with Linear Skin", href: "/components/landing-pages/page-devtools-launch?skin=linear" },
-            { label: isZh ? "套用 Claude 皮肤预览" : "Preview with Claude Skin", href: "/components/landing-pages/page-editorial-ai?skin=claude" },
-            { label: isZh ? "套用 Vercel 皮肤预览" : "Preview with Vercel Skin", href: "/components/docs-changelog/page-3col-reference?skin=vercel" },
-            { label: isZh ? "套用 Stripe 皮肤预览" : "Preview with Stripe Skin", href: "/components/dashboard-pages/page-observability-console?skin=stripe" }
+            { label: isZh ? "落地首页" : "Landing", href: "/templates?kind=page&scene=landing" },
+            { label: isZh ? "定价方案" : "Pricing", href: "/templates?kind=page&scene=pricing" },
+            { label: isZh ? "登录认证" : "Auth", href: "/templates?kind=page&scene=auth" },
+            { label: isZh ? "监控看板" : "Overview", href: "/templates?kind=page&scene=overview" },
+            {
+              label: isZh ? "更新日志" : "Changelog",
+              href: "/templates?kind=page&scene=changelog"
+            },
+            { label: isZh ? "设置中心" : "Settings", href: "/templates?kind=page&scene=settings" }
+          ]
+        },
+        {
+          heading: isZh ? "精选成品" : "Featured",
+          links: [
+            { label: isZh ? "黑曜石官网" : "Obsidian", href: "/templates/obsidian-saas-kit" },
+            { label: isZh ? "人文工作台" : "Editorial", href: "/templates/parchment-agent-desk" },
+            { label: isZh ? "极简文档站" : "Protocol", href: "/templates/monochrome-docs-hub" },
+            { label: isZh ? "金融监控台" : "Ledger", href: "/templates/ledger-telemetry-admin" }
           ]
         }
       ]
@@ -162,31 +218,43 @@ export function getGlobalNavFlyouts(
 
     tools: {
       primary: {
-        heading: isZh ? "探索视觉工具" : "Explore Studios",
+        heading: isZh ? "探索" : "Explore",
         elevatedLinks: [
-          { label: isZh ? "参数化背景生成器" : "Background Generator", href: "/tools/background" },
-          { label: isZh ? "阴影与表面令牌实验室" : "Shadow & Surface Lab", href: "/tools/shadow" }
+          { label: isZh ? "全部工具" : "All", href: "/tools" },
+          { label: isZh ? "背景纹理" : "Backgrounds", href: "/tools/background" },
+          { label: isZh ? "多层阴影" : "Shadows", href: "/tools/shadow" },
+          { label: isZh ? "配色对比" : "Colors", href: "/tools/colors" },
+          { label: isZh ? "字号排版" : "Typography", href: "/tools/typography" }
         ]
       },
       columns: [
         {
-          heading: isZh ? "背景预设直达" : "Background Presets",
+          heading: isZh ? "背景预设" : "Backgrounds",
           links: [
-            { label: isZh ? "深色精密网格" : "Obsidian Grid", href: "/tools/background?preset=linear-grid" },
-            { label: isZh ? "单色建筑细线" : "Monochrome Wire", href: "/tools/background?preset=vercel-hairline" },
-            { label: isZh ? "荧光极光渐变" : "Chartreuse Aurora", href: "/tools/background?preset=borealis-lime" },
-            { label: isZh ? "电光蓝紫弥散" : "Blurple Glow", href: "/tools/background?preset=stripe-mesh" },
-            { label: isZh ? "暖纸胶片颗粒" : "Warm Parchment Grain", href: "/tools/background?preset=claude-grain" },
-            { label: isZh ? "精密点阵矩阵" : "Precision Dot Matrix", href: "/tools/background?preset=dot-matrix" }
+            { label: isZh ? "细线网格" : "Grid", href: "/tools/background?preset=linear-grid" },
+            { label: isZh ? "点阵矩阵" : "Dots", href: "/tools/background?preset=dot-matrix" },
+            { label: isZh ? "极光弥散" : "Aurora", href: "/tools/background?preset=borealis-lime" },
+            { label: isZh ? "胶片噪点" : "Grain", href: "/tools/background?preset=claude-grain" },
+            { label: isZh ? "毛玻璃层" : "Frost", href: "/tools/background?preset=frost-glass" }
           ]
         },
         {
-          heading: isZh ? "阴影预设直达" : "Shadow Presets",
+          heading: isZh ? "阴影预设" : "Shadows",
           links: [
-            { label: isZh ? "零阴影细线平铺" : "Hairline Flat", href: "/tools/shadow?preset=hairline-flat" },
-            { label: isZh ? "微浮层面板阴影" : "Subtle Panel", href: "/tools/shadow?preset=linear-panel" },
-            { label: isZh ? "悬浮命令框阴影" : "Floating Command", href: "/tools/shadow?preset=raycast-float" },
-            { label: isZh ? "清爽亮色卡片阴影" : "Crisp Light Card", href: "/tools/shadow?preset=stripe-clean" }
+            { label: isZh ? "零影平铺" : "Flat", href: "/tools/shadow?preset=hairline-flat" },
+            { label: isZh ? "微浮面板" : "Subtle", href: "/tools/shadow?preset=linear-panel" },
+            { label: isZh ? "悬浮弹窗" : "Floating", href: "/tools/shadow?preset=raycast-float" },
+            { label: isZh ? "顶光内边" : "Inner", href: "/tools/shadow?preset=rim-inner" },
+            { label: isZh ? "硬边投影" : "Offset", href: "/tools/shadow?preset=brutal-offset" }
+          ]
+        },
+        {
+          heading: isZh ? "实用换算" : "Utilities",
+          links: [
+            { label: isZh ? "色阶生成" : "Shades", href: "/tools/colors?tab=shades" },
+            { label: isZh ? "对比度检查" : "Contrast", href: "/tools/colors?tab=contrast" },
+            { label: isZh ? "同心圆角" : "Radius", href: "/tools/shadow#radius-calc" },
+            { label: isZh ? "动效曲线" : "Easing", href: "/tools/typography?tab=easing" }
           ]
         }
       ]
@@ -194,33 +262,42 @@ export function getGlobalNavFlyouts(
 
     mcp: {
       primary: {
-        heading: isZh ? "接入到 AI" : "Connect to AI",
+        heading: isZh ? "探索" : "Explore",
         elevatedLinks: [
-          { label: isZh ? "接入配置概览" : "MCP Server Setup", href: "/mcp" },
-          { label: isZh ? "智能检索沙盒" : "Live Retrieval Sandbox", href: "/mcp#sandbox" },
-          { label: "Claude Code", href: "/mcp?client=claude-code" },
-          { label: "Cursor", href: "/mcp?client=cursor" },
-          { label: "Windsurf", href: "/mcp?client=windsurf" },
-          { label: "Codex CLI", href: "/mcp?client=codex" }
+          { label: isZh ? "快速接入" : "Quickstart", href: "/mcp" },
+          { label: isZh ? "检索沙盒" : "Sandbox", href: "/mcp#sandbox" },
+          { label: isZh ? "命令行" : "CLI", href: "/mcp#cli" },
+          { label: isZh ? "提示词库" : "Prompts", href: "/mcp#prompts" }
         ]
       },
       columns: [
         {
-          heading: isZh ? "按风格检索预览" : "Retrieve by Style",
+          heading: isZh ? "百宝箱能力" : "Capabilities",
           links: [
-            { label: isZh ? "暗色极简细线风" : "Dark Minimal Hairline", href: "/mcp?style=dark-minimal#sandbox" },
-            { label: isZh ? "温暖人文衬线风" : "Warm Editorial Serif", href: "/mcp?style=warm-editorial#sandbox" },
-            { label: isZh ? "黑白开发者工具风" : "Monochrome DevTools", href: "/mcp?style=monochrome-devtools#sandbox" },
-            { label: isZh ? "金融清晰账单风" : "Fintech Clean Ledger", href: "/mcp?style=fintech-clean#sandbox" }
+            { label: isZh ? "检索图鉴" : "Catalog", href: "/catalog" },
+            { label: isZh ? "匹配风格" : "Styles", href: "/styles" },
+            { label: isZh ? "拉取组件" : "Components", href: "/components" },
+            { label: isZh ? "安装模板" : "Templates", href: "/templates" },
+            { label: isZh ? "计算令牌" : "Tokens", href: "/tools" }
           ]
         },
         {
-          heading: isZh ? "协议能力范围" : "Exposed Capabilities",
+          heading: isZh ? "导出格式" : "Formats",
           links: [
-            { label: isZh ? "检索品牌设计规范" : "Search Brand DESIGN.md", href: "/catalog" },
-            { label: isZh ? "匹配区块与模块" : "Match UI Sections & Blocks", href: "/components" },
-            { label: isZh ? "拉取多框架组件源码" : "Fetch Multi-Framework Code", href: "/components/hero/hero-telemetry-counter?tab=code" },
-            { label: isZh ? "生成表面与背景令牌" : "Generate Surface Tokens", href: "/tools/background" }
+            { label: isZh ? "设计协议" : "DESIGN.md", href: "/catalog/linear" },
+            { label: isZh ? "样式变量" : "CSS Vars", href: "/tools/colors" },
+            { label: isZh ? "原子类名" : "Tailwind", href: "/tools/background" },
+            { label: isZh ? "复刻指令" : "Prompts", href: "/mcp#prompts" }
+          ]
+        },
+        {
+          heading: isZh ? "支持软件" : "Clients",
+          links: [
+            { label: "Claude Code", href: "/mcp?client=claude-code" },
+            { label: "Cursor", href: "/mcp?client=cursor" },
+            { label: "Windsurf", href: "/mcp?client=windsurf" },
+            { label: "Codex", href: "/mcp?client=codex" },
+            { label: "Cline", href: "/mcp?client=cline" }
           ]
         }
       ]

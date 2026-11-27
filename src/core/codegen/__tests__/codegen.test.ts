@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   type ComponentAssetMeta,
   type ComponentCategoryMeta,
-  generateFrameworkSource,
+  generateComponentSource,
   getComponentVirtualFiles
 } from "@/core/codegen";
 import { resolveWorkbenchTokens } from "@/core/tokens";
@@ -10,7 +10,8 @@ import { resolveWorkbenchTokens } from "@/core/tokens";
 const ITEM: ComponentAssetMeta = {
   id: "hero-telemetry-counter",
   name: "Telemetry Counter Hero",
-  subcat: "Stats & Live Data",
+  nameZh: "遥测数字首屏",
+  subcat: "Metrics",
   layout: "split-hero",
   archetype: "telemetry-hero",
   tags: ["hero", "counter"],
@@ -22,8 +23,8 @@ const ITEM: ComponentAssetMeta = {
 const CATEGORY: ComponentCategoryMeta = {
   id: "hero",
   assetType: "section",
-  name: "Hero Sections",
-  nameZh: "首屏区块",
+  name: "Hero",
+  nameZh: "首屏",
   totalCount: 28,
   miniKind: "hero",
   descEn: "Above-the-fold sections.",
@@ -31,23 +32,20 @@ const CATEGORY: ComponentCategoryMeta = {
 };
 
 describe("core/codegen", () => {
-  it("generates virtual file list and framework-specific code across React, Vue, Svelte, Solid", () => {
-    expect(getComponentVirtualFiles(ITEM, "vue")[0]).toBe("HeroTelemetryCounter.vue");
-    expect(getComponentVirtualFiles(ITEM, "svelte")[0]).toBe("HeroTelemetryCounter.svelte");
-    expect(getComponentVirtualFiles(ITEM, "react")[0]).toBe("HeroTelemetryCounter.tsx");
+  it("generates clean React + Tailwind source, tokens.css, and DESIGN.md", () => {
+    expect(getComponentVirtualFiles(ITEM)).toEqual([
+      "HeroTelemetryCounter.tsx",
+      "tokens.css",
+      "DESIGN.md"
+    ]);
 
     const tokens = resolveWorkbenchTokens({ radius: 0, density: "spacious" });
-    const reactCode = generateFrameworkSource(ITEM, CATEGORY, "react", tokens);
-    const vueCode = generateFrameworkSource(ITEM, CATEGORY, "vue", tokens);
-    const svelteCode = generateFrameworkSource(ITEM, CATEGORY, "svelte", tokens);
-    const solidCode = generateFrameworkSource(ITEM, CATEGORY, "solid", tokens);
+    const tsxCode = generateComponentSource(ITEM, CATEGORY, tokens);
+    const cssCode = generateComponentSource(ITEM, CATEGORY, tokens, "tokens.css");
+    const mdOut = generateComponentSource(ITEM, CATEGORY, tokens, "DESIGN.md");
 
-    expect(reactCode).toContain("rounded-none");
-    expect(vueCode).toContain("<script setup lang=\"ts\">");
-    expect(svelteCode).toContain("$props()");
-    expect(solidCode).toContain("createSignal");
-
-    const mdOut = generateFrameworkSource(ITEM, CATEGORY, "react", tokens, "DESIGN.md");
+    expect(tsxCode).toContain("rounded-none");
+    expect(cssCode).toContain("--ui-radius-card: 0px;");
     expect(mdOut).toContain('asset: "hero-telemetry-counter"');
   });
 });

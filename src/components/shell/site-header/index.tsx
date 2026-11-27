@@ -74,15 +74,17 @@ export function SiteHeader() {
 
   const activeChannel: NavChannelKey | "" = pathname.startsWith("/catalog")
     ? "catalog"
-    : pathname.startsWith("/components")
-      ? "components"
-      : pathname.startsWith("/templates")
-        ? "templates"
-        : pathname.startsWith("/tools")
-          ? "tools"
-          : pathname.startsWith("/mcp")
-            ? "mcp"
-            : "";
+    : pathname.startsWith("/styles")
+      ? "styles"
+      : pathname.startsWith("/components")
+        ? "components"
+        : pathname.startsWith("/templates")
+          ? "templates"
+          : pathname.startsWith("/tools")
+            ? "tools"
+            : pathname.startsWith("/mcp")
+              ? "mcp"
+              : "";
 
   // When a flyout menu is open, highlight ONLY that hovered channel to prevent adjacent double underlines.
   const highlightedChannel: NavChannelKey | "" = openMenu ?? activeChannel;
@@ -93,9 +95,10 @@ export function SiteHeader() {
     readonly href: string;
   }[] = [
     { key: "catalog", label: t("navCatalog"), href: "/catalog" },
+    { key: "styles", label: t("navStyles"), href: "/styles" },
     { key: "components", label: t("navComponents"), href: "/components" },
     { key: "templates", label: t("navTemplates"), href: "/templates" },
-    { key: "tools", label: t("navTools"), href: "/tools/background" },
+    { key: "tools", label: t("navTools"), href: "/tools" },
     { key: "mcp", label: t("navMcp"), href: "/mcp" }
   ];
 

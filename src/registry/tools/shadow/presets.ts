@@ -3,7 +3,7 @@ import type { ShadowPreset } from "@/core/studios/shadow";
 export const SHADOW_PRESETS: readonly ShadowPreset[] = [
   {
     id: "hairline-flat",
-    name: "00 · Hairline Flat",
+    name: "00 · Flat",
     mode: "dark",
     yOffset: 0,
     blur: 0,
@@ -16,7 +16,7 @@ export const SHADOW_PRESETS: readonly ShadowPreset[] = [
   },
   {
     id: "linear-panel",
-    name: "01 · Subtle Panel",
+    name: "01 · Subtle",
     mode: "dark",
     yOffset: 6,
     blur: 18,
@@ -29,7 +29,7 @@ export const SHADOW_PRESETS: readonly ShadowPreset[] = [
   },
   {
     id: "raycast-float",
-    name: "02 · Floating Command",
+    name: "02 · Floating",
     mode: "dark",
     yOffset: 18,
     blur: 44,
@@ -41,8 +41,34 @@ export const SHADOW_PRESETS: readonly ShadowPreset[] = [
     density: "default"
   },
   {
+    id: "rim-inner",
+    name: "03 · Inner Rim",
+    mode: "dark",
+    yOffset: 2,
+    blur: 8,
+    spread: 0,
+    opacity: 24,
+    rimLight: 26,
+    borderAlpha: 20,
+    radius: 12,
+    density: "default"
+  },
+  {
+    id: "brutal-offset",
+    name: "04 · Hard Offset",
+    mode: "light",
+    yOffset: 6,
+    blur: 0,
+    spread: 0,
+    opacity: 85,
+    rimLight: 0,
+    borderAlpha: 40,
+    radius: 4,
+    density: "default"
+  },
+  {
     id: "stripe-clean",
-    name: "03 · Crisp Light Card",
+    name: "05 · Clean Light",
     mode: "light",
     yOffset: 12,
     blur: 32,

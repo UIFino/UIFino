@@ -35,7 +35,7 @@ export function McpClientSetup() {
           }
           right={
             <>
-              <span className="font-mono-ui text-xs text-muted">4 MCP tools</span>
+              <span className="font-mono-ui text-xs text-muted">5 MCP tools</span>
               <Button
                 variant="contrast"
                 size="sm"

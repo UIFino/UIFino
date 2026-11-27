@@ -14,9 +14,9 @@ export function HomeHeroStage() {
 
   const stats = [
     ["12", t("statSpecs")],
-    ["16", t("statCategories")],
-    ["4", t("statFrameworks")],
-    ["2", t("statStudios")]
+    ["10", t("statStyles")],
+    ["21", t("statCategories")],
+    ["4", t("statStudios")]
   ] as const;
 
   return (
@@ -60,6 +60,8 @@ export function HomeHeroStage() {
             <span className="text-body">Codex</span>
             <span>·</span>
             <span className="text-body">Windsurf</span>
+            <span>·</span>
+            <span className="text-body">Cline</span>
           </div>
         </div>
 

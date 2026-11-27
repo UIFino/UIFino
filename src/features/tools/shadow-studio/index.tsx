@@ -21,6 +21,7 @@ export function ShadowStudioView() {
   const [params, setParams] = useState<ShadowStudioParams>(
     () => (SHADOW_PRESETS[1] ?? SHADOW_PRESETS[0]) as ShadowStudioParams
   );
+  const [innerPadding, setInnerPadding] = useState(8);
 
   useEffect(() => {
     if (presetQuery) {
@@ -196,6 +197,24 @@ export function ShadowStudioView() {
             value={params.radius}
             onChange={(radius) => setParams((prev) => ({ ...prev, radius }))}
           />
+
+          <div id="radius-calc" className="border-t border-hairline pt-4">
+            <div className="eyebrow-mono mb-2">CONCENTRIC RADIUS FORMULA</div>
+            <RangeSlider
+              label="Container Padding"
+              valueDisplay={`${innerPadding}px`}
+              min={4}
+              max={24}
+              step={2}
+              value={innerPadding}
+              onChange={setInnerPadding}
+            />
+            <div className="mt-2.5 border border-hairline bg-code px-3 py-2 font-mono text-xs text-muted">
+              outer <span className="font-semibold text-ink">{params.radius + innerPadding}px</span> = inner{" "}
+              <span className="font-semibold text-accent-text">{params.radius}px</span> + pad{" "}
+              <span className="text-ink">{innerPadding}px</span>
+            </div>
+          </div>
         </div>
       </div>
     </StudioShell>

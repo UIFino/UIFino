@@ -1,0 +1,8 @@
+{
+  "bannerTitle": "开箱即用的多页整站工程模板",
+  "bannerDesc": "预置多页面路由、明暗主题变量与配套 DESIGN.md 规范，克隆后即可直接接入业务代码。",
+  "searchPlaceholder": "搜索模板、技术栈或路由…",
+  "kitsCount": "{count} 套整站模板",
+  "openWorkbench": "工作台预览 →",
+  "includedRoutes": "预置页面路由"
+}

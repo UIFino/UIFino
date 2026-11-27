@@ -1,0 +1,21 @@
+{
+  "announceTag": "MCP READY",
+  "announceText": "Query DESIGN.md protocols, components, templates & tools directly from Claude Code and Cursor.",
+  "announceAction": "Connect MCP →",
+  "navCatalog": "Catalog",
+  "navComponents": "Components",
+  "navTemplates": "Templates",
+  "navTools": "Tools",
+  "navMcp": "MCP",
+  "searchPlaceholder": "Search catalog specs, components, templates, tools or MCP…",
+  "customizeBtn": "Customize",
+  "presetHeading": "GLOBAL WORKBENCH PRESET",
+  "defaultRadius": "Default Radius",
+  "defaultDensity": "Default Density",
+  "brandSkin": "Brand Skin",
+  "emptyResult": "No matching items",
+  "resetFilter": "Clear filters",
+  "footerTagline": "DESIGN.md protocols & progressive UI engineering for humans and AI coding agents.",
+  "notFoundTitle": "Protocol or page not found",
+  "notFoundAction": "Back to Home"
+}

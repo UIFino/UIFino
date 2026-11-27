@@ -1,0 +1,21 @@
+{
+  "announceTag": "MCP 协议",
+  "announceText": "在 Claude Code 与 Cursor 中按风格、布局与标签直接检索 DESIGN.md 与组件源码。",
+  "announceAction": "接入配置 →",
+  "navCatalog": "设计图鉴",
+  "navComponents": "组件库",
+  "navTemplates": "模板",
+  "navTools": "工具",
+  "navMcp": "MCP",
+  "searchPlaceholder": "搜索品牌规范、组件、整站模板、工具或 MCP…",
+  "customizeBtn": "令牌预设",
+  "presetHeading": "全局工作台预设",
+  "defaultRadius": "默认圆角",
+  "defaultDensity": "默认密度",
+  "brandSkin": "品牌皮肤",
+  "emptyResult": "没有匹配的条目",
+  "resetFilter": "清空筛选条件",
+  "footerTagline": "面向人类工程师与 AI 编程助手的 DESIGN.md 设计协议与渐进式组件工程库。",
+  "notFoundTitle": "未找到对应协议或页面",
+  "notFoundAction": "返回首页"
+}

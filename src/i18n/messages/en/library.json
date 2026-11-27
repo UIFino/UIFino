@@ -1,0 +1,14 @@
+{
+  "bannerTitle": "Page sections & UI blocks for every AI workflow.",
+  "bannerDesc": "Click any category card below to browse its visual gallery, then open concrete components inside the left-tree workbench.",
+  "searchPlaceholder": "Filter categories…",
+  "wbBack": "Back to list",
+  "wbFilterTree": "Filter assets…",
+  "wbParamsTitle": "LIVE PARAMETERS",
+  "wbRadius": "Border Radius",
+  "wbDensity": "Layout Density",
+  "wbBrandSkin": "Brand Skin",
+  "wbTocTitle": "ON THIS PAGE",
+  "wbReset": "Reset",
+  "wbCopyCode": "Copy Tuned Code"
+}

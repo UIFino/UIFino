@@ -1,0 +1,8 @@
+{
+  "bannerTitle": "Design system specs from real websites & apps.",
+  "bannerDesc": "Exact Light/Dark color ladders, typography pairings, and radius scales ready to export as DESIGN.md.",
+  "searchPlaceholder": "Search brand or tag…",
+  "allCatalog": "All Catalog",
+  "usageHint": "Drop DESIGN.md into your repository root so Claude Code and Cursor follow exact tokens.",
+  "applyInWorkbench": "Apply {name} Skin in Component Workbench →"
+}

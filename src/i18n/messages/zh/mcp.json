@@ -1,0 +1,5 @@
+{
+  "bannerTitle": "将设计图鉴与组件库接入 AI 编程助手",
+  "bannerDesc": "配置标准 MCP 服务后，可在 Claude Code、Cursor 与 Windsurf 中按提示词自动拉取 DESIGN.md 与组件代码。",
+  "sandboxTitle": "智能检索与复刻链路沙盒"
+}

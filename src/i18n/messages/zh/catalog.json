@@ -1,0 +1,8 @@
+{
+  "bannerTitle": "标杆网站与移动应用设计规范拆解",
+  "bannerDesc": "提取真实产品的明暗色彩阶梯、字族配对、圆角与间距体系，支持同屏对比并导出标准 DESIGN.md。",
+  "searchPlaceholder": "搜索品牌、字体或风格…",
+  "allCatalog": "全部图鉴",
+  "usageHint": "在项目根目录运行以生成 DESIGN.md，AI 助手写界面时会自动读取色彩、圆角与排版约束。",
+  "applyInWorkbench": "在组件工作台中套用 {name} 规范 →"
+}

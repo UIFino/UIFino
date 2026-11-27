@@ -90,7 +90,7 @@ export function CmdkPalette() {
                 handleSelect(visibleItems[activeIndex].href);
               }
             }}
-            className="w-full border-0 bg-transparent text-sm text-ink outline-none placeholder:text-subtle"
+            className="w-full border-0 bg-transparent text-sm text-ink outline-none focus-visible:outline-none placeholder:text-subtle"
           />
           <button
             type="button"

@@ -20,7 +20,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           ref={ref}
           type="search"
           className={cn(
-            "w-full border-0 bg-transparent text-xs text-ink outline-none placeholder:text-subtle",
+            "w-full border-0 bg-transparent text-xs text-ink outline-none focus-visible:outline-none placeholder:text-subtle",
             className
           )}
           {...props}

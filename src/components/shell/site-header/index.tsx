@@ -10,6 +10,7 @@ import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import type { NavChannelKey } from "@/registry/navigation/mega-menus";
 import { useShellUiStore } from "@/stores/shell-ui.store";
+import { BrandMark } from "../brand-mark";
 import { MegaMenuViewport } from "../mega-menu";
 import { TokenCustomizerPopover } from "../token-customizer";
 
@@ -124,9 +125,12 @@ export function SiteHeader() {
             <Link
               href="/"
               onMouseEnter={closeMenuImmediate}
-              className="font-pixel-brand text-lg font-bold text-ink"
+              className="font-pixel-brand inline-flex items-center gap-2 text-lg font-bold leading-none text-ink"
             >
-              ui<span className="text-accent-text">fino</span>
+              <BrandMark />
+              <span>
+                ui<span className="text-accent-text">fino</span>
+              </span>
             </Link>
 
             <nav aria-label="Primary" className="flex items-center overflow-x-auto">

@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { BrandMark } from "../brand-mark";
 
 export function SiteFooter() {
   const t = useTranslations("common");
@@ -8,8 +9,11 @@ export function SiteFooter() {
     <footer className="border-t border-hairline bg-canvas">
       <div className="shell-wrap grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-6 px-7 py-9">
         <div>
-          <div className="font-pixel-brand text-[17px] font-bold">
-            ui<span className="text-accent-text">fino</span>
+          <div className="font-pixel-brand inline-flex items-center gap-2 text-[17px] font-bold leading-none">
+            <BrandMark />
+            <span>
+              ui<span className="text-accent-text">fino</span>
+            </span>
           </div>
           <p className="mt-2.5 text-[12.5px] leading-[1.55] text-muted">{t("footerTagline")}</p>
         </div>

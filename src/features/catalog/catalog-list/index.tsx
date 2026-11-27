@@ -12,6 +12,7 @@ import { Link } from "@/i18n/navigation";
 import {
   BrandPortrait,
   CATALOG_CATEGORIES,
+  CATALOG_CATEGORY_LABELS,
   CATALOG_ITEMS,
   type CatalogCategoryFilter
 } from "@/registry/catalog";
@@ -48,6 +49,7 @@ export function CatalogListView() {
         item.name,
         item.slug,
         item.category,
+        CATALOG_CATEGORY_LABELS[item.category].zh,
         item.fonts.display,
         ...item.tags,
         item.summaryEn,
@@ -73,16 +75,19 @@ export function CatalogListView() {
             <>
               <SegmentedControl
                 options={[
-                  { value: "all" as KindFilter, label: "All" },
-                  { value: "website" as KindFilter, label: "Websites" },
-                  { value: "app" as KindFilter, label: "Apps" }
+                  { value: "all" as KindFilter, label: isZh ? "全部" : "All" },
+                  { value: "website" as KindFilter, label: isZh ? "桌面网站" : "Websites" },
+                  { value: "app" as KindFilter, label: isZh ? "移动应用" : "Mobile Apps" }
                 ]}
                 value={kind}
                 onChange={(v) => void setKind(v)}
               />
 
               <SegmentedControl
-                options={CATALOG_CATEGORIES.map((c) => ({ value: c, label: c }))}
+                options={CATALOG_CATEGORIES.map((c) => ({
+                  value: c,
+                  label: isZh ? CATALOG_CATEGORY_LABELS[c].zh : CATALOG_CATEGORY_LABELS[c].en
+                }))}
                 value={category}
                 onChange={(v) => void setCategory(v)}
               />
@@ -136,7 +141,9 @@ export function CatalogListView() {
                       {item.name}
                     </span>
                     <span className="font-mono-ui shrink-0 text-[11.5px] text-subtle">
-                      {item.category}
+                      {isZh
+                        ? CATALOG_CATEGORY_LABELS[item.category].zh
+                        : CATALOG_CATEGORY_LABELS[item.category].en}
                     </span>
                   </div>
                   <div className="mt-1 line-clamp-2 text-[12.5px] leading-[1.45] text-muted">

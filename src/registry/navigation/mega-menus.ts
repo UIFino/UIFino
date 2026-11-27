@@ -34,35 +34,45 @@ export function getGlobalNavFlyouts(
         heading: isZh ? "探索设计图鉴" : "Explore Design Specs",
         elevatedLinks: [
           { label: isZh ? "浏览全部图鉴" : "Explore All Specs", href: "/catalog" },
-          { label: "Linear", href: "/catalog/linear" },
-          { label: "Claude", href: "/catalog/claude" },
-          { label: "Vercel", href: "/catalog/vercel" },
-          { label: "Stripe", href: "/catalog/stripe" },
-          { label: "Raycast", href: "/catalog/raycast" },
-          { label: "Flighty iOS", href: "/catalog/flighty" }
+          { label: isZh ? "桌面网站" : "Websites", href: "/catalog?kind=website" },
+          { label: isZh ? "移动应用" : "Mobile Apps", href: "/catalog?kind=app" }
         ]
       },
       columns: [
         {
-          heading: isZh ? "更多标杆品牌" : "More Brands",
+          heading: isZh ? "按行业领域" : "By Domain",
           links: [
-            { label: "Supabase", href: "/catalog/supabase" },
-            { label: "Notion", href: "/catalog/notion" },
-            { label: "Resend", href: "/catalog/resend" },
-            { label: "Arc Search", href: "/catalog/arc-search" },
-            { label: "Luma", href: "/catalog/luma-app" },
-            { label: "Mercury Banking", href: "/catalog/mercury-app" }
+            { label: isZh ? "AI 与大模型" : "AI & LLM", href: "/catalog?category=AI+%26+LLM" },
+            { label: isZh ? "开发者工具" : "Developer Tools", href: "/catalog?category=DevTools" },
+            { label: isZh ? "效率与协作" : "Productivity", href: "/catalog?category=Productivity" },
+            { label: isZh ? "金融与账单" : "Fintech & Billing", href: "/catalog?category=Fintech" },
+            {
+              label: isZh ? "内容与社区" : "Content & Community",
+              href: "/catalog?category=Content+%26+Community"
+            },
+            {
+              label: isZh ? "消费与出行" : "Consumer & Travel",
+              href: "/catalog?category=Consumer+%26+Travel"
+            }
           ]
         },
         {
-          heading: isZh ? "按平台与行业" : "Platforms & Domains",
+          heading: isZh ? "网站标杆" : "Featured Websites",
           links: [
-            { label: isZh ? "Websites 桌面网站" : "Websites", href: "/catalog?kind=website" },
-            { label: isZh ? "Mobile Apps 移动应用" : "Mobile Apps", href: "/catalog?kind=app" },
-            { label: isZh ? "AI 与大模型" : "AI & LLM Platforms", href: "/catalog?category=AI+%26+LLM" },
-            { label: isZh ? "开发者工具" : "Developer Tools", href: "/catalog?category=DevTools" },
-            { label: isZh ? "效率与协作" : "Productivity & SaaS", href: "/catalog?category=Productivity" },
-            { label: isZh ? "金融与账单" : "Fintech & Payments", href: "/catalog?category=Fintech" }
+            { label: "Linear", href: "/catalog/linear" },
+            { label: "Claude", href: "/catalog/claude" },
+            { label: "Vercel", href: "/catalog/vercel" },
+            { label: "Stripe", href: "/catalog/stripe" },
+            { label: "Raycast", href: "/catalog/raycast" }
+          ]
+        },
+        {
+          heading: isZh ? "应用标杆" : "Featured Apps",
+          links: [
+            { label: "Arc Search", href: "/catalog/arc-search" },
+            { label: "Flighty", href: "/catalog/flighty" },
+            { label: "Luma", href: "/catalog/luma-app" },
+            { label: "Mercury", href: "/catalog/mercury-app" }
           ]
         }
       ]
@@ -77,7 +87,7 @@ export function getGlobalNavFlyouts(
             label: isZh ? "三栏实时工作台" : "3-Column Workbench",
             href: "/components/hero/hero-telemetry-counter"
           },
-          { label: isZh ? "首屏区块 (Hero)" : "Hero Sections", href: "/components/hero" },
+          { label: isZh ? "首屏区块" : "Hero Sections", href: "/components/hero" },
           { label: isZh ? "特性与便当格" : "Bento & Features", href: "/components/bento-features" },
           { label: isZh ? "定价与套餐" : "Pricing & Tiers", href: "/components/pricing" },
           { label: isZh ? "登录与身份认证" : "Authentication", href: "/components/auth" },
@@ -90,7 +100,7 @@ export function getGlobalNavFlyouts(
           links: [
             { label: isZh ? "口碑与客户墙" : "Testimonials & Logos", href: "/components/social-proof" },
             { label: isZh ? "底部转化与页脚" : "CTA & Footers", href: "/components/cta-footer" },
-            { label: isZh ? "命令面板 (⌘K)" : "Command & Search", href: "/components/command-menu" },
+            { label: isZh ? "全局命令面板" : "Command & Search", href: "/components/command-menu" },
             { label: isZh ? "设置与密钥管理" : "Settings & API Keys", href: "/components/settings-billing" },
             { label: isZh ? "空状态与异常恢复" : "Empty & Error States", href: "/components/empty-states" }
           ]
@@ -123,10 +133,10 @@ export function getGlobalNavFlyouts(
         heading: isZh ? "探索整站模板" : "Explore Templates",
         elevatedLinks: [
           { label: isZh ? "浏览全部模板" : "Explore All Templates", href: "/templates" },
-          { label: isZh ? "Obsidian SaaS 整站" : "Obsidian SaaS Starter", href: "/templates/obsidian-saas-kit" },
-          { label: isZh ? "Editorial AI 工作台" : "Editorial AI Workspace", href: "/templates/parchment-agent-desk" },
-          { label: isZh ? "Protocol 技术文档站" : "Protocol Docs & SDK Hub", href: "/templates/monochrome-docs-hub" },
-          { label: isZh ? "Ledger 监控后台" : "Fintech Telemetry Console", href: "/templates/ledger-telemetry-admin" }
+          { label: isZh ? "开发者 SaaS 整站" : "Obsidian SaaS Starter", href: "/templates/obsidian-saas-kit" },
+          { label: isZh ? "人文风 AI 工作台" : "Editorial AI Workspace", href: "/templates/parchment-agent-desk" },
+          { label: isZh ? "三栏技术文档站" : "Protocol Docs & SDK Hub", href: "/templates/monochrome-docs-hub" },
+          { label: isZh ? "账单与遥测监控后台" : "Fintech Telemetry Console", href: "/templates/ledger-telemetry-admin" }
         ]
       },
       columns: [
@@ -162,7 +172,7 @@ export function getGlobalNavFlyouts(
         {
           heading: isZh ? "背景预设直达" : "Background Presets",
           links: [
-            { label: isZh ? "Obsidian 精密网格" : "Obsidian Grid", href: "/tools/background?preset=linear-grid" },
+            { label: isZh ? "深色精密网格" : "Obsidian Grid", href: "/tools/background?preset=linear-grid" },
             { label: isZh ? "单色建筑细线" : "Monochrome Wire", href: "/tools/background?preset=vercel-hairline" },
             { label: isZh ? "荧光极光渐变" : "Chartreuse Aurora", href: "/tools/background?preset=borealis-lime" },
             { label: isZh ? "电光蓝紫弥散" : "Blurple Glow", href: "/tools/background?preset=stripe-mesh" },
@@ -186,7 +196,7 @@ export function getGlobalNavFlyouts(
       primary: {
         heading: isZh ? "接入到 AI" : "Connect to AI",
         elevatedLinks: [
-          { label: isZh ? "MCP 接入概览" : "MCP Server Setup", href: "/mcp" },
+          { label: isZh ? "接入配置概览" : "MCP Server Setup", href: "/mcp" },
           { label: isZh ? "智能检索沙盒" : "Live Retrieval Sandbox", href: "/mcp#sandbox" },
           { label: "Claude Code", href: "/mcp?client=claude-code" },
           { label: "Cursor", href: "/mcp?client=cursor" },
@@ -207,7 +217,7 @@ export function getGlobalNavFlyouts(
         {
           heading: isZh ? "协议能力范围" : "Exposed Capabilities",
           links: [
-            { label: isZh ? "检索品牌 DESIGN.md" : "Search Brand DESIGN.md", href: "/catalog" },
+            { label: isZh ? "检索品牌设计规范" : "Search Brand DESIGN.md", href: "/catalog" },
             { label: isZh ? "匹配区块与模块" : "Match UI Sections & Blocks", href: "/components" },
             { label: isZh ? "拉取多框架组件源码" : "Fetch Multi-Framework Code", href: "/components/hero/hero-telemetry-counter?tab=code" },
             { label: isZh ? "生成表面与背景令牌" : "Generate Surface Tokens", href: "/tools/background" }

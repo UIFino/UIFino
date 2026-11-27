@@ -6,7 +6,7 @@ export const lumaAppSpec: CatalogBrandSpec = {
   name: "Luma",
   kind: "app",
   platformLabel: "iOS & Web · Events",
-  category: "Productivity",
+  category: "Content & Community",
   installs: "15.4K",
   bookmarks: "1,040",
   tags: ["mobile", "clean", "cards", "minimal"],

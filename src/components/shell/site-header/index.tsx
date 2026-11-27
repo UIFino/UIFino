@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Search, Star } from "lucide-react";
+import { Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/primitives/button";
@@ -10,7 +10,6 @@ import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import type { NavChannelKey } from "@/registry/navigation/mega-menus";
 import { useShellUiStore } from "@/stores/shell-ui.store";
-import { BrandMark } from "../brand-mark";
 import { MegaMenuViewport } from "../mega-menu";
 import { TokenCustomizerPopover } from "../token-customizer";
 
@@ -23,9 +22,6 @@ export function SiteHeader() {
   const [mounted, setMounted] = useState(false);
 
   const setCmdkOpen = useShellUiStore((s) => s.setCmdkOpen);
-  const starred = useShellUiStore((s) => s.starred);
-  const starCount = useShellUiStore((s) => s.starCount);
-  const toggleStar = useShellUiStore((s) => s.toggleStar);
 
   const [openMenu, setOpenMenu] = useState<NavChannelKey | null>(null);
   const closeTimerRef = useRef<number | null>(null);
@@ -88,6 +84,9 @@ export function SiteHeader() {
             ? "mcp"
             : "";
 
+  // When a flyout menu is open, highlight ONLY that hovered channel to prevent adjacent double underlines.
+  const highlightedChannel: NavChannelKey | "" = openMenu ?? activeChannel;
+
   const navChannels: readonly {
     readonly key: NavChannelKey;
     readonly label: string;
@@ -107,7 +106,6 @@ export function SiteHeader() {
     router.replace(`${pathname}${search}`, { locale: nextLocale });
   };
 
-  const starFormatted = `${(starCount / 1000).toFixed(1)}k`;
   const isDark = !mounted || resolvedTheme === "dark";
 
   return (
@@ -125,18 +123,15 @@ export function SiteHeader() {
             <Link
               href="/"
               onMouseEnter={closeMenuImmediate}
-              className="font-pixel-brand inline-flex items-center gap-2 text-lg font-bold leading-none text-ink"
+              className="font-pixel-brand text-lg font-bold text-ink"
             >
-              <BrandMark />
-              <span>
-                ui<span className="text-accent-text">fino</span>
-              </span>
+              ui<span className="text-accent-text">fino</span>
             </Link>
 
             <nav aria-label="Primary" className="flex items-center overflow-x-auto">
               {navChannels.map((ch) => {
                 const isMenuOpen = openMenu === ch.key;
-                const isActive = activeChannel === ch.key;
+                const isHighlighted = highlightedChannel === ch.key;
                 return (
                   <Link
                     key={ch.key}
@@ -147,12 +142,9 @@ export function SiteHeader() {
                     onClick={closeMenuImmediate}
                     className={cn(
                       "relative inline-flex h-[var(--header-h)] items-center whitespace-nowrap px-3 text-[13.5px] font-medium transition-colors duration-140",
-                      isActive
-                        ? "font-semibold text-ink shadow-[inset_0_-2px_0_var(--accent-text)]"
-                        : "text-muted hover:text-ink",
-                      isMenuOpen &&
-                        !isActive &&
-                        "text-ink shadow-[inset_0_-2px_0_var(--text-primary)]"
+                      isHighlighted
+                        ? "font-semibold text-ink after:absolute after:inset-x-3 after:bottom-0 after:h-[2px] after:bg-accent-text"
+                        : "text-muted hover:text-ink"
                     )}
                   >
                     {ch.label}
@@ -162,7 +154,7 @@ export function SiteHeader() {
             </nav>
           </div>
 
-          {/* Right Chrome Controls */}
+          {/* Right Utility Controls: Search (⌘K) + Token Presets + Locale + Theme */}
           <div
             onMouseEnter={closeMenuImmediate}
             className="flex shrink-0 items-center gap-2"
@@ -178,24 +170,6 @@ export function SiteHeader() {
             </Button>
 
             <TokenCustomizerPopover onOpenTrigger={closeMenuImmediate} />
-
-            <button
-              type="button"
-              onClick={toggleStar}
-              className="hidden h-8 cursor-pointer items-stretch border border-hairline bg-surface sm:inline-flex"
-            >
-              <span className="inline-flex items-center bg-gray-100 px-2 text-xs">
-                <Star
-                  className={cn(
-                    "h-3.5 w-3.5",
-                    starred ? "fill-[var(--star-amber)] text-[var(--star-amber)]" : "text-ink"
-                  )}
-                />
-              </span>
-              <span className="font-mono-ui inline-flex items-center border-l border-hairline px-2 text-[11.5px]">
-                {starFormatted}
-              </span>
-            </button>
 
             <Button
               variant="hairline"
@@ -224,7 +198,7 @@ export function SiteHeader() {
         />
       </header>
 
-      {/* Full-Viewport Dim & Blur Backdrop Curtain (shadcn.io / Apple GlobalNav pattern) */}
+      {/* Full-Viewport Dim & Blur Backdrop Curtain */}
       {openMenu ? (
         <div
           aria-hidden="true"

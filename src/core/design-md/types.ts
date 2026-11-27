@@ -1,7 +1,13 @@
 import type { BrandSkinContract } from "@/core/tokens";
 
 export type CatalogPlatformKind = "website" | "app";
-export type CatalogDomainCategory = "AI & LLM" | "DevTools" | "Productivity" | "Fintech";
+export type CatalogDomainCategory =
+  | "AI & LLM"
+  | "DevTools"
+  | "Productivity"
+  | "Fintech"
+  | "Content & Community"
+  | "Consumer & Travel";
 
 export interface CatalogBrandSpec extends BrandSkinContract {
   readonly slug: string;

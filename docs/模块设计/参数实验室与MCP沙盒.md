@@ -4,7 +4,7 @@
 - **对应代码**：`src/features/tools/`、`src/features/mcp/`、`src/app/[locale]/(site)/tools/`、`src/app/[locale]/(site)/mcp/`
 - **所属里程碑**：[M5](../roadmap.md#里程碑总览)
 - **前端设计规范**：[前端设计](../前端设计.md)
-- **当前状态**：未开始
+- **当前状态**：已完成
 - **最近更新时间**：2026-11-27
 
 ## 1. 职责与边界
@@ -22,7 +22,7 @@
 - 每个实验室（`background-studio/`、`shadow-studio/`）独立成目录并共享 `studio-layout/` 工具栏壳层，后续新增排版阶梯或配色对比度实验室只需平行添加子目录。
 
 ## 4. 当前实现
-- 待在 `M5` 阶段完成实现并执行全站收尾验收。
+- 已完成 `features/tools/{studio-layout,background-studio,shadow-studio}/` 与 `features/mcp/{client-setup,query-sandbox}/` 及对应多语言路由，远程 `pnpm gate`（`tsc` + `eslint` + `vitest` + `next build` 129 个静态页面预渲染）全部通过。
 
 ## 5. 验证方式
 - 拖动各实验室滑块与切换预设，验证画布与代码框零卡顿同步更新；测试 MCP 客户端切换与检索沙盒过滤结果跳转，最后运行 `pnpm gate` 并完成全站截图核验。

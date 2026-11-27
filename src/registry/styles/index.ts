@@ -11,6 +11,7 @@ import { softTactileStyle } from "./soft-tactile";
 import { swissTypographicStyle } from "./swiss-typographic";
 
 export * from "./_taxonomy";
+export * from "./_fit";
 
 export const MINIMAL_STYLE_ITEMS: readonly UiStyleSpec[] = [
   hairlineGridStyle,

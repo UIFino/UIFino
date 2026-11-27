@@ -3,6 +3,13 @@
   "bannerDesc": "覆盖多页面启动套件与单页标准页面，预置明暗主题变量与配套 DESIGN.md 规范。",
   "searchPlaceholder": "搜索模板、场景或路由…",
   "kitsCount": "{count} 套模板",
-  "openWorkbench": "预览组件 →",
+  "allTemplates": "全部模板",
+  "openLiveSandbox": "新窗口试玩",
+  "copyAiPrompt": "复制整站 AI 复刻指令",
+  "copyCss": "复制 CSS",
+  "copyCli": "命令行初始化",
+  "fitGood": "适合用来做",
+  "fitAvoid": "别拿来做",
+  "openWorkbench": "去工作台组合积木 →",
   "includedRoutes": "包含区块与路由"
 }

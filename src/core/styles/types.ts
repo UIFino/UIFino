@@ -48,6 +48,10 @@ export interface UiStyleSpec extends BrandSkinContract {
   readonly dosZh: readonly string[];
   readonly dontsEn: readonly string[];
   readonly dontsZh: readonly string[];
+  readonly goodForEn?: readonly string[];
+  readonly goodForZh?: readonly string[];
+  readonly notForEn?: readonly string[];
+  readonly notForZh?: readonly string[];
   readonly tags: readonly string[];
 }
 

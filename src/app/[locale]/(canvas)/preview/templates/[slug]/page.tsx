@@ -1,20 +1,29 @@
 import { notFound } from "next/navigation";
-import { findTemplateById, TemplatePreviewFrame } from "@/registry/templates";
+import type { ThemeMode } from "@/core/tokens";
+import { findTemplateById } from "@/registry/templates";
+import { IsolatedTemplateCanvas } from "./canvas";
 
 export default async function IsolatedTemplatePreviewPage({
-  params
+  params,
+  searchParams
 }: {
-  readonly params: Promise<{ slug: string }>;
+  readonly params: Promise<{ locale: string; slug: string }>;
+  readonly searchParams: Promise<{ route?: string; mode?: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const sp = await searchParams;
   const template = findTemplateById(slug);
   if (!template) {
     notFound();
   }
 
+  const mode: ThemeMode = sp.mode === "light" ? "light" : "dark";
   return (
-    <div className="min-h-dvh p-6" style={{ backgroundColor: template.canvas }}>
-      <TemplatePreviewFrame template={template} />
-    </div>
+    <IsolatedTemplateCanvas
+      template={template}
+      initialRoute={sp.route}
+      initialMode={mode}
+      isZh={locale === "zh"}
+    />
   );
 }

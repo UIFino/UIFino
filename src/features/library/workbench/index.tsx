@@ -1,21 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { parseAsString, useQueryState } from "nuqs";
-import type { ViewportSize } from "@/components/patterns/viewport-frame";
+import type { CanvasPattern, ViewportSize } from "@/components/patterns/viewport-frame";
 import {
+  compileComponentAiPrompt,
   type ComponentAssetMeta,
   type ComponentCategoryMeta,
   generateComponentSource,
-  getComponentVirtualFiles
+  getComponentDependencies,
+  getComponentVirtualFiles,
+  toPascalCase
 } from "@/core/codegen";
-import { resolveWorkbenchTokens } from "@/core/tokens";
+import { resolveWorkbenchTokens, serializeTokensCss } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { ALL_WORKBENCH_SKINS } from "@/registry/skins";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
 import { WorkbenchParamsPanel } from "./params-panel";
 import { WorkbenchStagePanel } from "./stage-panel";
-import { type WorkbenchStageTab, WorkbenchToolbar } from "./toolbar";
+import {
+  WorkbenchToolbar,
+  type WorkbenchStageTab,
+  type WorkbenchStageVariant
+} from "./toolbar";
 import { WorkbenchTreeSidebar } from "./tree-sidebar";
 
 export interface ComponentWorkbenchViewProps {
@@ -23,7 +31,12 @@ export interface ComponentWorkbenchViewProps {
   readonly item: ComponentAssetMeta;
 }
 
-export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchViewProps) {
+export function ComponentWorkbenchView({
+  category,
+  item
+}: ComponentWorkbenchViewProps) {
+  const locale = useLocale();
+  const isZh = locale === "zh";
   const { copy } = useClipboard();
 
   const radius = useWorkbenchPresetStore((s) => s.radius);
@@ -34,13 +47,15 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
   const setDensity = useWorkbenchPresetStore((s) => s.setDensity);
   const setSkin = useWorkbenchPresetStore((s) => s.setSkin);
   const setStageMode = useWorkbenchPresetStore((s) => s.setStageMode);
-  const resetPreset = useWorkbenchPresetStore((s) => s.resetPreset);
+  const resetPreset = useWorkbenchPresetStore((s) => s.reset);
 
   const [tabRaw, setTabQuery] = useQueryState("tab", parseAsString.withDefault("preview"));
   const [vpRaw, setVpQuery] = useQueryState("vp", parseAsString.withDefault("desktop"));
   const [fileQuery, setFileQuery] = useQueryState("file", parseAsString.withDefault(""));
   const [skinQuery, setSkinQuery] = useQueryState("skin", parseAsString.withDefault(""));
 
+  const [stageVariant, setStageVariant] = useState<WorkbenchStageVariant>("default");
+  const [bgPattern, setBgPattern] = useState<CanvasPattern>("solid");
   const [replayKey, setReplayKey] = useState(0);
 
   useEffect(() => {
@@ -62,8 +77,31 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
   });
 
   const files = getComponentVirtualFiles(item);
-  const activeFile = files.includes(fileQuery) ? fileQuery : (files[0] ?? "Stage.tsx");
+  const pascalName = toPascalCase(item.id);
+  const activeFile = files.includes(fileQuery) ? fileQuery : (files[0] ?? `${pascalName}.tsx`);
   const codeOutput = generateComponentSource(item, category, tokens, activeFile);
+
+  const handleCopyAiPrompt = () => {
+    const componentCode = generateComponentSource(item, category, tokens, `${pascalName}.tsx`);
+    const demoCode = generateComponentSource(item, category, tokens, `${pascalName}Demo.tsx`);
+    const cssTokens = serializeTokensCss(tokens);
+    const dependencies = getComponentDependencies(item);
+    const promptText = compileComponentAiPrompt({
+      item,
+      category,
+      tokens,
+      pascalName,
+      componentCode,
+      demoCode,
+      cssTokens,
+      dependencies,
+      isZh
+    });
+    void copy(
+      promptText,
+      isZh ? "已复制 6 合 1 AI 施工指令" : "Copied 6-in-1 AI Prompt"
+    );
+  };
 
   const canvasPreviewHref = `/preview/components/${category.id}/${item.id}?skin=${skin}&radius=${radius}&density=${density}&mode=${stageMode}`;
 
@@ -90,13 +128,19 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
               category={category}
               item={item}
               stageTab={stageTab}
+              stageVariant={stageVariant}
+              bgPattern={bgPattern}
               viewport={viewport}
               stageMode={stageMode}
               canvasPreviewHref={canvasPreviewHref}
               onStageTabChange={(next) => void setTabQuery(next)}
+              onStageVariantChange={setStageVariant}
+              onBgPatternChange={setBgPattern}
               onViewportChange={(next) => void setVpQuery(next)}
               onStageModeChange={setStageMode}
               onReplay={() => setReplayKey((k) => k + 1)}
+              onCopyAiPrompt={handleCopyAiPrompt}
+              onCopySource={() => void copy(codeOutput, `Copied ${activeFile}`)}
             />
 
             <WorkbenchStagePanel
@@ -104,6 +148,8 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
               category={category}
               tokens={tokens}
               stageTab={stageTab}
+              stageVariant={stageVariant}
+              bgPattern={bgPattern}
               viewport={viewport}
               files={files}
               activeFile={activeFile}

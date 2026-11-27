@@ -47,9 +47,10 @@ export function WorkbenchParamsPanel({
   const tocItems = [
     ["#wb-overview", "Overview & Stack"],
     ["#wb-stage", `Live Stage (${viewport})`],
-    ["#wb-install", "Installation CLI"],
+    ["#wb-install", "Install & Deps"],
     ["#wb-tokens", "Active Token Contract"],
-    ["#wb-rules", "Layout & Motion Rules"]
+    ["#wb-rules", "Layout & Motion Rules"],
+    ["#wb-props", "Props API Table"]
   ] as const;
 
   return (

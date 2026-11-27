@@ -3,6 +3,13 @@
   "bannerDesc": "Pre-wired with Light/Dark tokens, clean routes, and matching DESIGN.md protocols.",
   "searchPlaceholder": "Search templates or routes…",
   "kitsCount": "{count} templates",
-  "openWorkbench": "Preview Skin →",
+  "allTemplates": "All Templates",
+  "openLiveSandbox": "Live Preview",
+  "copyAiPrompt": "Copy AI Prompt",
+  "copyCss": "Copy CSS",
+  "copyCli": "CLI Init",
+  "fitGood": "Best suited for",
+  "fitAvoid": "Avoid using for",
+  "openWorkbench": "Compose in Workbench →",
   "includedRoutes": "INCLUDED SECTIONS & ROUTES"
 }

@@ -71,6 +71,14 @@ export interface ComponentCategoryMeta {
   readonly descZh: string;
 }
 
+export interface ComponentPropRow {
+  readonly name: string;
+  readonly type: string;
+  readonly defaultValue: string;
+  readonly descEn: string;
+  readonly descZh: string;
+}
+
 export interface AdapterRenderContext {
   readonly item: ComponentAssetMeta;
   readonly category: ComponentCategoryMeta;

@@ -13,7 +13,7 @@ export function getComponentVirtualFiles(
   item: Pick<ComponentAssetMeta, "id">
 ): readonly string[] {
   const pascal = toPascalCase(item.id);
-  return [`${pascal}.tsx`, "tokens.css", "DESIGN.md"];
+  return [`${pascal}.tsx`, `${pascal}Demo.tsx`, "tokens.css", "DESIGN.md"];
 }
 
 export function resolveFileCodeLang(filename: string): SupportedCodeLang {

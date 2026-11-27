@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { Badge } from "@/components/primitives/badge";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { cn } from "@/lib/cn";
@@ -13,6 +13,8 @@ export interface CodeViewerProps {
   readonly title?: string;
   readonly copyLabel?: string;
   readonly maxHeightClassName?: string;
+  readonly collapsible?: boolean;
+  readonly defaultCollapsed?: boolean;
   readonly headerRight?: React.ReactNode;
   readonly className?: string;
 }
@@ -23,11 +25,17 @@ export function CodeViewer({
   title,
   copyLabel = "Copy",
   maxHeightClassName,
+  collapsible = false,
+  defaultCollapsed = false,
   headerRight,
   className
 }: CodeViewerProps) {
   const { copy, copiedKey } = useClipboard();
   const [highlightedHtml, setHighlightedHtml] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(!defaultCollapsed);
+
+  const lineCount = code.split("\n").length;
+  const shouldShowToggle = collapsible && lineCount > 24;
 
   useEffect(() => {
     let active = true;
@@ -67,7 +75,13 @@ export function CodeViewer({
         </div>
       ) : null}
 
-      <div className={cn("overflow-y-auto", maxHeightClassName)}>
+      <div
+        className={cn(
+          "relative overflow-y-auto",
+          maxHeightClassName,
+          shouldShowToggle && !expanded && "max-h-[340px] overflow-hidden"
+        )}
+      >
         {highlightedHtml ? (
           <div
             className="shiki-code-wrap"
@@ -79,6 +93,17 @@ export function CodeViewer({
           </pre>
         )}
       </div>
+
+      {shouldShowToggle ? (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 border-t border-hairline bg-surface py-2 font-mono text-[11.5px] text-muted transition-colors hover:text-ink"
+        >
+          {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          <span>{expanded ? `Collapse (${lineCount} lines)` : `Expand all (${lineCount} lines)`}</span>
+        </button>
+      ) : null}
     </div>
   );
 }

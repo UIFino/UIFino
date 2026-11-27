@@ -2,21 +2,32 @@
 
 import { useState } from "react";
 import { resolveStylePlaygroundPhysics, type UiStyleSpec } from "@/core/styles";
-import type { ThemeMode } from "@/core/tokens";
+import type { RadiusStop, ThemeMode } from "@/core/tokens";
+import {
+  CardsAuthStageTemplate,
+  LandingStageTemplate,
+  TypographyStageTemplate
+} from "./stage-templates";
+
+export type StyleStageTemplate = "dashboard" | "landing" | "cards" | "typography";
 
 export interface LiveStyleCanonicalStageProps {
   readonly style: UiStyleSpec;
   readonly mode: ThemeMode;
   readonly isZh: boolean;
+  readonly template?: StyleStageTemplate;
+  readonly radiusOverride?: RadiusStop;
 }
 
 export function LiveStyleCanonicalStage({
   style,
   mode,
-  isZh
+  isZh,
+  template = "dashboard",
+  radiusOverride
 }: LiveStyleCanonicalStageProps) {
   const [endpointInput, setEndpointInput] = useState("edge.uifino.dev/v2/gateway");
-  const p = resolveStylePlaygroundPhysics(style, mode);
+  const p = resolveStylePlaygroundPhysics(style, mode, radiusOverride);
   const { palette } = p;
 
   const kpis = isZh
@@ -95,7 +106,15 @@ export function LiveStyleCanonicalStage({
           <div className="h-[2px] w-full" style={{ backgroundColor: palette.ink }} />
         ) : null}
 
-        {/* 1. Canonical Workspace Header */}
+        {template === "landing" ? (
+          <LandingStageTemplate style={style} physics={p} cardStyle={cardStyle} isZh={isZh} />
+        ) : template === "cards" ? (
+          <CardsAuthStageTemplate style={style} physics={p} cardStyle={cardStyle} isZh={isZh} />
+        ) : template === "typography" ? (
+          <TypographyStageTemplate style={style} physics={p} cardStyle={cardStyle} isZh={isZh} />
+        ) : (
+          <>
+            {/* 1. Canonical Workspace Header */}
         <div
           className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
           style={cardStyle}
@@ -293,6 +312,8 @@ export function LiveStyleCanonicalStage({
             </div>
           ))}
         </div>
+          </>
+        )}
       </div>
     </div>
   );

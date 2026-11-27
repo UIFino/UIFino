@@ -1,12 +1,13 @@
-import type { ThemeMode } from "@/core/tokens";
+import type { RadiusStop, ThemeMode } from "@/core/tokens";
 import type { ResolvedStylePlaygroundPhysics, UiStyleSpec } from "./types";
 
 export function resolveStylePlaygroundPhysics(
   style: UiStyleSpec,
-  mode: ThemeMode
+  mode: ThemeMode,
+  radiusOverride?: RadiusStop
 ): ResolvedStylePlaygroundPhysics {
   const palette = mode === "light" ? style.light : style.dark;
-  const baseRadius = style.defaultRadius;
+  const baseRadius = radiusOverride ?? style.defaultRadius;
   const ctrlRadiusPx = baseRadius === 0 ? 0 : Math.max(4, Math.round(baseRadius * 0.65));
   const badgeRadiusPx =
     style.surfaceEffect === "frosted-glass" || style.surfaceEffect === "bento-ring"

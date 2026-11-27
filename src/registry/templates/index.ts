@@ -13,7 +13,9 @@ import { workspaceSettingsPage } from "./workspace-settings-page/meta";
 import type { StarterTemplateSpec } from "./_taxonomy";
 
 export * from "./_taxonomy";
+export * from "./details";
 export * from "./specimen";
+export * from "./live-sandbox";
 
 export const TEMPLATE_ITEMS: readonly StarterTemplateSpec[] = [
   obsidianSaasKit,

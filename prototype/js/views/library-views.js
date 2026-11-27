@@ -4,6 +4,7 @@ import { CATALOG_ITEMS } from "../data/catalog-data.js";
 import { ASSET_TYPES, COMPONENT_CATEGORIES, findAssetByPath, findCategoryById } from "../data/components-data.js";
 import { computeWorkbenchTokens, generateFrameworkCode, getComponentFileList } from "../core/generators.js";
 import { t } from "../i18n.js";
+import { renderPageBanner } from "./page-banner.js";
 import { renderAssetStage, renderCategoryMiniStack } from "./preview-stage.js";
 
 function esc(str) {
@@ -43,20 +44,14 @@ export function renderComponentsIndexView(state) {
 
   return `
     <div>
-      <!-- Level 1 Header -->
-      <div class="band-full">
-        <section class="shell-wrap hero-stripes" style="padding:0 28px 34px;">
-          <span class="ribbon-tag">SECTIONS · BLOCKS · PAGES · MOTION</span>
-          <nav class="font-mono-ui" style="margin-top:16px;font-size:12px;color:var(--text-muted);">
-            <button type="button" data-go="home" style="background:none;border:0;padding:0;color:inherit;cursor:pointer;">Home</button>
-            <span> / </span>
-            <span style="color:var(--text-primary);">${t(lang, "navComponents")}</span>
-          </nav>
-          <h1 class="heading-page" style="margin-top:8px;">
-            ${lang === "zh" ? "渐进式组件与动效资产总览" : "Progressive Sections, Blocks, Pages & Motion."}
-          </h1>
-        </section>
-      </div>
+      ${renderPageBanner({
+        breadcrumbs: [{ label: "Home", go: "home" }, { label: t(lang, "navComponents") }],
+        title: lang === "zh" ? "面向 AI 工作流的现成组件与区块" : "Page sections & UI blocks for every AI workflow.",
+        description:
+          lang === "zh"
+            ? "点击任意分类卡片浏览视觉画廊，打开具体组件即可进入左侧目录树工作台实时换肤并复制源码。"
+            : "Click any category card below to browse its visual gallery, then open concrete components inside the left-tree workbench."
+      })}
 
       <!-- Level 1 Filter & Card Size Toolbar (shadcn.io/blocks authentic toolbar) -->
       <div class="band-full">
@@ -148,7 +143,6 @@ export function renderComponentsCategoryView(state) {
   const lang = state.lang;
   const cat = findCategoryById(state.param);
   const subcats = ["All", ...Array.from(new Set(cat.items.map((i) => i.subcat)))];
-  const siblings = COMPONENT_CATEGORIES.filter((c) => c.assetType === cat.assetType);
 
   const items = cat.items.filter((i) => state.catSubfilter === "All" || i.subcat === state.catSubfilter);
   const previewTokens = computeWorkbenchTokens({
@@ -160,39 +154,15 @@ export function renderComponentsCategoryView(state) {
 
   return `
     <div>
-      <!-- Level 2 Header -->
-      <div class="band-full">
-        <section class="shell-wrap hero-stripes" style="padding:24px 28px 30px;">
-          <nav class="font-mono-ui" style="font-size:12px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-            <button type="button" data-go="home" style="background:none;border:0;padding:0;color:inherit;cursor:pointer;">Home</button>
-            <span>/</span>
-            <button type="button" data-go="components-index" style="background:none;border:0;padding:0;color:inherit;cursor:pointer;">${t(lang, "navComponents")}</button>
-            <span>/</span>
-            <span style="text-transform:uppercase;">${cat.assetType}</span>
-            <span>/</span>
-            <span style="color:var(--text-primary);">${lang === "zh" ? cat.nameZh : cat.name}</span>
-          </nav>
-
-          <div style="margin-top:12px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;">
-            <div>
-              <h1 class="heading-page">${lang === "zh" ? cat.nameZh : cat.name}</h1>
-              <p style="margin:8px 0 0;max-width:640px;font-size:14.5px;color:var(--text-muted);">
-                ${lang === "zh" ? cat.descZh : cat.descEn}
-              </p>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;">
-              ${siblings
-                .map(
-                  (s) => `
-                <button type="button" data-go="components-cat:${s.id}" class="badge-sharp" style="height:26px;padding:0 9px;cursor:pointer;${s.id === cat.id ? "border-color:var(--accent-border);color:var(--accent-text);" : ""}">
-                  ${lang === "zh" ? s.nameZh : s.name}
-                </button>`
-                )
-                .join("")}
-            </div>
-          </div>
-        </section>
-      </div>
+      ${renderPageBanner({
+        breadcrumbs: [
+          { label: "Home", go: "home" },
+          { label: t(lang, "navComponents"), go: "components-index" },
+          { label: lang === "zh" ? cat.nameZh : cat.name }
+        ],
+        title: lang === "zh" ? cat.nameZh : cat.name,
+        description: lang === "zh" ? cat.descZh : cat.descEn
+      })}
 
       <!-- Level 2 Subcategory Toolbar + Clean 3-Column 16:10 Cards -->
       <div class="band-full">

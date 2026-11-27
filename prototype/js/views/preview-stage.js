@@ -19,7 +19,7 @@ export function renderBrandPortrait(item, mode = "dark") {
             <div style="margin-top:3px;font-size:14px;font-weight:700;letter-spacing:-0.02em;line-height:1.15;">${item.name}</div>
           </div>
 
-          <div style="display:grid;gap:7px;my:auto;">
+          <div style="display:grid;gap:7px;margin-block:auto;">
             <div style="background:${p.surface};border:1px solid ${p.border};border-radius:12px;padding:9px;">
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <span style="font-size:9.5px;color:${p.muted};">LIVE STATUS</span>
@@ -309,6 +309,21 @@ export function renderAssetStage(item, tokens, viewport = "desktop", compact = f
             </div>`
             )
             .join("")}
+        </div>
+      </div>`;
+  }
+
+  if (item.archetype === "empty-state") {
+    return `
+      <div style="background:${tk.canvas};color:${tk.ink};padding:${pad};display:flex;justify-content:center;">
+        <div style="width:100%;max-width:420px;background:${tk.surface};border:1px dashed ${tk.border};border-radius:${tk.card};padding:${compact ? "14px" : "24px"};text-align:center;display:grid;gap:10px;">
+          <div class="font-mono-ui" style="font-size:10px;color:${tk.muted};">0 RECORDS · BLUEPRINT EMPTY</div>
+          <div style="font-size:${compact ? "13px" : "16px"};font-weight:600;">No deployments match current filter</div>
+          ${compact ? "" : `<div style="font-size:12px;color:${tk.muted};">Reset active filters or import your first DESIGN.md protocol via CLI.</div>`}
+          <div style="display:flex;justify-content:center;gap:8px;margin-top:4px;">
+            <span style="padding:0 12px;height:${compact ? "24px" : tk.btnH};display:inline-flex;align-items:center;background:${tk.accent};color:${tk.accentFg};border-radius:${tk.ctrl};font-size:11.5px;font-weight:600;">Create Item</span>
+            <span style="padding:0 12px;height:${compact ? "24px" : tk.btnH};display:inline-flex;align-items:center;border:1px solid ${tk.border};border-radius:${tk.ctrl};font-size:11.5px;">Clear Filters</span>
+          </div>
         </div>
       </div>`;
   }

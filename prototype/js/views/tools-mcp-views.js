@@ -1,6 +1,8 @@
 // View 7 & View 8: Parameterized Frontend Tools (Background Generator + Shadow & Token Lab) & MCP AI Integration
 import { generateBackgroundOutput, generateShadowOutput, queryMcpAssets } from "../core/generators.js";
 import { BG_PRESETS, MCP_CAPABILITIES, MCP_CLIENTS, SHADOW_PRESETS } from "../data/tools-mcp-data.js";
+import { t } from "../i18n.js";
+import { renderPageBanner } from "./page-banner.js";
 
 function esc(str) {
   return String(str || "")
@@ -19,34 +21,46 @@ export function renderToolsView(state) {
 
   return `
     <div>
-      <!-- Studio Switcher Header -->
+      ${renderPageBanner({
+        breadcrumbs: [{ label: "Home", go: "home" }, { label: t(lang, "navTools") }],
+        title: lang === "zh" ? "参数化背景与表面令牌工具" : "Parameterized surface & token studios.",
+        description:
+          lang === "zh"
+            ? "可视化微调网格、点阵、极光与颗粒背景及多层内高光阴影，实时导出 CSS 或 Tailwind 代码。"
+            : "Fine-tune grid, aurora, and grain backgrounds alongside layered rim-lit shadows with live CSS & Tailwind output."
+      })}
+
       <div class="band-full">
-        <section class="shell-wrap hero-stripes" style="padding:0 28px 28px;">
-          <span class="ribbon-tag">PARAMETERIZED FRONTEND TOOLS</span>
-          <div style="margin-top:18px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;">
-            <div>
-              <h1 class="heading-page">
-                ${activeStudio === "shadow" ? (lang === "zh" ? "阴影与表面令牌实验室" : "Shadow & Surface Token Lab") : lang === "zh" ? "参数化背景生成器" : "Parameterized Background Studio"}
-              </h1>
+        <section class="shell-wrap">
+          <!-- Unified Content Toolbar (Switcher moved OUT of banner into toolbar!) -->
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border-hairline);background:var(--bg-surface);">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+              <div class="seg-group">
+                <button type="button" data-tool-studio="background" class="seg-btn ${activeStudio === "background" ? "is-active" : ""}">
+                  01 · ${lang === "zh" ? "背景生成器" : "Background Studio"}
+                </button>
+                <button type="button" data-tool-studio="shadow" class="seg-btn ${activeStudio === "shadow" ? "is-active" : ""}">
+                  02 · ${lang === "zh" ? "阴影与表面令牌" : "Shadow & Token Lab"}
+                </button>
+              </div>
             </div>
-            <div class="seg-group">
-              <button type="button" data-tool-studio="background" class="seg-btn ${activeStudio === "background" ? "is-active" : ""}" style="height:34px;padding:0 14px;">
-                01 · ${lang === "zh" ? "背景生成器" : "Background Generator"}
-              </button>
-              <button type="button" data-tool-studio="shadow" class="seg-btn ${activeStudio === "shadow" ? "is-active" : ""}" style="height:34px;padding:0 14px;">
-                02 · ${lang === "zh" ? "阴影与令牌实验室" : "Shadow & Token Lab"}
+
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="seg-group">
+                <button type="button" data-tool-fmt="css" class="seg-btn ${state.toolCodeFormat === "css" ? "is-active" : ""}">CSS</button>
+                <button type="button" data-tool-fmt="tailwind" class="seg-btn ${state.toolCodeFormat === "tailwind" ? "is-active" : ""}">Tailwind</button>
+              </div>
+              <button type="button" data-copy-tool-code="${activeStudio === "shadow" ? "shadow" : "bg"}" class="btn-contrast" style="height:30px;padding:0 12px;font-size:12px;">
+                Copy ${state.toolCodeFormat === "tailwind" ? "Tailwind" : "CSS"}
               </button>
             </div>
           </div>
-        </section>
-      </div>
 
-      <div class="band-full">
-        <section class="shell-wrap" style="padding:24px 28px;">
+          <div style="padding:24px 28px;">
           ${
             activeStudio === "background"
               ? `
-            <!-- BACKGROUND GENERATOR WORKBENCH (shadcn.io/tools two-column workbench) -->
+            <!-- BACKGROUND GENERATOR WORKBENCH -->
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:20px;align-items:start;">
               <!-- Left: Live Canvas + Presets + Code Output -->
               <div style="display:grid;gap:16px;min-width:0;">
@@ -71,7 +85,7 @@ export function renderToolsView(state) {
                     </label>
                   </div>
 
-                  <div style="height:300px;${bgResult.inlineStyle}display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;">
+                  <div id="bg-live-stage" style="height:300px;${bgResult.inlineStyle}display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;">
                     ${
                       state.bgShowSample
                         ? `<div style="text-align:center;max-width:420px;padding:20px 24px;background:rgba(17,17,19,0.72);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.16);color:#f4f4f6;">
@@ -180,7 +194,7 @@ export function renderToolsView(state) {
                     </div>
                   </div>
 
-                  <div style="height:300px;background:${shResult.canvasBg};display:flex;align-items:center;justify-content:center;padding:28px;">
+                  <div id="shadow-live-stage" style="height:300px;background:${shResult.canvasBg};display:flex;align-items:center;justify-content:center;padding:28px;">
                     <div style="width:100%;max-width:380px;background:${shResult.surfaceBg};color:${shResult.ink};border:1px solid ${shResult.borderCol};border-radius:${shResult.radius}px;box-shadow:${shResult.boxShadow};padding:22px;display:grid;gap:12px;">
                       <div style="display:flex;justify-content:space-between;align-items:center;">
                         <span style="font-size:14.5px;font-weight:600;">Production API Key</span>
@@ -279,6 +293,7 @@ export function renderToolsView(state) {
               </div>
             </div>`
           }
+          </div>
         </section>
       </div>
     </div>`;
@@ -296,38 +311,49 @@ export function renderMcpView(state) {
 
   return `
     <div>
-      <!-- MCP Header -->
-      <div class="band-full">
-        <section class="shell-wrap hero-stripes" style="padding:0 28px 32px;">
-          <span class="ribbon-tag">STANDARD MCP SERVER · AI INTEGRATION</span>
-          <h1 class="heading-page" style="margin-top:18px;">
-            ${lang === "zh" ? "连接 Claude Code 与 Cursor，驱动高保真界面复刻" : "Connect AI Coding Agents to Real Design Protocols."}
-          </h1>
-          <p style="margin:10px 0 0;max-width:680px;font-size:14.5px;color:var(--text-muted);">
-            ${lang === "zh" ? "客户端可按风格、布局与标签自动检索双端 DESIGN.md 规范、四类组件源码及背景阴影令牌。" : "Query Website/App DESIGN.md files, tuned component source, and surface tokens directly inside your editor."}
-          </p>
-        </section>
-      </div>
+      ${renderPageBanner({
+        breadcrumbs: [{ label: "Home", go: "home" }, { label: t(lang, "navMcp") }],
+        title: lang === "zh" ? "将设计图鉴与组件库接入 AI 编程助手" : "Connect AI coding agents to real design protocols.",
+        description:
+          lang === "zh"
+            ? "配置标准 MCP 服务后，可在 Claude Code、Cursor 与 Windsurf 中按提示词自动拉取 DESIGN.md 与组件代码。"
+            : "Query Website/App DESIGN.md files, tuned component source, and surface tokens directly inside your editor."
+      })}
 
-      <!-- 1. Client Config & Exposed MCP Tools -->
+      <!-- 1. Unified Client Toolbar + Config & Exposed MCP Tools -->
       <div class="band-full">
-        <section class="shell-wrap" style="padding:24px 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:20px;">
+        <section class="shell-wrap">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border-hairline);background:var(--bg-surface);">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+              <div class="seg-group">
+                ${MCP_CLIENTS.map(
+                  (cl) => `
+                  <button type="button" data-mcp-client="${cl.id}" class="seg-btn ${activeClient.id === cl.id ? "is-active" : ""}">${cl.name}</button>`
+                ).join("")}
+              </div>
+              <span class="font-mono-ui" style="font-size:12px;color:var(--text-subtle);">${activeClient.file}</span>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="font-mono-ui" style="font-size:12px;color:var(--text-muted);">4 MCP tools</span>
+              <button type="button" data-copy-mcp-client="${activeClient.id}" class="btn-contrast" style="height:30px;padding:0 12px;font-size:12px;">
+                Copy ${activeClient.name} Config
+              </button>
+            </div>
+          </div>
+
+          <div style="padding:24px 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:20px;">
           <div style="border:1px solid var(--border-hairline);background:var(--bg-surface);display:flex;flex-direction:column;justify-content:space-between;min-width:0;">
             <div>
-              <div style="padding:10px 14px;border-bottom:1px solid var(--border-hairline);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">
-                <div class="seg-group">
-                  ${MCP_CLIENTS.map(
-                    (cl) => `
-                    <button type="button" data-mcp-client="${cl.id}" class="seg-btn ${activeClient.id === cl.id ? "is-active" : ""}">${cl.name}</button>`
-                  ).join("")}
-                </div>
+              <div style="padding:10px 14px;border-bottom:1px solid var(--border-hairline);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <span class="eyebrow-mono">${activeClient.name.toUpperCase()} SETUP</span>
                 <span class="font-mono-ui" style="font-size:11px;color:var(--text-subtle);">${activeClient.file}</span>
               </div>
               <pre class="code-scroll">${esc(activeClient.snippet)}</pre>
             </div>
             <div style="padding:10px 14px;border-top:1px solid var(--border-hairline);display:flex;justify-content:flex-end;">
-              <button type="button" data-copy-mcp-client="${activeClient.id}" class="btn-contrast" style="height:30px;padding:0 12px;font-size:12px;">
-                Copy ${activeClient.name} Config
+              <button type="button" data-copy-mcp-client="${activeClient.id}" class="btn-hairline" style="height:30px;padding:0 12px;font-size:12px;">
+                Copy Snippet
               </button>
             </div>
           </div>
@@ -348,6 +374,7 @@ export function renderMcpView(state) {
                 </div>`
               ).join("")}
             </div>
+          </div>
           </div>
         </section>
       </div>

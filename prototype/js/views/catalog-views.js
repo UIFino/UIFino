@@ -2,6 +2,7 @@
 import { CATALOG_CATEGORIES, CATALOG_ITEMS } from "../data/catalog-data.js";
 import { generateDesignMd } from "../core/generators.js";
 import { t } from "../i18n.js";
+import { renderPageBanner } from "./page-banner.js";
 import { renderBrandPortrait } from "./preview-stage.js";
 
 function esc(str) {
@@ -30,72 +31,46 @@ export function renderCatalogIndexView(state) {
 
   return `
     <div>
-      <!-- Split Header (getdesign.md/design-md style) -->
-      <div class="band-full">
-        <section class="shell-wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));">
-          <div class="hero-stripes" style="padding:0 28px 34px;border-right:1px solid var(--border-hairline);">
-            <span class="ribbon-tag">WEBSITE &amp; APP CATALOG</span>
-            <h1 class="heading-page" style="margin-top:18px;">
-              ${lang === "zh" ? "真实标杆网站与移动应用设计规范拆解" : "DESIGN SYSTEM ANALYSIS FROM REAL WEBSITES & APPS."}
-            </h1>
-            <p style="margin:10px 0 0;max-width:540px;font-size:14.5px;color:var(--text-muted);">
-              ${lang === "zh" ? "提取色彩阶梯、字族字重、圆角与间距体系，支持明暗主题同屏对比并导出标准 DESIGN.md。" : "Exact color ladders, type pairings, radius & spacing tokens with Light/Dark comparison and standardized DESIGN.md export."}
-            </p>
-          </div>
+      ${renderPageBanner({
+        breadcrumbs: [{ label: "Home", go: "home" }, { label: t(lang, "navCatalog") }],
+        title: lang === "zh" ? "标杆网站与移动应用设计规范拆解" : "Design system specs from real websites & apps.",
+        description:
+          lang === "zh"
+            ? "提取真实产品的明暗色彩阶梯、字族配对、圆角与间距体系，支持同屏对比并导出标准 DESIGN.md。"
+            : "Exact Light/Dark color ladders, typography pairings, and radius scales ready to export as DESIGN.md."
+      })}
 
-          <div style="padding:0 28px 30px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;">
-            <div>
-              <span class="ribbon-tag">OUTPUT FORMATS</span>
-              <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-family:var(--font-mono);font-size:11.5px;">
-                <div style="padding:10px;border:1px solid var(--border-hairline);background:var(--bg-surface);">
-                  <div style="color:var(--accent-text);font-weight:700;">DESIGN.md</div>
-                  <div style="margin-top:3px;font-size:10.5px;color:var(--text-muted);">YAML + Guardrails</div>
-                </div>
-                <div style="padding:10px;border:1px solid var(--border-hairline);background:var(--bg-surface);">
-                  <div style="color:var(--text-primary);font-weight:700;">Light / Dark</div>
-                  <div style="margin-top:3px;font-size:10.5px;color:var(--text-muted);">Dual Surface Hex</div>
-                </div>
-                <div style="padding:10px;border:1px solid var(--border-hairline);background:var(--bg-surface);">
-                  <div style="color:var(--text-primary);font-weight:700;">Workbench Skin</div>
-                  <div style="margin-top:3px;font-size:10.5px;color:var(--text-muted);">1-Click Apply</div>
-                </div>
-              </div>
-            </div>
-            <div class="font-mono-ui" style="font-size:11.5px;color:var(--text-subtle);">
-              Websites (${CATALOG_ITEMS.filter((x) => x.kind === "website").length}) · Mobile Apps (${CATALOG_ITEMS.filter((x) => x.kind === "app").length})
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <!-- 46px Filter & Search Bar (getdesign.md /design-md) -->
+      <!-- Unified Filter & Search Toolbar -->
       <div class="band-full">
         <div class="shell-wrap">
-          <div class="filter-tab-bar">
-            <div style="display:flex;flex-wrap:wrap;align-items:center;padding-inline:12px;gap:4px;">
-              <div class="seg-group" style="margin-right:8px;my:6px;">
-                <button type="button" data-cat-kind="all" class="seg-btn ${state.catalogKind === "all" ? "is-active" : ""}">All ${CATALOG_ITEMS.length}</button>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border-hairline);background:var(--bg-surface);">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+              <div class="seg-group">
+                <button type="button" data-cat-kind="all" class="seg-btn ${state.catalogKind === "all" ? "is-active" : ""}">All</button>
                 <button type="button" data-cat-kind="website" class="seg-btn ${state.catalogKind === "website" ? "is-active" : ""}">Websites</button>
                 <button type="button" data-cat-kind="app" class="seg-btn ${state.catalogKind === "app" ? "is-active" : ""}">Apps</button>
               </div>
-              ${CATALOG_CATEGORIES.map(
-                (cat) => `
-                <button type="button" data-cat-category="${cat}" class="filter-underline-tab ${state.catalogCategory === cat ? "is-active" : ""}">
-                  <span>${cat}</span>
-                </button>`
-              ).join("")}
+
+              <div class="seg-group" style="flex-wrap:wrap;">
+                ${CATALOG_CATEGORIES.map(
+                  (cat) => `
+                  <button type="button" data-cat-category="${cat}" class="seg-btn ${state.catalogCategory === cat ? "is-active" : ""}">
+                    <span>${cat}</span>
+                  </button>`
+                ).join("")}
+              </div>
+
+              <div style="display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:1px solid var(--border-hairline);background:var(--bg-code);width:210px;">
+                <span style="color:var(--text-subtle);font-size:12px;">⌕</span>
+                <input id="catalog-search-input" type="search" value="${esc(state.catalogSearch)}" placeholder="${lang === "zh" ? "搜索品牌、字体或风格…" : "Search brand or tag…"}" style="width:100%;border:0;background:transparent;outline:none;font-size:12px;" />
+              </div>
             </div>
 
-            <div style="display:flex;align-items:stretch;border-left:1px solid var(--border-hairline);">
-              <div style="display:flex;align-items:center;padding-inline:10px;border-right:1px solid var(--border-hairline);">
-                <div class="seg-group">
-                  <button type="button" data-cat-preview-mode="dark" class="seg-btn ${state.catalogCardMode === "dark" ? "is-active" : ""}">Dark</button>
-                  <button type="button" data-cat-preview-mode="light" class="seg-btn ${state.catalogCardMode === "light" ? "is-active" : ""}">Light</button>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;padding-inline:14px;width:260px;background:var(--bg-surface);">
-                <span style="color:var(--text-subtle);font-size:13px;">⌕</span>
-                <input id="catalog-search-input" type="search" value="${esc(state.catalogSearch)}" placeholder="${lang === "zh" ? "搜索品牌、字体或风格…" : "Search brand or tag…"}" style="width:100%;border:0;background:transparent;outline:none;font-size:13px;" />
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="font-mono-ui" style="font-size:12px;color:var(--text-muted);">${filtered.length} specs</span>
+              <div class="seg-group">
+                <button type="button" data-cat-preview-mode="dark" class="seg-btn ${state.catalogCardMode === "dark" ? "is-active" : ""}">Dark</button>
+                <button type="button" data-cat-preview-mode="light" class="seg-btn ${state.catalogCardMode === "light" ? "is-active" : ""}">Light</button>
               </div>
             </div>
           </div>

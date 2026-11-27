@@ -16,7 +16,7 @@ export function AnnounceBar() {
   return (
     <aside
       aria-label="Announcement"
-      className="relative flex min-h-9 items-center justify-center gap-2.5 border-b border-hairline bg-elevated px-10 py-1.5 text-[12.5px]"
+      className="relative z-50 flex min-h-9 items-center justify-center gap-2.5 border-b border-hairline bg-elevated px-10 py-1.5 text-[12.5px]"
     >
       <Badge variant="accent">{t("announceTag")}</Badge>
       <span className="truncate text-body">{t("announceText")}</span>

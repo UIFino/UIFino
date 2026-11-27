@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { parseAsString, useQueryState } from "nuqs";
 import { CodeViewer } from "@/components/patterns/code-viewer";
 import { Badge } from "@/components/primitives/badge";
 import { Button } from "@/components/primitives/button";
@@ -16,7 +17,7 @@ export function McpQuerySandbox() {
   const t = useTranslations("mcp");
   const { copy } = useClipboard();
 
-  const [style, setStyle] = useState("dark-minimal");
+  const [style, setStyle] = useQueryState("style", parseAsString.withDefault("dark-minimal"));
   const [layout, setLayout] = useState("all");
   const [query, setQuery] = useState("");
 
@@ -27,7 +28,7 @@ export function McpQuerySandbox() {
   );
 
   return (
-    <div className="band-full">
+    <div id="sandbox" className="band-full">
       <section className="shell-wrap grid gap-[18px] px-7 py-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="heading-section">{t("sandboxTitle")}</h2>
@@ -43,7 +44,7 @@ export function McpQuerySandbox() {
           <NativeSelect
             label="STYLE DIRECTION"
             value={style}
-            onChange={(e) => setStyle(e.target.value)}
+            onChange={(e) => void setStyle(e.target.value)}
           >
             <option value="all">All Styles</option>
             <option value="dark-minimal">Dark Minimal Hairline</option>

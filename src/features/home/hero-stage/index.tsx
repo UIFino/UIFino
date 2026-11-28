@@ -16,7 +16,7 @@ export function HomeHeroStage() {
     ["12", t("statSpecs")],
     ["10", t("statStyles")],
     ["21", t("statCategories")],
-    ["4", t("statStudios")]
+    ["5", t("statStudios")]
   ] as const;
 
   return (

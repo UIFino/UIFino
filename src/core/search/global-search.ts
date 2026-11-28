@@ -95,18 +95,27 @@ export function buildGlobalSearchItems(
       id: "tool-typography",
       group: "tools",
       badge: "TOOL",
-      label: "字号排版 · Typography & Easing",
-      keywords: "font size modular scale bezier easing",
-      meta: "Scale & Easing",
+      label: "字号排版 · Typography Studio",
+      keywords: "font size modular scale fluid clamp pairing",
+      meta: "Fluid Type & Pairings",
       href: "/tools/typography"
+    },
+    {
+      id: "tool-motion",
+      group: "tools",
+      badge: "TOOL",
+      label: "交互动效 · Motion Studio",
+      keywords: "spring linear bezier easing drawer modal hover",
+      meta: "Spring & Easing",
+      href: "/tools/motion"
     },
     {
       id: "tool-mcp",
       group: "tools",
       badge: "AI",
-      label: "接入到AI · MCP & CLI Setup",
-      keywords: "claude cursor windsurf codex cline prompts",
-      meta: "MCP · CLI · Prompts",
+      label: "接入到AI · MCP, Registry & Skill",
+      keywords: "claude cursor windsurf codex cline shadcn skill prompts",
+      meta: "MCP · /r · Skill · Sandbox",
       href: "/mcp"
     }
   );

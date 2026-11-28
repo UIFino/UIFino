@@ -224,37 +224,35 @@ export function getGlobalNavFlyouts(
           { label: isZh ? "背景纹理" : "Backgrounds", href: "/tools/background" },
           { label: isZh ? "多层阴影" : "Shadows", href: "/tools/shadow" },
           { label: isZh ? "配色对比" : "Colors", href: "/tools/colors" },
-          { label: isZh ? "字号排版" : "Typography", href: "/tools/typography" }
+          { label: isZh ? "字号排版" : "Typography", href: "/tools/typography" },
+          { label: isZh ? "交互动效" : "Motion", href: "/tools/motion" }
         ]
       },
       columns: [
         {
-          heading: isZh ? "背景预设" : "Backgrounds",
+          heading: isZh ? "表面预设" : "Surfaces",
           links: [
             { label: isZh ? "细线网格" : "Grid", href: "/tools/background?preset=linear-grid" },
             { label: isZh ? "点阵矩阵" : "Dots", href: "/tools/background?preset=dot-matrix" },
             { label: isZh ? "极光弥散" : "Aurora", href: "/tools/background?preset=borealis-lime" },
-            { label: isZh ? "胶片噪点" : "Grain", href: "/tools/background?preset=claude-grain" },
-            { label: isZh ? "毛玻璃层" : "Frost", href: "/tools/background?preset=frost-glass" }
-          ]
-        },
-        {
-          heading: isZh ? "阴影预设" : "Shadows",
-          links: [
-            { label: isZh ? "零影平铺" : "Flat", href: "/tools/shadow?preset=hairline-flat" },
             { label: isZh ? "微浮面板" : "Subtle", href: "/tools/shadow?preset=linear-panel" },
-            { label: isZh ? "悬浮弹窗" : "Floating", href: "/tools/shadow?preset=raycast-float" },
-            { label: isZh ? "顶光内边" : "Inner", href: "/tools/shadow?preset=rim-inner" },
             { label: isZh ? "硬边投影" : "Offset", href: "/tools/shadow?preset=brutal-offset" }
           ]
         },
         {
-          heading: isZh ? "实用换算" : "Utilities",
+          heading: isZh ? "色彩排版" : "Color Type",
           links: [
-            { label: isZh ? "色阶生成" : "Shades", href: "/tools/colors?tab=shades" },
+            { label: isZh ? "色阶生成" : "OKLCH", href: "/tools/colors?tab=shades" },
             { label: isZh ? "对比度检查" : "Contrast", href: "/tools/colors?tab=contrast" },
-            { label: isZh ? "同心圆角" : "Radius", href: "/tools/shadow#radius-calc" },
-            { label: isZh ? "动效曲线" : "Easing", href: "/tools/typography?tab=easing" }
+            { label: isZh ? "流体字阶" : "Fluid Type", href: "/tools/typography" }
+          ]
+        },
+        {
+          heading: isZh ? "动效圆角" : "Motion Radii",
+          links: [
+            { label: isZh ? "弹簧曲线" : "Spring", href: "/tools/motion" },
+            { label: isZh ? "同心圆角" : "Concentric", href: "/tools/shadow#radius-calc" },
+            { label: isZh ? "磨砂模糊" : "Blur", href: "/tools/shadow" }
           ]
         }
       ]
@@ -267,6 +265,7 @@ export function getGlobalNavFlyouts(
           { label: isZh ? "快速接入" : "Quickstart", href: "/mcp" },
           { label: isZh ? "检索沙盒" : "Sandbox", href: "/mcp#sandbox" },
           { label: isZh ? "命令行" : "CLI", href: "/mcp#cli" },
+          { label: isZh ? "护栏规则" : "Rules", href: "/mcp#skill" },
           { label: isZh ? "提示词库" : "Prompts", href: "/mcp#prompts" }
         ]
       },
@@ -282,12 +281,12 @@ export function getGlobalNavFlyouts(
           ]
         },
         {
-          heading: isZh ? "导出格式" : "Formats",
+          heading: isZh ? "交付方式" : "Delivery",
           links: [
-            { label: isZh ? "设计协议" : "DESIGN.md", href: "/catalog/linear" },
-            { label: isZh ? "样式变量" : "CSS Vars", href: "/tools/colors" },
-            { label: isZh ? "原子类名" : "Tailwind", href: "/tools/background" },
-            { label: isZh ? "复刻指令" : "Prompts", href: "/mcp#prompts" }
+            { label: isZh ? "在线接口" : "HTTP MCP", href: "/mcp" },
+            { label: isZh ? "组件注册表" : "Registry", href: "/mcp#cli" },
+            { label: isZh ? "防丑规则" : "Skill", href: "/mcp#skill" },
+            { label: isZh ? "单次指令" : "Prompt", href: "/mcp#sandbox" }
           ]
         },
         {

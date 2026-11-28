@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Badge } from "@/components/primitives/badge";
-import { SegmentedControl } from "@/components/primitives/segmented";
 import {
   type CatalogBrandSpec,
   compileBrandDesignMd,
   compileBrandTokensCss
 } from "@/core/design-md";
+import type { ThemeMode } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { useDownload } from "@/hooks/use-download";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import { APP_CATALOG_ITEMS, WEBSITE_CATALOG_ITEMS } from "@/registry/catalog";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
-import { CatalogDetailHeader } from "./detail-header";
+import { getFallbackBlueprintPages } from "./blueprint-preview";
+import { CatalogRightInspector } from "./right-inspector";
 import { CatalogGuardrailsTab } from "./tab-guardrails";
-import { CatalogPagesTab } from "./tab-pages";
+import { type CaptureViewport, CatalogPagesTab } from "./tab-pages";
 import { CatalogSectionsTab } from "./tab-sections";
 import { CatalogTokensCssTab } from "./tab-tokens";
 
@@ -32,7 +32,33 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
   const { downloadText } = useDownload();
   const applyBrandSkin = useWorkbenchPresetStore((s) => s.applyBrandSkin);
 
+  const scrapedPages = item.scraped?.pages ?? [];
+  const fallbackPages = getFallbackBlueprintPages(item);
+  const pageTabs = scrapedPages.length > 0 ? scrapedPages : fallbackPages;
+
   const [tab, setTab] = useState<CatalogDetailTab>("pages");
+  const [activePageId, setActivePageId] = useState<string>(pageTabs[0]?.id ?? "home");
+  const [vp, setVp] = useState<CaptureViewport>("desktop");
+  const [blueprintMode, setBlueprintMode] = useState<ThemeMode>("dark");
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [scrollTrigger, setScrollTrigger] = useState(0);
+
+  useEffect(() => {
+    setActivePageId(pageTabs[0]?.id ?? "home");
+    setSelectedIdx(null);
+    setHoveredIdx(null);
+  }, [item.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setSelectedIdx(null);
+    setHoveredIdx(null);
+  }, [activePageId, vp]);
+
+  const currentScrapedPage = scrapedPages.find((p) => p.id === activePageId) ?? scrapedPages[0];
+  const currentFallbackPage = fallbackPages.find((p) => p.id === activePageId) ?? fallbackPages[0];
+  const activeAnatomy = currentScrapedPage?.anatomy ?? currentFallbackPage?.anatomy ?? [];
+  const activePagePath = currentScrapedPage?.path ?? currentFallbackPage?.path ?? "/";
 
   const rawMd = compileBrandDesignMd(item);
   const rawCss = compileBrandTokensCss(item);
@@ -42,19 +68,35 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
     router.push(`/components/hero/hero-telemetry-counter?skin=${item.id}`);
   };
 
+  const handleSelectSection = (idx: number) => {
+    if (selectedIdx === idx) {
+      setSelectedIdx(null);
+      return;
+    }
+    setSelectedIdx(idx);
+    setScrollTrigger((n) => n + 1);
+  };
+
+  const viewTabs: readonly { readonly id: CatalogDetailTab; readonly label: string }[] = [
+    { id: "pages", label: t("tabPages") },
+    { id: "sections", label: t("tabSections") },
+    { id: "tokens", label: t("tabTokens") },
+    { id: "guardrails", label: t("tabGuardrails") }
+  ];
+
   return (
     <div className="band-full">
-      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)]">
-        {/* Left Contextual Catalog Rail */}
-        <aside className="order-2 border-t border-hairline bg-canvas px-3.5 py-4 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
+      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[196px_minmax(0,1fr)]">
+        {/* Left Narrow Brand Switcher Rail */}
+        <aside className="order-2 border-t border-hairline bg-canvas px-2.5 py-3 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
           <Link
             href="/catalog"
-            className="font-mono-ui mb-2.5 flex items-center px-2.5 py-1.5 text-[11.5px] text-muted hover:bg-surface-hover hover:text-ink"
+            className="font-mono-ui mb-2 flex items-center px-2 py-1.5 text-[11px] text-muted hover:bg-surface-hover hover:text-ink"
           >
             ← {t("allCatalog")}
           </Link>
 
-          <div className="eyebrow-mono px-2.5 py-1.5">
+          <div className="eyebrow-mono px-2 py-1.5">
             {isZh ? "桌面网站" : "WEBSITES"}
           </div>
           {WEBSITE_CATALOG_ITEMS.map((w) => {
@@ -64,18 +106,18 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
                 key={w.id}
                 href={`/catalog/${w.id}`}
                 className={cn(
-                  "flex items-center justify-between gap-2 border-l-2 px-2.5 py-1.5 text-[12.5px] transition-colors",
+                  "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
                   active
-                    ? "border-l-accent-text bg-surface font-semibold text-ink"
-                    : "border-l-transparent text-muted hover:bg-surface-hover hover:text-ink"
+                    ? "bg-elevated font-semibold text-ink"
+                    : "text-muted hover:bg-surface-hover hover:text-ink"
                 )}
               >
                 <span className="truncate">{w.name}</span>
                 <span className="flex items-center gap-1.5">
                   {w.scraped ? (
-                    <Badge variant="accent" className="h-4 px-1 text-[9px]">
+                    <span className="bg-accent-soft px-1 font-mono text-[9px] font-semibold text-accent-text">
                       LIVE
-                    </Badge>
+                    </span>
                   ) : null}
                   <span
                     className="inline-block h-2 w-2 shrink-0"
@@ -86,8 +128,8 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
             );
           })}
 
-          <div className="eyebrow-mono px-2.5 pt-3.5 pb-1.5">
-            {isZh ? "移动应用" : "MOBILE APPS"}
+          <div className="eyebrow-mono px-2 pt-3 pb-1.5">
+            {isZh ? "移动应用" : "APPS"}
           </div>
           {APP_CATALOG_ITEMS.map((a) => {
             const active = a.id === item.id;
@@ -96,10 +138,10 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
                 key={a.id}
                 href={`/catalog/${a.id}`}
                 className={cn(
-                  "flex items-center justify-between gap-2 border-l-2 px-2.5 py-1.5 text-[12.5px] transition-colors",
+                  "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
                   active
-                    ? "border-l-accent-text bg-surface font-semibold text-ink"
-                    : "border-l-transparent text-muted hover:bg-surface-hover hover:text-ink"
+                    ? "bg-elevated font-semibold text-ink"
+                    : "text-muted hover:bg-surface-hover hover:text-ink"
                 )}
               >
                 <span className="truncate">{a.name}</span>
@@ -112,50 +154,148 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
           })}
         </aside>
 
-        {/* Main Brand Spec Content — Centered Readable Blueprint Frame inside Full-Bleed Workspace */}
+        {/* Center + Right Workspace */}
         <div className="order-1 min-w-0 lg:order-2">
-          <div className="detail-center-frame">
-            <CatalogDetailHeader
+          {/* Top 44px Minimal Borderless Tab Bar (inspired by getdesign.md) */}
+          <div className="sticky top-[var(--header-h)] z-20 flex min-h-[44px] flex-wrap items-center justify-between gap-3 border-b border-hairline bg-canvas px-4">
+            <div className="flex flex-wrap items-center gap-1">
+              {viewTabs.map((vt) => {
+                const active = tab === vt.id;
+                return (
+                  <button
+                    key={vt.id}
+                    type="button"
+                    onClick={() => setTab(vt.id)}
+                    className={cn(
+                      "relative inline-flex h-[43px] cursor-pointer items-center px-2.5 text-xs transition-colors",
+                      active
+                        ? "font-semibold text-ink after:absolute after:inset-x-2 after:bottom-0 after:h-[2px] after:bg-accent-text"
+                        : "text-muted hover:text-ink"
+                    )}
+                  >
+                    {vt.label}
+                  </button>
+                );
+              })}
+
+              {tab === "pages" ? (
+                <div className="ml-2 flex flex-wrap items-center gap-1 bg-code/70 p-0.5">
+                  {pageTabs.map((pg) => {
+                    const active = pg.id === activePageId;
+                    return (
+                      <button
+                        key={pg.id}
+                        type="button"
+                        onClick={() => setActivePageId(pg.id)}
+                        className={cn(
+                          "inline-flex h-7 cursor-pointer items-center px-2.5 text-[11.5px] transition-colors",
+                          active
+                            ? "bg-elevated font-semibold text-ink"
+                            : "text-muted hover:text-ink"
+                        )}
+                      >
+                        {isZh ? pg.titleZh : pg.titleEn}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+
+            {tab === "pages" ? (
+              <div className="flex items-center gap-2">
+                {scrapedPages.length === 0 ? (
+                  <div className="inline-flex bg-code/70 p-0.5">
+                    {(["dark", "light"] as const).map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setBlueprintMode(m)}
+                        className={cn(
+                          "h-7 cursor-pointer px-2.5 text-[11.5px] capitalize transition-colors",
+                          blueprintMode === m
+                            ? "bg-elevated font-semibold text-ink"
+                            : "text-muted hover:text-ink"
+                        )}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className="inline-flex bg-code/70 p-0.5">
+                  {(
+                    [
+                      ["desktop", t("vpDesktop")],
+                      ["mobile", t("vpMobile")]
+                    ] as const
+                  ).map(([val, lbl]) => (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => setVp(val)}
+                      className={cn(
+                        "h-7 cursor-pointer px-2.5 text-[11.5px] transition-colors",
+                        vp === val
+                          ? "bg-elevated font-semibold text-ink"
+                          : "text-muted hover:text-ink"
+                      )}
+                    >
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          {/* 100% Edge-to-Edge Visual Stage + Concise Sticky Inspector */}
+          <div className="grid grid-cols-1 items-start xl:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="min-w-0">
+              {tab === "pages" ? (
+                <CatalogPagesTab
+                  item={item}
+                  isZh={isZh}
+                  currentPage={currentScrapedPage}
+                  activePageId={activePageId}
+                  vp={vp}
+                  blueprintMode={blueprintMode}
+                  selectedIdx={selectedIdx}
+                  hoveredIdx={hoveredIdx}
+                  scrollTrigger={scrollTrigger}
+                  onSelectFromImage={handleSelectSection}
+                  onHoverChange={setHoveredIdx}
+                />
+              ) : (
+                <div className="p-5">
+                  {tab === "sections" ? (
+                    <CatalogSectionsTab item={item} isZh={isZh} />
+                  ) : tab === "tokens" ? (
+                    <CatalogTokensCssTab item={item} rawCss={rawCss} isZh={isZh} />
+                  ) : (
+                    <CatalogGuardrailsTab item={item} rawMd={rawMd} isZh={isZh} />
+                  )}
+                </div>
+              )}
+            </div>
+
+            <CatalogRightInspector
               item={item}
               isZh={isZh}
-              onCopyCss={() => void copy(rawCss, `Copied ${item.name} CSS tokens`)}
+              anatomy={activeAnatomy}
+              activePagePath={activePagePath}
+              showAnatomy={tab === "pages"}
+              selectedIdx={selectedIdx}
+              hoveredIdx={hoveredIdx}
+              onSelectSection={handleSelectSection}
+              onHoverChange={setHoveredIdx}
+              onClearSelection={() => setSelectedIdx(null)}
               onCopyMd={() => void copy(rawMd, `Copied ${item.name} DESIGN.md`)}
+              onCopyCss={() => void copy(rawCss, `Copied ${item.name} CSS tokens`)}
               onDownloadMd={() => downloadText(`${item.id}-DESIGN.md`, rawMd)}
               onApplySkin={handleApplyToWorkbench}
             />
-
-            {/* 4 Primary Tabs */}
-            <div className="grid gap-5 px-7 py-6">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
-                <SegmentedControl
-                  options={[
-                    { value: "pages" as CatalogDetailTab, label: t("tabPages") },
-                    { value: "sections" as CatalogDetailTab, label: t("tabSections") },
-                    { value: "tokens" as CatalogDetailTab, label: t("tabTokens") },
-                    { value: "guardrails" as CatalogDetailTab, label: t("tabGuardrails") }
-                  ]}
-                  value={tab}
-                  onChange={setTab}
-                />
-
-                {item.scraped ? (
-                  <span className="font-mono-ui text-xs text-muted">
-                    Captured {item.scraped.capturedAt} · {item.scraped.pages.length} pages ·{" "}
-                    {item.scraped.sections.length} slices
-                  </span>
-                ) : null}
-              </div>
-
-              {tab === "pages" ? (
-                <CatalogPagesTab item={item} isZh={isZh} />
-              ) : tab === "sections" ? (
-                <CatalogSectionsTab item={item} isZh={isZh} />
-              ) : tab === "tokens" ? (
-                <CatalogTokensCssTab item={item} rawCss={rawCss} isZh={isZh} />
-              ) : (
-                <CatalogGuardrailsTab item={item} rawMd={rawMd} isZh={isZh} />
-              )}
-            </div>
           </div>
         </div>
       </div>

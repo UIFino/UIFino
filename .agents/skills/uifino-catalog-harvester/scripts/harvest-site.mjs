@@ -349,19 +349,29 @@ async function extractContiguousBands(page) {
       return [{ index: "01", tag: "main", heading: document.title, top: 0, height: totalH, topPct: 0, heightPct: 100 }];
     }
 
-    // Normalize into contiguous 0% -> 100% bands with zero dead zones
+    // Normalize into contiguous 0% -> 100% bands WITHOUT stretching <header>/<nav> into hero top padding!
     return merged.map((blk, i) => {
-      const startPx = i === 0 ? 0 : blk.top;
-      const endPx = i === merged.length - 1 ? totalH : merged[i + 1].top;
+      const prev = i > 0 ? merged[i - 1] : null;
+      const isHeaderBar = i === 0 && (blk.tag === "header" || blk.tag === "nav") && blk.height <= 120;
+      const prevWasHeaderBar =
+        i === 1 && prev && (prev.tag === "header" || prev.tag === "nav") && prev.height <= 120;
+
+      const startPx = i === 0 ? 0 : prevWasHeaderBar ? prev.top + prev.height : blk.top;
+      const endPx = isHeaderBar
+        ? blk.top + blk.height
+        : i === merged.length - 1
+          ? totalH
+          : merged[i + 1].top;
+
       const topPct = Number(((startPx / totalH) * 100).toFixed(2));
-      const endPct = i === merged.length - 1 ? 100 : Number(((endPx / totalH) * 100).toFixed(2));
-      const heightPct = Number(Math.max(0.8, endPct - topPct).toFixed(2));
+      const endPct = i === merged.length - 1 && !isHeaderBar ? 100 : Number(((endPx / totalH) * 100).toFixed(2));
+      const heightPct = Number(Math.max(0.4, endPct - topPct).toFixed(2));
       return {
         index: String(i + 1).padStart(2, "0"),
         tag: blk.tag,
         heading: blk.heading,
         top: startPx,
-        height: Math.max(56, endPx - startPx),
+        height: Math.max(44, endPx - startPx),
         topPct,
         heightPct
       };

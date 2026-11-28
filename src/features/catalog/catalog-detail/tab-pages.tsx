@@ -213,7 +213,12 @@ export function CatalogPagesTab({
                 height: `${activeBounds.heightPct}%`
               }}
             >
-              <span className="font-mono-ui absolute top-1.5 left-1.5 inline-flex items-center gap-1.5 bg-[#FF4D4F] px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
+              <span
+                className={cn(
+                  "font-mono-ui absolute left-1.5 inline-flex items-center gap-1.5 bg-[#FF4D4F] px-2 py-0.5 text-[11px] font-bold text-white shadow-sm",
+                  activeBounds.heightPct < 2.2 ? "top-full mt-1" : "top-1.5"
+                )}
+              >
                 <span>{activeSec.index}</span>
                 <span>{isZh ? activeSec.nameZh : activeSec.nameEn}</span>
               </span>

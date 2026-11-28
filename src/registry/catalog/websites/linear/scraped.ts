@@ -22,8 +22,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "高度 73px，20px 背景模糊配 8% 透明度细底边，右侧放置实心银白胶囊注册按钮。",
           noteEn: "73px height, blur(20px) backdrop, 1px rgba(255,255,255,0.08) bottom rule, silver-white pill CTA.",
           bounds: {
-            desktop: { topPct: 0, heightPct: 2.5 },
-            mobile: { topPct: 0, heightPct: 3.1 }
+            desktop: { topPct: 0, heightPct: 0.73 },
+            mobile: { topPct: 0, heightPct: 1.08 }
           }
         },
         {
@@ -35,8 +35,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "64px Inter Variable 紧凑主标题（字重 510），下方紧接带侧边栏与 Agent 浮窗的真实软件界面框。",
           noteEn: "64px Inter Variable headline (510 weight, -1.4px tracking) above a framed dark workspace + Agent PR drawer.",
           bounds: {
-            desktop: { topPct: 2.5, heightPct: 10.6 },
-            mobile: { topPct: 3.1, heightPct: 12.3 }
+            desktop: { topPct: 0.73, heightPct: 12.37 },
+            mobile: { topPct: 1.08, heightPct: 14.32 }
           }
         },
         {

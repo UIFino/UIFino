@@ -18,7 +18,7 @@ description: >-
    - 每个苦工只允许读写 `public/catalog/<id>/` 与 `src/registry/catalog/websites/<id>/` 两个专属目录；
    - **严禁苦工修改 `src/registry/catalog/index.ts`** 或任何公共组件代码；公共索引统一由主控在整批收尾时运行 [sync-catalog-index.mjs](./scripts/sync-catalog-index.mjs) 自动生成。
 4. **开源平替字体必走白名单**：商业收费字体一律对照 [font-alternatives.md](./references/font-alternatives.md) 映射为可直接免费商用的开源字体组合。
-5. **导航与标签短词铁律**：中文分类与适用/慎用短词控制在 2～4 个字（严禁「XX与XX」），整页区块坐标在首页与定价页必须从 `0%` 到 `100%` 连续覆盖，不得留超过 `5%` 的空白死区。
+5. **导航与标签短词铁律**：中文分类与适用/慎用短词控制在 2～4 个字（严禁「XX与XX」），整页区块坐标在首页与定价页必须从 `0%` 到 `100%` 连续覆盖，不得留超过 `5%` 的空白死区；**严禁把首屏顶部留白吞进 `01 导航栏`**（导航栏 `heightPct` 换算回真实图片像素高必须等于 `<header>` 自身高度 `44px ~ 115px`，下方留白一律归入 `02 首屏`）。
 
 ---
 

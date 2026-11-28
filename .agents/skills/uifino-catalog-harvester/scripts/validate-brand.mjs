@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * UIFino Catalog Brand Quality Gate Validator
+ * UIFino Catalog Brand Quality Gate Validator (with Pixel-Level Bounds Verification)
  *
  * Usage:
  *   node .agents/skills/uifino-catalog-harvester/scripts/validate-brand.mjs <brand-id> [--kind website|app]
@@ -28,20 +28,89 @@ const publicRoot = path.join(repoRoot, "public");
 const errors = [];
 const warnings = [];
 
+/** Read real bitmap dimensions (width, height) from JPEG, PNG, or WebP without external deps */
+function readImageDimensions(diskPath) {
+  const buf = fs.readFileSync(diskPath);
+
+  // PNG
+  if (buf.length >= 24 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) {
+    return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+  }
+
+  // JPEG
+  if (buf.length >= 4 && buf[0] === 0xff && buf[1] === 0xd8) {
+    let i = 2;
+    while (i + 9 < buf.length) {
+      if (buf[i] !== 0xff) {
+        i += 1;
+        continue;
+      }
+      const marker = buf[i + 1];
+      if (
+        marker === 0xc0 ||
+        marker === 0xc1 ||
+        marker === 0xc2 ||
+        marker === 0xc3 ||
+        marker === 0xc9 ||
+        marker === 0xca
+      ) {
+        return { height: buf.readUInt16BE(i + 5), width: buf.readUInt16BE(i + 7) };
+      }
+      if (marker === 0xd9 || marker === 0xda) break;
+      const segLen = buf.readUInt16BE(i + 2);
+      if (segLen < 2) break;
+      i += 2 + segLen;
+    }
+  }
+
+  // WebP (VP8 / VP8L / VP8X)
+  if (
+    buf.length >= 30 &&
+    buf.toString("ascii", 0, 4) === "RIFF" &&
+    buf.toString("ascii", 8, 12) === "WEBP"
+  ) {
+    const chunk = buf.toString("ascii", 12, 16);
+    if (chunk === "VP8X") {
+      const w = 1 + buf.readUIntLE(24, 3);
+      const h = 1 + buf.readUIntLE(27, 3);
+      return { width: w, height: h };
+    }
+    if (chunk === "VP8 " && buf.length >= 30) {
+      return {
+        width: buf.readUInt16LE(26) & 0x3fff,
+        height: buf.readUInt16LE(28) & 0x3fff
+      };
+    }
+    if (chunk === "VP8L" && buf.length >= 25) {
+      const b0 = buf[21];
+      const b1 = buf[22];
+      const b2 = buf[23];
+      const b3 = buf[24];
+      return {
+        width: 1 + (((b1 & 0x3f) << 8) | b0),
+        height: 1 + (((b3 & 0x0f) << 10) | (b2 << 2) | ((b1 & 0xc0) >> 6))
+      };
+    }
+  }
+
+  return null;
+}
+
 function checkAssetPath(webPath, label, minBytes = 4096) {
   if (!webPath || !webPath.startsWith("/")) {
     errors.push(`${label}: invalid asset path "${webPath}"`);
-    return;
+    return null;
   }
   const diskPath = path.join(publicRoot, webPath.replace(/^\/+/, ""));
   if (!fs.existsSync(diskPath)) {
     errors.push(`${label}: file missing on disk -> ${diskPath}`);
-    return;
+    return null;
   }
   const stat = fs.statSync(diskPath);
   if (stat.size < minBytes) {
     errors.push(`${label}: suspiciously small image (${stat.size} bytes < ${minBytes}) -> ${webPath}`);
   }
+  return diskPath;
 }
 
 if (!fs.existsSync(indexFile)) {
@@ -91,11 +160,14 @@ if (fs.existsSync(indexFile)) {
 
   const hexMatches = indexSrc.match(/#[0-9A-Fa-f]{6}\b/g) || [];
   if (hexMatches.length < 16) {
-    errors.push(`index.ts expected >= 16 #RRGGBB hex tokens across light & dark palettes (found ${hexMatches.length})`);
+    errors.push(
+      `index.ts expected >= 16 #RRGGBB hex tokens across light & dark palettes (found ${hexMatches.length})`
+    );
   }
 }
 
 if (fs.existsSync(scrapedFile)) {
+  // Dynamically evaluate the pure data object in scraped.ts by stripping the TS type import/annotation
   const scrapedSrc = fs.readFileSync(scrapedFile, "utf8");
 
   for (const sectionKey of [
@@ -113,31 +185,129 @@ if (fs.existsSync(scrapedFile)) {
     }
   }
 
-  // Check all referenced /catalog/... images exist and are non-empty
-  const imgRefs = [...scrapedSrc.matchAll(/(?:desktopImg|mobileImg|img):\s*["']([^"']+)["']/g)];
-  if (imgRefs.length < 4) {
-    errors.push(`scraped.ts has too few image captures (${imgRefs.length})`);
-  }
-  for (const m of imgRefs) {
-    checkAssetPath(m[1], `scraped image (${m[1]})`);
+  const jsExpr = scrapedSrc
+    .replace(/^import\s+type[^\n]+\n/gm, "")
+    .replace(/export\s+const\s+\w+\s*(?::\s*\w+)?\s*=\s*/, "return ");
+  let data = null;
+  try {
+    data = new Function(jsExpr)();
+  } catch (err) {
+    errors.push(`Failed to parse scraped.ts data object: ${err.message}`);
   }
 
-  // Check desktop bounds coverage per page block
-  const desktopBounds = [
-    ...scrapedSrc.matchAll(/desktop:\s*\{\s*topPct:\s*([\d.]+),\s*heightPct:\s*([\d.]+)\s*\}/g)
-  ].map((m) => ({ topPct: Number(m[1]), heightPct: Number(m[2]) }));
+  if (data) {
+    // Find measured header slice height if present (e.g. 01-header.jpg -> 73px)
+    let measuredHeaderPx = null;
+    for (const sec of data.sections || []) {
+      const disk = checkAssetPath(sec.img, `section slice ${sec.id}`);
+      if (disk && sec.selector === "<header>") {
+        const dim = readImageDimensions(disk);
+        if (dim) measuredHeaderPx = dim.height;
+      }
+    }
 
-  if (desktopBounds.length === 0) {
-    errors.push("scraped.ts contains zero desktop percentage bounds in anatomy");
-  } else {
-    for (const b of desktopBounds) {
-      if (b.topPct < 0 || b.heightPct <= 0 || b.topPct + b.heightPct > 100.5) {
-        errors.push(`Out-of-range desktop bound: topPct=${b.topPct}, heightPct=${b.heightPct}`);
+    for (const pg of data.pages || []) {
+      const deskDisk = checkAssetPath(pg.desktopImg, `page[${pg.id}].desktopImg`);
+      const mobDisk = checkAssetPath(pg.mobileImg, `page[${pg.id}].mobileImg`);
+      const deskDim = deskDisk ? readImageDimensions(deskDisk) : null;
+      const mobDim = mobDisk ? readImageDimensions(mobDisk) : null;
+
+      if (!deskDim || !mobDim) {
+        errors.push(`page[${pg.id}]: unable to read image dimensions`);
+        continue;
+      }
+
+      // Mobile captures use deviceScaleFactor=2 at 390px CSS viewport (bitmap width ~780px)
+      const deskDpr = deskDim.width > 2000 ? 2 : 1;
+      const mobDpr = mobDim.width > 550 ? 2 : 1;
+      const deskCssH = deskDim.height / deskDpr;
+      const mobCssH = mobDim.height / mobDpr;
+
+      const anatomy = pg.anatomy || [];
+      if (anatomy.length === 0) {
+        errors.push(`page[${pg.id}]: anatomy array is empty`);
+        continue;
+      }
+
+      let prevDeskEnd = 0;
+      for (let i = 0; i < anatomy.length; i += 1) {
+        const item = anatomy[i];
+        const db = item.bounds?.desktop;
+        const mb = item.bounds?.mobile;
+        if (!db || !mb) {
+          errors.push(`page[${pg.id}]#${item.index}: missing desktop or mobile bounds`);
+          continue;
+        }
+
+        if (db.topPct < 0 || db.heightPct <= 0 || db.topPct + db.heightPct > 100.5) {
+          errors.push(
+            `page[${pg.id}]#${item.index}: out-of-range desktop bounds (${db.topPct}% + ${db.heightPct}%)`
+          );
+        }
+
+        // Check gaps/overlaps on multi-section pages
+        if (anatomy.length > 1) {
+          const gap = db.topPct - prevDeskEnd;
+          if (gap > 5.0) {
+            errors.push(
+              `page[${pg.id}]#${item.index}: dead-zone gap of ${gap.toFixed(2)}% before section (prev ended at ${prevDeskEnd}%, current starts at ${db.topPct}%)`
+            );
+          }
+          if (gap < -0.5) {
+            errors.push(
+              `page[${pg.id}]#${item.index}: overlaps previous section by ${Math.abs(gap).toFixed(2)}%`
+            );
+          }
+          prevDeskEnd = Number((db.topPct + db.heightPct).toFixed(2));
+        }
+
+        const renderedDeskPx = Math.round((db.heightPct / 100) * deskCssH);
+        const renderedMobPx = Math.round((mb.heightPct / 100) * mobCssH);
+
+        // Gate A: Navbar / Sticky Header physical height sanity check (must be 44px..115px CSS, never swallowing Hero padding!)
+        const isNavbar =
+          /导航栏|顶栏|navbar|sticky.*bar|sticky.*header/i.test(`${item.nameZh} ${item.nameEn}`) &&
+          !/标题|订阅|hero/i.test(item.nameZh);
+        if (isNavbar) {
+          if (renderedDeskPx < 40 || renderedDeskPx > 115) {
+            errors.push(
+              `page[${pg.id}]#${item.index} "${item.nameZh}": desktop red-box height converts to ${renderedDeskPx}px on ${deskCssH}px page (expected navbar 40px–115px; likely swallowed hero top margin!)`
+            );
+          }
+          if (renderedMobPx < 38 || renderedMobPx > 110) {
+            errors.push(
+              `page[${pg.id}]#${item.index} "${item.nameZh}": mobile red-box height converts to ${renderedMobPx}px on ${mobCssH}px page (expected mobile navbar 38px–110px)`
+            );
+          }
+          if (measuredHeaderPx !== null && Math.abs(renderedDeskPx - measuredHeaderPx) > 18) {
+            errors.push(
+              `page[${pg.id}]#${item.index} "${item.nameZh}": desktop red-box is ${renderedDeskPx}px, which disagrees with measured <header> slice (${measuredHeaderPx}px)`
+            );
+          }
+        }
+
+        // Gate B: Cross-check explicit "高度 XXpx" / "XXpx height" stated in noteZh/noteEn against rendered red-box px
+        const statedHeightMatch =
+          `${item.noteZh} ${item.noteEn}`.match(/高度\s*(\d{2,4})px/i) ||
+          `${item.noteZh} ${item.noteEn}`.match(/\b(\d{2,4})px\s+height\b/i);
+        if (statedHeightMatch) {
+          const statedPx = Number(statedHeightMatch[1]);
+          if (Math.abs(renderedDeskPx - statedPx) > Math.max(20, statedPx * 0.25)) {
+            errors.push(
+              `page[${pg.id}]#${item.index} "${item.nameZh}": note states ${statedPx}px height, but bounds.desktop.heightPct (${db.heightPct}%) renders as ${renderedDeskPx}px on ${deskCssH}px image`
+            );
+          }
+        }
+      }
+
+      if (anatomy.length > 1 && prevDeskEnd < 95) {
+        errors.push(
+          `page[${pg.id}]: anatomy stops at ${prevDeskEnd}% instead of covering down to 100% footer`
+        );
       }
     }
   }
 
-  // Ensure raw-probe.json wasn't left behind uncleaned if desired (warn only)
   const rawProbe = path.join(publicRoot, "catalog", brandId, "raw-probe.json");
   if (fs.existsSync(rawProbe)) {
     warnings.push(`Temporary raw-probe.json still exists at ${rawProbe} (remove before git commit)`);
@@ -153,4 +323,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(`[PASS] ${brandId} passed all UIFino catalog quality gates!`);
+console.log(`[PASS] ${brandId} passed all UIFino catalog quality & pixel-bounds gates!`);

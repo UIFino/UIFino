@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { SearchInput } from "@/components/primitives/input";
 import { SegmentedControl } from "@/components/primitives/segmented";
@@ -54,9 +54,13 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [scrollTrigger, setScrollTrigger] = useState(0);
 
-  // Left brand rail search & domain filter
+  // Left brand rail search, domain filter & collapsible directory state
   const [railSearch, setRailSearch] = useState("");
   const [railCategory, setRailCategory] = useState<CatalogCategoryFilter>("All");
+  const [openGroups, setOpenGroups] = useState<{ website: boolean; app: boolean }>({
+    website: true,
+    app: true
+  });
 
   useEffect(() => {
     setActivePageId(pageTabs[0]?.id ?? "home");
@@ -121,16 +125,16 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
   return (
     <div className="band-full">
       <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[208px_minmax(0,1fr)]">
-        {/* Left Narrow Brand Switcher Rail (No LIVE badges, with Search & Domain Filter) */}
-        <aside className="order-2 border-t border-hairline bg-canvas px-2.5 py-3 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
+        {/* Left Narrow Brand Switcher Rail (Collapsible shadcn-style Tree + Right Accent Indicator) */}
+        <aside className="order-2 border-t border-hairline bg-canvas py-3 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
           <Link
             href="/catalog"
-            className="font-mono-ui mb-2.5 flex items-center px-2 py-1 text-[11px] text-muted hover:bg-surface-hover hover:text-ink"
+            className="font-mono-ui mb-2.5 flex items-center px-3 py-1 text-[11px] text-muted hover:bg-surface-hover hover:text-ink"
           >
             ← {t("allCatalog")}
           </Link>
 
-          <div className="mb-2.5 grid gap-1.5 px-1">
+          <div className="mb-3 grid gap-1.5 px-3">
             <SearchInput
               value={railSearch}
               onChange={(e) => setRailSearch(e.target.value)}
@@ -154,7 +158,7 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
           </div>
 
           {filteredWeb.length === 0 && filteredApps.length === 0 ? (
-            <div className="px-2 py-4 text-center text-[11.5px] text-muted">
+            <div className="px-3 py-4 text-center text-[11.5px] text-muted">
               <div>{isZh ? "没有匹配图鉴" : "No matches"}</div>
               <button
                 type="button"
@@ -170,63 +174,105 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
           ) : null}
 
           {filteredWeb.length > 0 ? (
-            <>
-              <div className="eyebrow-mono px-2 py-1.5">
-                {isZh ? "桌面网站" : "WEBSITES"}
-              </div>
-              {filteredWeb.map((w) => {
-                const active = w.id === item.id;
-                const dotCol = (w.defaultTheme ?? "dark") === "light" ? w.light.accent : w.dark.accent;
-                return (
-                  <Link
-                    key={w.id}
-                    href={`/catalog/${w.id}`}
-                    className={cn(
-                      "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
-                      active
-                        ? "bg-elevated font-semibold text-ink"
-                        : "text-muted hover:bg-surface-hover hover:text-ink"
-                    )}
-                  >
-                    <span className="truncate">{w.name}</span>
-                    <span
-                      className="inline-block h-2 w-2 shrink-0"
-                      style={{ backgroundColor: dotCol }}
-                    />
-                  </Link>
-                );
-              })}
-            </>
+            <div className="mb-1.5">
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenGroups((prev) => ({ ...prev, website: !prev.website }))
+                }
+                aria-expanded={Boolean(q || railCategory !== "All" || openGroups.website)}
+                className="flex w-full cursor-pointer items-center justify-between px-3 py-1.5 text-left text-[12.5px] transition-colors hover:bg-surface-hover"
+              >
+                <span
+                  className={cn(
+                    "flex items-center gap-1.5",
+                    q || railCategory !== "All" || openGroups.website
+                      ? "font-semibold text-ink"
+                      : "font-medium text-muted"
+                  )}
+                >
+                  {q || railCategory !== "All" || openGroups.website ? (
+                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-subtle" />
+                  )}
+                  <span>{isZh ? "桌面网站" : "Websites"}</span>
+                </span>
+                <span className="font-mono text-[11px] text-subtle">{filteredWeb.length}</span>
+              </button>
+
+              {q || railCategory !== "All" || openGroups.website ? (
+                <div className="ml-[19px] border-l border-hairline py-0.5">
+                  {filteredWeb.map((w) => {
+                    const active = w.id === item.id;
+                    return (
+                      <Link
+                        key={w.id}
+                        href={`/catalog/${w.id}`}
+                        className={cn(
+                          "flex items-center border-r-2 py-1.5 pr-3 pl-3.5 text-[12.5px] transition-colors",
+                          active
+                            ? "border-r-accent-text bg-elevated font-semibold text-ink"
+                            : "border-r-transparent text-muted hover:bg-surface-hover hover:text-ink"
+                        )}
+                      >
+                        <span className="truncate">{w.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
           ) : null}
 
           {filteredApps.length > 0 ? (
-            <>
-              <div className="eyebrow-mono px-2 pt-3 pb-1.5">
-                {isZh ? "移动应用" : "APPS"}
-              </div>
-              {filteredApps.map((a) => {
-                const active = a.id === item.id;
-                const dotCol = (a.defaultTheme ?? "dark") === "light" ? a.light.accent : a.dark.accent;
-                return (
-                  <Link
-                    key={a.id}
-                    href={`/catalog/${a.id}`}
-                    className={cn(
-                      "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
-                      active
-                        ? "bg-elevated font-semibold text-ink"
-                        : "text-muted hover:bg-surface-hover hover:text-ink"
-                    )}
-                  >
-                    <span className="truncate">{a.name}</span>
-                    <span
-                      className="inline-block h-2 w-2 shrink-0 rounded-full"
-                      style={{ backgroundColor: dotCol }}
-                    />
-                  </Link>
-                );
-              })}
-            </>
+            <div>
+              <button
+                type="button"
+                onClick={() => setOpenGroups((prev) => ({ ...prev, app: !prev.app }))}
+                aria-expanded={Boolean(q || railCategory !== "All" || openGroups.app)}
+                className="flex w-full cursor-pointer items-center justify-between px-3 py-1.5 text-left text-[12.5px] transition-colors hover:bg-surface-hover"
+              >
+                <span
+                  className={cn(
+                    "flex items-center gap-1.5",
+                    q || railCategory !== "All" || openGroups.app
+                      ? "font-semibold text-ink"
+                      : "font-medium text-muted"
+                  )}
+                >
+                  {q || railCategory !== "All" || openGroups.app ? (
+                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-subtle" />
+                  )}
+                  <span>{isZh ? "移动应用" : "Apps"}</span>
+                </span>
+                <span className="font-mono text-[11px] text-subtle">{filteredApps.length}</span>
+              </button>
+
+              {q || railCategory !== "All" || openGroups.app ? (
+                <div className="ml-[19px] border-l border-hairline py-0.5">
+                  {filteredApps.map((a) => {
+                    const active = a.id === item.id;
+                    return (
+                      <Link
+                        key={a.id}
+                        href={`/catalog/${a.id}`}
+                        className={cn(
+                          "flex items-center border-r-2 py-1.5 pr-3 pl-3.5 text-[12.5px] transition-colors",
+                          active
+                            ? "border-r-accent-text bg-elevated font-semibold text-ink"
+                            : "border-r-transparent text-muted hover:bg-surface-hover hover:text-ink"
+                        )}
+                      >
+                        <span className="truncate">{a.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
           ) : null}
         </aside>
 

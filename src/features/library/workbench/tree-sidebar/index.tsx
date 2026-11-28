@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileCode2 } from "lucide-react";
+import { ChevronDown, ChevronRight, FileCode2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { SearchInput } from "@/components/primitives/input";
 import type { ComponentAssetMeta, ComponentCategoryMeta } from "@/core/codegen";
@@ -37,6 +37,9 @@ export function WorkbenchTreeSidebar({
 
   const [treeType, setTreeType] = useState<AssetTypeFilter>("all");
   const [treeFilter, setTreeFilter] = useState("");
+  const [expandedCatIds, setExpandedCatIds] = useState<Record<string, boolean>>(() => ({
+    [category.id]: true
+  }));
 
   const q = treeFilter.trim().toLowerCase();
   const visibleCats = COMPONENT_CATEGORIES.filter((cat) => {
@@ -45,20 +48,25 @@ export function WorkbenchTreeSidebar({
     if (!q) return true;
     return (
       cat.name.toLowerCase().includes(q) ||
+      cat.nameZh.toLowerCase().includes(q) ||
       cat.items.some((it) => it.name.toLowerCase().includes(q))
     );
   });
 
+  const toggleCat = (catId: string) => {
+    setExpandedCatIds((prev) => ({ ...prev, [catId]: !(prev[catId] ?? catId === category.id) }));
+  };
+
   return (
-    <aside className="order-3 border-t border-hairline bg-canvas px-2.5 py-3.5 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
+    <aside className="order-3 border-t border-hairline bg-canvas py-3.5 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
       <Link
         href={`/components/${category.id}`}
-        className="font-mono-ui mb-2 flex items-center px-2.5 py-1.5 text-[11.5px] text-muted hover:bg-surface-hover hover:text-ink"
+        className="font-mono-ui mb-2 flex items-center px-3 py-1.5 text-[11.5px] text-muted hover:bg-surface-hover hover:text-ink"
       >
-        ← {t("wbBack")} ({category.name})
+        ← {t("wbBack")} ({isZh ? category.nameZh : category.name})
       </Link>
 
-      <div className="grid gap-1.5 border-b border-hairline px-1.5 pb-2.5">
+      <div className="grid gap-1.5 border-b border-hairline px-3 pb-2.5">
         <select
           aria-label="Asset Type"
           value={treeType}
@@ -81,7 +89,7 @@ export function WorkbenchTreeSidebar({
 
       {/* Active Asset Virtual Source Files */}
       <div className="border-b border-hairline py-2.5">
-        <div className="eyebrow-mono px-2.5 pb-1.5">SOURCE FILES</div>
+        <div className="eyebrow-mono px-3 pb-1.5">SOURCE FILES</div>
         {files.map((file) => {
           const active = stageTab === "code" && activeFile === file;
           return (
@@ -90,10 +98,10 @@ export function WorkbenchTreeSidebar({
               type="button"
               onClick={() => onSelectFile(file)}
               className={cn(
-                "font-mono-ui flex w-full cursor-pointer items-center gap-2 border-l-2 px-2.5 py-1.5 text-left text-[11.5px] transition-colors",
+                "font-mono-ui flex w-full cursor-pointer items-center gap-2 border-r-2 px-3 py-1.5 text-left text-[11.5px] transition-colors",
                 active
-                  ? "border-l-accent-text bg-surface font-semibold text-ink"
-                  : "border-l-transparent text-muted hover:bg-surface-hover hover:text-ink"
+                  ? "border-r-accent-text bg-elevated font-semibold text-ink"
+                  : "border-r-transparent text-muted hover:bg-surface-hover hover:text-ink"
               )}
             >
               <FileCode2 className="h-3.5 w-3.5 shrink-0 text-subtle" />
@@ -103,48 +111,66 @@ export function WorkbenchTreeSidebar({
         })}
       </div>
 
-      {/* Registry Tree */}
-      <div className="grid gap-3 pt-2.5">
-        {visibleCats.map((cat) => (
-          <div key={cat.id}>
-            <Link
-              href={`/components/${cat.id}`}
-              className={cn(
-                "eyebrow-mono flex w-full items-center justify-between px-2.5 py-0.5 hover:text-ink",
-                cat.id === category.id ? "text-accent-text" : "text-subtle"
-              )}
-            >
-              <span className="truncate">{isZh ? cat.nameZh : cat.name}</span>
-              <span>{cat.items.length}</span>
-            </Link>
-            <div className="mt-[3px]">
-              {cat.items
-                .filter(
-                  (it) =>
-                    !q ||
-                    it.name.toLowerCase().includes(q) ||
-                    cat.name.toLowerCase().includes(q)
-                )
-                .map((it) => {
-                  const active = it.id === item.id;
-                  return (
-                    <Link
-                      key={it.id}
-                      href={`/components/${cat.id}/${it.id}`}
-                      className={cn(
-                        "flex w-full items-center border-l-2 px-2.5 py-1.5 text-[12.5px] transition-colors",
-                        active
-                          ? "border-l-accent-text bg-surface font-semibold text-ink"
-                          : "border-l-transparent text-muted hover:bg-surface-hover hover:text-ink"
-                      )}
-                    >
-                      <span className="truncate">{it.name}</span>
-                    </Link>
-                  );
-                })}
+      {/* Collapsible shadcn-style Directory Tree */}
+      <div className="grid gap-0.5 pt-2.5">
+        {visibleCats.map((cat) => {
+          const isOpen = Boolean(q) || (expandedCatIds[cat.id] ?? cat.id === category.id);
+          const matchingItems = cat.items.filter(
+            (it) =>
+              !q ||
+              it.name.toLowerCase().includes(q) ||
+              cat.name.toLowerCase().includes(q) ||
+              cat.nameZh.toLowerCase().includes(q)
+          );
+
+          return (
+            <div key={cat.id}>
+              <button
+                type="button"
+                onClick={() => toggleCat(cat.id)}
+                aria-expanded={isOpen}
+                className="flex w-full cursor-pointer items-center justify-between px-3 py-1.5 text-left text-[12.5px] transition-colors hover:bg-surface-hover"
+              >
+                <span
+                  className={cn(
+                    "flex min-w-0 items-center gap-1.5",
+                    isOpen ? "font-semibold text-ink" : "font-medium text-muted"
+                  )}
+                >
+                  {isOpen ? (
+                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-subtle" />
+                  )}
+                  <span className="truncate">{isZh ? cat.nameZh : cat.name}</span>
+                </span>
+                <span className="font-mono text-[11px] text-subtle">{cat.items.length}</span>
+              </button>
+
+              {isOpen ? (
+                <div className="ml-[19px] border-l border-hairline py-0.5">
+                  {matchingItems.map((it) => {
+                    const active = it.id === item.id;
+                    return (
+                      <Link
+                        key={it.id}
+                        href={`/components/${cat.id}/${it.id}`}
+                        className={cn(
+                          "flex w-full items-center border-r-2 py-1.5 pr-3 pl-3.5 text-[12.5px] transition-colors",
+                          active
+                            ? "border-r-accent-text bg-elevated font-semibold text-ink"
+                            : "border-r-transparent text-muted hover:bg-surface-hover hover:text-ink"
+                        )}
+                      >
+                        <span className="truncate">{it.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </aside>
   );

@@ -160,13 +160,13 @@ export function SiteHeader() {
           {/* Right Utility Controls: Search (⌘K) + Token Presets + Locale + Theme */}
           <div
             onMouseEnter={closeMenuImmediate}
-            className="flex shrink-0 items-center gap-2"
+            className="flex shrink-0 items-center gap-1.5"
           >
             <Button
-              variant="hairline"
+              variant="soft"
               size="sm"
               onClick={() => setCmdkOpen(true)}
-              className="h-8 px-2.5 text-muted"
+              className="h-8 px-2.5 text-muted hover:text-ink"
             >
               <Search className="h-3.5 w-3.5" />
               <span className="font-mono-ui text-[11.5px]">⌘K</span>
@@ -175,7 +175,7 @@ export function SiteHeader() {
             <TokenCustomizerPopover onOpenTrigger={closeMenuImmediate} />
 
             <Button
-              variant="hairline"
+              variant="ghost"
               size="sm"
               onClick={handleSwitchLocale}
               className="font-mono-ui h-8 px-2.5 text-[11.5px]"
@@ -184,7 +184,7 @@ export function SiteHeader() {
             </Button>
 
             <Button
-              variant="hairline"
+              variant="ghost"
               size="sm"
               onClick={() => setTheme(isDark ? "light" : "dark")}
               className="font-mono-ui h-8 px-2.5 text-[11.5px]"

@@ -21,12 +21,8 @@ import {
   type StyleToneFilter
 } from "@/registry/styles";
 import { StyleMiniPreview } from "../specimens/mini-card-preview";
-import {
-  type PlaygroundModeSetting,
-  StylesComparePlayground
-} from "./compare-playground";
 
-type StylesViewMode = "grid" | "compare";
+type StylePreviewModeSetting = "auto" | ThemeMode;
 
 export function StylesListView() {
   const t = useTranslations("styles");
@@ -34,20 +30,14 @@ export function StylesListView() {
   const locale = useLocale();
   const isZh = locale === "zh";
 
-  const [viewRaw, setView] = useQueryState("view", parseAsString.withDefault("grid"));
   const [toneRaw, setTone] = useQueryState("tone", parseAsString.withDefault("all"));
   const [scenarioRaw, setScenario] = useQueryState(
     "scenario",
     parseAsString.withDefault("all")
   );
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
-  const [styleRaw, setStyleSlug] = useQueryState(
-    "style",
-    parseAsString.withDefault("hairline-grid")
-  );
   const [modeRaw, setMode] = useQueryState("mode", parseAsString.withDefault("auto"));
 
-  const view: StylesViewMode = viewRaw === "compare" ? "compare" : "grid";
   const tone: StyleToneFilter = STYLE_TONE_FILTERS.includes(toneRaw as StyleToneFilter)
     ? (toneRaw as StyleToneFilter)
     : "all";
@@ -56,7 +46,7 @@ export function StylesListView() {
   )
     ? (scenarioRaw as StyleScenarioFilter)
     : "all";
-  const modeSetting: PlaygroundModeSetting =
+  const modeSetting: StylePreviewModeSetting =
     modeRaw === "dark" || modeRaw === "light" ? modeRaw : "auto";
 
   const q = search.trim().toLowerCase();
@@ -87,26 +77,12 @@ export function StylesListView() {
     void setSearch("");
   };
 
-  const activeStyle =
-    filtered.find((s) => s.slug === styleRaw) ??
-    filtered[0] ??
-    STYLE_ITEMS[0]!;
-
   return (
     <div className="band-full">
       <div className="shell-wrap">
         <FilterToolbar
           left={
             <>
-              <SegmentedControl
-                options={[
-                  { value: "grid" as StylesViewMode, label: t("viewGallery") },
-                  { value: "compare" as StylesViewMode, label: t("viewCompare") }
-                ]}
-                value={view}
-                onChange={(v) => void setView(v)}
-              />
-
               <SegmentedControl
                 options={STYLE_TONE_FILTERS.map((tf) => ({
                   value: tf,
@@ -140,17 +116,15 @@ export function StylesListView() {
               <span className="font-mono-ui text-xs text-muted">
                 {filtered.length} {t("countUnit")}
               </span>
-              {view === "grid" ? (
-                <SegmentedControl
-                  options={[
-                    { value: "auto" as PlaygroundModeSetting, label: t("modeAuto") },
-                    { value: "dark" as PlaygroundModeSetting, label: "Dark" },
-                    { value: "light" as PlaygroundModeSetting, label: "Light" }
-                  ]}
-                  value={modeSetting}
-                  onChange={(v) => void setMode(v)}
-                />
-              ) : null}
+              <SegmentedControl
+                options={[
+                  { value: "auto" as StylePreviewModeSetting, label: t("modeAuto") },
+                  { value: "dark" as StylePreviewModeSetting, label: "Dark" },
+                  { value: "light" as StylePreviewModeSetting, label: "Light" }
+                ]}
+                value={modeSetting}
+                onChange={(v) => void setMode(v)}
+              />
             </>
           }
         />
@@ -160,15 +134,6 @@ export function StylesListView() {
             title={tCommon("emptyResult")}
             actionLabel={tCommon("resetFilter")}
             onReset={handleReset}
-          />
-        ) : view === "compare" ? (
-          <StylesComparePlayground
-            items={filtered}
-            activeStyle={activeStyle}
-            modeSetting={modeSetting}
-            isZh={isZh}
-            onSelectStyle={(slug) => void setStyleSlug(slug)}
-            onModeSettingChange={(next) => void setMode(next)}
           />
         ) : (
           <div className="grid grid-cols-1 gap-x-6 gap-y-8 px-6 py-7 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">

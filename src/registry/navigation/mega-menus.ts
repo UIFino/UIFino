@@ -94,7 +94,6 @@ export function getGlobalNavFlyouts(
         heading: isZh ? "探索" : "Explore",
         elevatedLinks: [
           { label: isZh ? "全部风格" : "All Styles", href: "/styles" },
-          { label: isZh ? "换肤对比" : "Playground", href: "/styles?view=compare" },
           { label: isZh ? "深色系" : "Dark", href: "/styles?tone=dark" },
           { label: isZh ? "浅色系" : "Light", href: "/styles?tone=light" }
         ]

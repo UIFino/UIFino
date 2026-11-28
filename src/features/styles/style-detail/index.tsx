@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { parseAsString, useQueryState } from "nuqs";
 import { CodeViewer } from "@/components/patterns/code-viewer";
 import { Badge } from "@/components/primitives/badge";
 import { Button } from "@/components/primitives/button";
@@ -36,6 +37,12 @@ import { StylePalettePanel } from "./palette-panel";
 type StyleDetailTab = "live" | "palette" | "md";
 
 const RADIUS_STOPS: readonly RadiusStop[] = [0, 4, 8, 16];
+const VALID_TEMPLATES: readonly StyleStageTemplate[] = [
+  "dashboard",
+  "landing",
+  "cards",
+  "typography"
+];
 
 export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
   const t = useTranslations("styles");
@@ -49,10 +56,25 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
   const applyBrandSkin = useWorkbenchPresetStore((s) => s.applyBrandSkin);
   const setStageMode = useWorkbenchPresetStore((s) => s.setStageMode);
 
-  const [tab, setTab] = useState<StyleDetailTab>("live");
-  const [mode, setMode] = useState<ThemeMode>(item.primaryTone);
-  const [template, setTemplate] = useState<StyleStageTemplate>("dashboard");
+  const [tabParam, setTabParam] = useQueryState("tab", parseAsString);
+  const [tplParam, setTplParam] = useQueryState("tpl", parseAsString);
+  const [modeParam, setModeParam] = useQueryState("mode", parseAsString);
   const [liveRadius, setLiveRadius] = useState<RadiusStop>(item.defaultRadius);
+
+  const tab: StyleDetailTab = tabParam === "palette" || tabParam === "md" ? tabParam : "live";
+  const template: StyleStageTemplate = VALID_TEMPLATES.includes(tplParam as StyleStageTemplate)
+    ? (tplParam as StyleStageTemplate)
+    : "dashboard";
+  const mode: ThemeMode =
+    modeParam === "dark" || modeParam === "light" ? modeParam : item.primaryTone;
+
+  const preservedQuery = new URLSearchParams();
+  if (template !== "dashboard") preservedQuery.set("tpl", template);
+  if (modeParam === "dark" || modeParam === "light") preservedQuery.set("mode", modeParam);
+  if (tab !== "live") preservedQuery.set("tab", tab);
+  const preservedQs = preservedQuery.toString();
+  const buildStyleHref = (slug: string) =>
+    preservedQs ? `/styles/${slug}?${preservedQs}` : `/styles/${slug}`;
 
   const displayName = isZh ? item.nameZh : item.name;
   const rawMd = compileStyleDesignMd(item);
@@ -86,15 +108,9 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
         <aside className="order-2 border-t border-hairline bg-canvas px-3.5 py-4 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
           <Link
             href="/styles"
-            className="font-mono-ui mb-1 flex items-center px-2.5 py-1.5 text-[11.5px] text-muted hover:bg-surface-hover hover:text-ink"
+            className="font-mono-ui mb-3 flex items-center px-2.5 py-1.5 text-[11.5px] text-muted hover:bg-surface-hover hover:text-ink"
           >
             ← {t("allStyles")}
-          </Link>
-          <Link
-            href={`/styles?view=compare&style=${item.slug}`}
-            className="font-mono-ui mb-3 flex items-center px-2.5 py-1.5 text-[11.5px] text-accent-text hover:bg-surface-hover"
-          >
-            {t("openPlayground")}
           </Link>
 
           <div className="eyebrow-mono px-2.5 py-1.5">
@@ -105,7 +121,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
             return (
               <Link
                 key={s.slug}
-                href={`/styles/${s.slug}`}
+                href={buildStyleHref(s.slug)}
                 className={cn(
                   "flex items-center justify-between gap-2 border-l-2 px-2.5 py-1.5 text-[12.5px] transition-colors",
                   active
@@ -132,7 +148,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
             return (
               <Link
                 key={s.slug}
-                href={`/styles/${s.slug}`}
+                href={buildStyleHref(s.slug)}
                 className={cn(
                   "flex items-center justify-between gap-2 border-l-2 px-2.5 py-1.5 text-[12.5px] transition-colors",
                   active
@@ -246,7 +262,9 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
                     { value: "md" as StyleDetailTab, label: t("tabMd") }
                   ]}
                   value={tab}
-                  onChange={setTab}
+                  onChange={(nextTab) =>
+                    void setTabParam(nextTab === "live" ? null : nextTab)
+                  }
                 />
 
                 {tab === "live" ? (
@@ -259,7 +277,9 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
                         { value: "typography" as StyleStageTemplate, label: t("tplType") }
                       ]}
                       value={template}
-                      onChange={setTemplate}
+                      onChange={(nextTpl) =>
+                        void setTplParam(nextTpl === "dashboard" ? null : nextTpl)
+                      }
                     />
                     <SegmentedControl
                       options={RADIUS_STOPS.map((r) => ({
@@ -275,7 +295,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
                         { value: "light" as ThemeMode, label: "Light" }
                       ]}
                       value={mode}
-                      onChange={setMode}
+                      onChange={(nextMode) => void setModeParam(nextMode)}
                     />
                   </div>
                 ) : null}

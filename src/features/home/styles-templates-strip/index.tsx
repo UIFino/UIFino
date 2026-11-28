@@ -27,8 +27,8 @@ export function HomeStylesAndTemplatesStrip() {
             <Badge variant="accent">10 Styles · 12 Templates</Badge>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link href="/styles?view=compare">
-              <Button variant="hairline">{isZh ? "同界面换肤对比 →" : "Style Playground →"}</Button>
+            <Link href="/styles">
+              <Button variant="hairline">{isZh ? "全部风格 →" : "All Styles →"}</Button>
             </Link>
             <Link href="/templates">
               <Button variant="hairline">{isZh ? "全部模板 →" : "All Templates →"}</Button>

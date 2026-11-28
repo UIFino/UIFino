@@ -39,8 +39,8 @@ export function SiteFooter() {
         <div>
           <div className="eyebrow-mono mb-2.5">STYLES</div>
           <div className="grid gap-1.5 text-[13px] text-muted">
-            <Link href="/styles?view=compare" className="hover:text-ink">
-              Style Playground
+            <Link href="/styles" className="hover:text-ink">
+              All Styles
             </Link>
             <Link href="/styles/hairline-grid" className="hover:text-ink">
               Hairline Grid

@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { LoadingGridSkeleton } from "@/components/patterns/state-views";
 import { StyleDetailView } from "@/features/styles/style-detail";
 import { findUiStyleBySlug, STYLE_ITEMS } from "@/registry/styles";
 
@@ -17,5 +19,9 @@ export default async function StyleDetailPage({
     notFound();
   }
 
-  return <StyleDetailView item={item} />;
+  return (
+    <Suspense fallback={<LoadingGridSkeleton count={4} />}>
+      <StyleDetailView item={item} />
+    </Suspense>
+  );
 }

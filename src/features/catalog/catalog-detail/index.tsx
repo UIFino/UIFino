@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Badge } from "@/components/primitives/badge";
+import { SegmentedControl } from "@/components/primitives/segmented";
 import {
   type CatalogBrandSpec,
   compileBrandDesignMd,
@@ -115,9 +117,9 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
                 <span className="truncate">{w.name}</span>
                 <span className="flex items-center gap-1.5">
                   {w.scraped ? (
-                    <span className="bg-accent-soft px-1 font-mono text-[9px] font-semibold text-accent-text">
+                    <Badge variant="accent" className="h-4 px-1 text-[9px]">
                       LIVE
-                    </span>
+                    </Badge>
                   ) : null}
                   <span
                     className="inline-block h-2 w-2 shrink-0"
@@ -179,25 +181,15 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
               })}
 
               {tab === "pages" ? (
-                <div className="ml-2 flex flex-wrap items-center gap-1 bg-code/70 p-0.5">
-                  {pageTabs.map((pg) => {
-                    const active = pg.id === activePageId;
-                    return (
-                      <button
-                        key={pg.id}
-                        type="button"
-                        onClick={() => setActivePageId(pg.id)}
-                        className={cn(
-                          "inline-flex h-7 cursor-pointer items-center px-2.5 text-[11.5px] transition-colors",
-                          active
-                            ? "bg-elevated font-semibold text-ink"
-                            : "text-muted hover:text-ink"
-                        )}
-                      >
-                        {isZh ? pg.titleZh : pg.titleEn}
-                      </button>
-                    );
-                  })}
+                <div className="ml-2 border-l border-hairline pl-3">
+                  <SegmentedControl
+                    options={pageTabs.map((pg) => ({
+                      value: pg.id,
+                      label: isZh ? pg.titleZh : pg.titleEn
+                    }))}
+                    value={activePageId}
+                    onChange={setActivePageId}
+                  />
                 </div>
               ) : null}
             </div>
@@ -205,47 +197,24 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
             {tab === "pages" ? (
               <div className="flex items-center gap-2">
                 {scrapedPages.length === 0 ? (
-                  <div className="inline-flex bg-code/70 p-0.5">
-                    {(["dark", "light"] as const).map((m) => (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => setBlueprintMode(m)}
-                        className={cn(
-                          "h-7 cursor-pointer px-2.5 text-[11.5px] capitalize transition-colors",
-                          blueprintMode === m
-                            ? "bg-elevated font-semibold text-ink"
-                            : "text-muted hover:text-ink"
-                        )}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
+                  <SegmentedControl
+                    options={[
+                      { value: "dark" as ThemeMode, label: "Dark" },
+                      { value: "light" as ThemeMode, label: "Light" }
+                    ]}
+                    value={blueprintMode}
+                    onChange={setBlueprintMode}
+                  />
                 ) : null}
 
-                <div className="inline-flex bg-code/70 p-0.5">
-                  {(
-                    [
-                      ["desktop", t("vpDesktop")],
-                      ["mobile", t("vpMobile")]
-                    ] as const
-                  ).map(([val, lbl]) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => setVp(val)}
-                      className={cn(
-                        "h-7 cursor-pointer px-2.5 text-[11.5px] transition-colors",
-                        vp === val
-                          ? "bg-elevated font-semibold text-ink"
-                          : "text-muted hover:text-ink"
-                      )}
-                    >
-                      {lbl}
-                    </button>
-                  ))}
-                </div>
+                <SegmentedControl
+                  options={[
+                    { value: "desktop" as CaptureViewport, label: t("vpDesktop") },
+                    { value: "mobile" as CaptureViewport, label: t("vpMobile") }
+                  ]}
+                  value={vp}
+                  onChange={setVp}
+                />
               </div>
             ) : null}
           </div>

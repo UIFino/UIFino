@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowUpRight, Check, Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Badge } from "@/components/primitives/badge";
 import { Button } from "@/components/primitives/button";
 import type { CatalogBrandSpec, CatalogPageSectionAnatomy } from "@/core/design-md";
 import { useClipboard } from "@/hooks/use-clipboard";
@@ -77,20 +78,18 @@ export function CatalogRightInspector({
   ] as const;
 
   return (
-    <aside className="bg-surface/35 xl:sticky xl:top-[calc(var(--header-h)+44px)] xl:h-[calc(100dvh-var(--header-h)-44px)] xl:overflow-y-auto xl:border-l xl:border-hairline">
-      {/* 1. Brand Title + Primary Delivery Actions (borderless soft-surface controls) */}
-      <div className="grid gap-3 px-4 pt-4 pb-5">
+    <aside className="border-t border-hairline bg-surface/40 xl:sticky xl:top-[calc(var(--header-h)+44px)] xl:h-[calc(100dvh-var(--header-h)-44px)] xl:overflow-y-auto xl:border-t-0 xl:border-l">
+      {/* Region 1: Brand Title + Primary Delivery Actions */}
+      <div className="grid gap-3 border-b border-hairline p-4">
         <div className="flex items-start justify-between gap-2">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="m-0 text-lg font-semibold tracking-tight text-ink">
                 {item.name}
               </h1>
-              <span className="bg-elevated px-2 py-0.5 text-[11px] font-medium text-muted">
-                {catLabel}
-              </span>
+              <Badge>{catLabel}</Badge>
             </div>
-            <div className="mt-1 font-mono text-[11px] text-subtle">
+            <div className="mt-1 font-mono text-[11px] text-muted">
               {item.kind === "app" ? (isZh ? "移动应用" : "App") : isZh ? "桌面网站" : "Website"} ·{" "}
               {item.slug}
             </div>
@@ -102,7 +101,7 @@ export function CatalogRightInspector({
               target="_blank"
               rel="noreferrer"
               title={t("visitSite")}
-              className="inline-flex h-7 w-7 items-center justify-center bg-elevated text-muted transition-colors hover:bg-gray-100 hover:text-ink"
+              className="inline-flex h-7 w-7 items-center justify-center border border-hairline bg-canvas text-muted transition-colors hover:border-accent-border hover:text-ink"
             >
               <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
@@ -115,28 +114,20 @@ export function CatalogRightInspector({
         </Button>
 
         <div className="grid grid-cols-3 gap-1.5">
-          <button
-            type="button"
-            onClick={onCopyCss}
-            className="h-8 cursor-pointer bg-elevated/80 px-2 text-xs font-medium text-ink transition-colors hover:bg-gray-100"
-          >
+          <Button variant="hairline" size="xs" className="h-8" onClick={onCopyCss}>
             {t("copyCss")}
-          </button>
-          <button
-            type="button"
-            onClick={onDownloadMd}
-            className="h-8 cursor-pointer bg-elevated/80 px-2 text-xs font-medium text-ink transition-colors hover:bg-gray-100"
-          >
+          </Button>
+          <Button variant="hairline" size="xs" className="h-8" onClick={onDownloadMd}>
             {t("downloadMd")}
-          </button>
+          </Button>
           <Button variant="contrast" size="xs" className="h-8" onClick={onApplySkin}>
             {t("applyInWorkbench")}
           </Button>
         </div>
       </div>
 
-      {/* 2. Concise Overview + Clean Text Fit Lines (no mini-box clutter) */}
-      <div className="grid gap-2.5 px-4 pb-5">
+      {/* Region 2: Concise Overview + Fit Lines */}
+      <div className="grid gap-2.5 border-b border-hairline p-4">
         <p className="m-0 text-[12.5px] leading-[1.55] text-body">
           {isZh ? item.summaryZh : item.summaryEn}
         </p>
@@ -157,8 +148,8 @@ export function CatalogRightInspector({
         </div>
       </div>
 
-      {/* 3. Seamless Color Strip + Key Tokens */}
-      <div className="grid gap-3 bg-surface/55 px-4 py-4">
+      {/* Region 3: Seamless Color Strip + Key Tokens */}
+      <div className="grid gap-3 border-b border-hairline p-4">
         <div className="flex items-center justify-between">
           <span className="eyebrow-mono">DESIGN TOKENS</span>
           <span className="font-mono text-[10px] text-subtle">
@@ -166,17 +157,16 @@ export function CatalogRightInspector({
           </span>
         </div>
 
-        {/* Continuous flush color ribbon without 7 boxy borders */}
-        <div className="grid grid-cols-7 overflow-hidden">
+        <div className="grid grid-cols-7 border border-hairline bg-canvas">
           {swatches.map(([label, hex]) => (
             <button
               key={label}
               type="button"
               title={`${label}: ${hex}`}
               onClick={() => void copy(hex, `Copied ${label}: ${hex}`)}
-              className="group flex cursor-pointer flex-col items-center gap-1 transition-opacity hover:opacity-85"
+              className="group flex cursor-pointer flex-col items-center gap-1 pb-1 transition-opacity hover:opacity-85"
             >
-              <span className="block h-7 w-full" style={{ backgroundColor: hex }} />
+              <span className="block h-6 w-full" style={{ backgroundColor: hex }} />
               <span className="w-full truncate text-center font-mono text-[8.5px] text-muted group-hover:text-ink">
                 {hex.replace("#", "")}
               </span>
@@ -184,7 +174,7 @@ export function CatalogRightInspector({
           ))}
         </div>
 
-        <div className="grid gap-1.5 pt-1 font-mono text-[11px] text-muted">
+        <div className="grid gap-1.5 pt-0.5 font-mono text-[11px] text-muted">
           <div className="flex items-center justify-between gap-2">
             <span>{isZh ? "原站字体" : "Font"}</span>
             <span className="truncate text-ink">{item.fonts.display}</span>
@@ -202,10 +192,10 @@ export function CatalogRightInspector({
         </div>
       </div>
 
-      {/* 4. Line-Free Section Anatomy Index */}
+      {/* Region 4: Section Anatomy Index */}
       {showAnatomy && anatomy.length > 0 ? (
-        <div className="grid gap-1.5 px-3 py-4">
-          <div className="flex items-center justify-between px-1.5 pb-1">
+        <div className="grid">
+          <div className="flex items-center justify-between border-b border-hairline px-4 py-2.5">
             <span className="eyebrow-mono text-ink">{t("anatomyTitle")}</span>
             <div className="flex items-center gap-2">
               {selectedIdx !== null ? (
@@ -217,11 +207,11 @@ export function CatalogRightInspector({
                   {isZh ? "取消框选" : "Clear"}
                 </button>
               ) : null}
-              <span className="font-mono text-[10.5px] text-subtle">{activePagePath}</span>
+              <Badge>{activePagePath}</Badge>
             </div>
           </div>
 
-          <div className="grid gap-0.5">
+          <div className="divide-y divide-hairline">
             {anatomy.map((sec, idx) => {
               const isSelected = selectedIdx === idx;
               const isHovered = hoveredIdx === idx && !isSelected;
@@ -245,7 +235,7 @@ export function CatalogRightInspector({
                     }
                   }}
                   className={cn(
-                    "group cursor-pointer border-l-2 px-2.5 py-2 text-left transition-colors",
+                    "group cursor-pointer border-l-2 px-4 py-2.5 text-left transition-colors",
                     isSelected
                       ? "border-l-[#FF4D4F] bg-elevated"
                       : isHovered

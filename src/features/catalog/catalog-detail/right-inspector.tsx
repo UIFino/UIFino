@@ -1,26 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowUpRight, Check, Copy } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/primitives/badge";
 import { Button } from "@/components/primitives/button";
-import type { CatalogBrandSpec, CatalogPageSectionAnatomy } from "@/core/design-md";
+import { SegmentedControl } from "@/components/primitives/segmented";
+import type { CatalogBrandSpec } from "@/core/design-md";
+import type { ThemeMode } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
-import { cn } from "@/lib/cn";
 import { CATALOG_CATEGORY_LABELS } from "@/registry/catalog";
 
 export interface CatalogRightInspectorProps {
   readonly item: CatalogBrandSpec;
   readonly isZh: boolean;
-  readonly anatomy: readonly CatalogPageSectionAnatomy[];
-  readonly activePagePath: string;
-  readonly showAnatomy: boolean;
-  readonly selectedIdx: number | null;
-  readonly hoveredIdx: number | null;
-  readonly onSelectSection: (idx: number) => void;
-  readonly onHoverChange: (idx: number | null) => void;
-  readonly onClearSelection: () => void;
   readonly onCopyMd: () => void;
   readonly onCopyCss: () => void;
   readonly onDownloadMd: () => void;
@@ -30,14 +23,6 @@ export interface CatalogRightInspectorProps {
 export function CatalogRightInspector({
   item,
   isZh,
-  anatomy,
-  activePagePath,
-  showAnatomy,
-  selectedIdx,
-  hoveredIdx,
-  onSelectSection,
-  onHoverChange,
-  onClearSelection,
   onCopyMd,
   onCopyCss,
   onDownloadMd,
@@ -45,8 +30,14 @@ export function CatalogRightInspector({
 }: CatalogRightInspectorProps) {
   const t = useTranslations("catalog");
   const { copy } = useClipboard();
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
+  const [paletteMode, setPaletteMode] = useState<ThemeMode>(item.defaultTheme ?? "dark");
+
+  useEffect(() => {
+    setPaletteMode(item.defaultTheme ?? "dark");
+  }, [item.id, item.defaultTheme]);
+
+  const activePalette = paletteMode === "light" ? item.light : item.dark;
   const siteHref =
     item.siteUrl ?? (item.kind === "website" ? `https://${item.slug}` : undefined);
   const catLabel = isZh
@@ -68,14 +59,22 @@ export function CatalogRightInspector({
     : (item.notForEn ?? ["Flash Sales", "Tabloid Portals"]);
 
   const swatches = [
-    ["Canvas", item.dark.canvas],
-    ["Surface", item.dark.surface],
-    ["Elevated", item.dark.elevated],
-    ["Border", item.dark.border],
-    ["Ink", item.dark.ink],
-    ["Muted", item.dark.muted],
-    ["Accent", item.dark.accent]
+    [isZh ? "画布" : "Bg", activePalette.canvas],
+    [isZh ? "卡片" : "Card", activePalette.surface],
+    [isZh ? "浮层" : "Elev", activePalette.elevated],
+    [isZh ? "描边" : "Line", activePalette.border],
+    [isZh ? "主字" : "Ink", activePalette.ink],
+    [isZh ? "次字" : "Muted", activePalette.muted],
+    [isZh ? "焦点" : "Accent", activePalette.accent]
   ] as const;
+
+  const openAlt = item.openFontAlt ?? "Inter + JetBrains Mono";
+  const displayFontLine =
+    item.fonts.body && item.fonts.body !== item.fonts.display
+      ? `${item.fonts.display} / ${item.fonts.body}`
+      : item.fonts.display;
+
+  const openAltCss = `/* ${item.name} Free Open-Source Font Stack */\n--font-sans: "${openAlt.split("+")[0]?.trim() || "Inter"}", system-ui, sans-serif;\n--font-mono: "${openAlt.split("+")[1]?.trim() || "JetBrains Mono"}", ui-monospace, monospace;`;
 
   return (
     <aside className="border-t border-hairline bg-surface/40 xl:sticky xl:top-[calc(var(--header-h)+44px)] xl:h-[calc(100dvh-var(--header-h)-44px)] xl:overflow-y-auto xl:border-t-0 xl:border-l">
@@ -132,7 +131,7 @@ export function CatalogRightInspector({
           {isZh ? item.summaryZh : item.summaryEn}
         </p>
 
-        <div className="grid gap-1 text-[11.5px]">
+        <div className="grid gap-1.5 text-[11.5px]">
           <div className="flex items-baseline gap-2">
             <span className="font-mono shrink-0 font-semibold text-accent-text">
               {t("goodForLabel")}
@@ -140,7 +139,7 @@ export function CatalogRightInspector({
             <span className="text-ink">{goodFor.join(" · ")}</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-mono shrink-0 font-semibold text-subtle">
+            <span className="font-mono shrink-0 font-semibold text-[#FF5C5C]">
               {t("notForLabel")}
             </span>
             <span className="text-muted">{notFor.join(" · ")}</span>
@@ -148,13 +147,19 @@ export function CatalogRightInspector({
         </div>
       </div>
 
-      {/* Region 3: Seamless Color Strip + Key Tokens */}
+      {/* Region 3: Color Ribbon (Anti-melt inset stroke + 2-char part label + Dark/Light toggle) */}
       <div className="grid gap-3 border-b border-hairline p-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <span className="eyebrow-mono">DESIGN TOKENS</span>
-          <span className="font-mono text-[10px] text-subtle">
-            {isZh ? "点击色块复制" : "Click swatch"}
-          </span>
+          <SegmentedControl
+            options={[
+              { value: "dark" as ThemeMode, label: isZh ? "深" : "Dark" },
+              { value: "light" as ThemeMode, label: isZh ? "浅" : "Light" }
+            ]}
+            value={paletteMode}
+            onChange={setPaletteMode}
+            itemClassName="h-[24px] px-2 text-[11px]"
+          />
         </div>
 
         <div className="grid grid-cols-7 border border-hairline bg-canvas">
@@ -164,135 +169,67 @@ export function CatalogRightInspector({
               type="button"
               title={`${label}: ${hex}`}
               onClick={() => void copy(hex, `Copied ${label}: ${hex}`)}
-              className="group flex cursor-pointer flex-col items-center gap-1 pb-1 transition-opacity hover:opacity-85"
+              className="group flex cursor-pointer flex-col items-center pb-1.5 transition-opacity hover:opacity-90"
             >
-              <span className="block h-6 w-full" style={{ backgroundColor: hex }} />
-              <span className="w-full truncate text-center font-mono text-[8.5px] text-muted group-hover:text-ink">
+              <span
+                className={
+                  paletteMode === "dark"
+                    ? "block h-7 w-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]"
+                    : "block h-7 w-full shadow-[inset_0_0_0_1px_rgba(15,23,42,0.10)]"
+                }
+                style={{ backgroundColor: hex }}
+              />
+              <span className="mt-1 text-[10px] font-medium text-ink">{label}</span>
+              <span className="w-full truncate text-center font-mono text-[8.5px] text-muted group-hover:text-accent-text">
                 {hex.replace("#", "")}
               </span>
             </button>
           ))}
         </div>
 
-        <div className="grid gap-1.5 pt-0.5 font-mono text-[11px] text-muted">
-          <div className="flex items-center justify-between gap-2">
-            <span>{isZh ? "原站字体" : "Font"}</span>
-            <span className="truncate text-ink">{item.fonts.display}</span>
+        <div className="font-mono text-[10px] text-subtle">
+          {isZh
+            ? `默认展示原站主调（${(item.defaultTheme ?? "dark") === "dark" ? "深色优先" : "浅色优先"}），点击色块复制 Hex`
+            : `Showing native ${(item.defaultTheme ?? "dark")} theme · Click any swatch to copy`}
+        </div>
+      </div>
+
+      {/* Region 4: Clean 3-Row Typography + Radius */}
+      <div className="grid gap-2.5 p-4">
+        <div className="eyebrow-mono">{isZh ? "字体排印与几何" : "TYPOGRAPHY & GEOMETRY"}</div>
+
+        <div className="grid gap-2 font-mono text-[11.5px]">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="shrink-0 text-muted">{isZh ? "标题 / 正文" : "Display / Body"}</span>
+            <span className="truncate text-right text-ink">
+              {displayFontLine} · {item.fonts.tracking}
+            </span>
           </div>
-          {item.openFontAlt ? (
-            <div className="flex items-center justify-between gap-2">
-              <span>{isZh ? "开源平替" : "Open Alt"}</span>
-              <span className="truncate text-accent-text">{item.openFontAlt}</span>
-            </div>
-          ) : null}
+
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="shrink-0 text-muted">{isZh ? "数据 / 等宽" : "Monospace"}</span>
+            <span className="truncate text-right text-ink">{item.fonts.mono}</span>
+          </div>
+
           <div className="flex items-center justify-between gap-2">
-            <span>{isZh ? "默认圆角" : "Radius"}</span>
+            <span className="shrink-0 text-muted">{isZh ? "开源平替" : "Open Alt"}</span>
+            <button
+              type="button"
+              onClick={() => void copy(openAltCss, `Copied ${item.name} open-source font CSS`)}
+              className="inline-flex min-w-0 cursor-pointer items-center gap-1 text-right text-accent-text hover:underline"
+              title={isZh ? "点击复制开源平替 font-family CSS" : "Copy open-source font-family CSS"}
+            >
+              <span className="truncate">{openAlt}</span>
+              <Copy className="h-3 w-3 shrink-0" />
+            </button>
+          </div>
+
+          <div className="flex items-baseline justify-between gap-2 border-t border-hairline pt-2">
+            <span className="shrink-0 text-muted">{isZh ? "默认圆角" : "Default Radius"}</span>
             <span className="text-ink">{item.defaultRadius}</span>
           </div>
         </div>
       </div>
-
-      {/* Region 4: Section Anatomy Index */}
-      {showAnatomy && anatomy.length > 0 ? (
-        <div className="grid">
-          <div className="flex items-center justify-between border-b border-hairline px-4 py-2.5">
-            <span className="eyebrow-mono text-ink">{t("anatomyTitle")}</span>
-            <div className="flex items-center gap-2">
-              {selectedIdx !== null ? (
-                <button
-                  type="button"
-                  onClick={onClearSelection}
-                  className="cursor-pointer font-mono text-[11px] text-[#FF4D4F] hover:underline"
-                >
-                  {isZh ? "取消框选" : "Clear"}
-                </button>
-              ) : null}
-              <Badge>{activePagePath}</Badge>
-            </div>
-          </div>
-
-          <div className="divide-y divide-hairline">
-            {anatomy.map((sec, idx) => {
-              const isSelected = selectedIdx === idx;
-              const isHovered = hoveredIdx === idx && !isSelected;
-              const copyId = `${activePagePath}-${sec.index}`;
-              const copyPayload = isZh
-                ? `${sec.index} ${sec.nameZh}（${sec.layoutZh}）：${sec.noteZh}`
-                : `${sec.index} ${sec.nameEn} (${sec.layoutEn}): ${sec.noteEn}`;
-
-              return (
-                <div
-                  key={sec.index + sec.nameEn}
-                  onMouseEnter={() => onHoverChange(idx)}
-                  onMouseLeave={() => onHoverChange(null)}
-                  onClick={() => onSelectSection(idx)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      onSelectSection(idx);
-                    }
-                  }}
-                  className={cn(
-                    "group cursor-pointer border-l-2 px-4 py-2.5 text-left transition-colors",
-                    isSelected
-                      ? "border-l-[#FF4D4F] bg-elevated"
-                      : isHovered
-                        ? "border-l-[#FF4D4F]/50 bg-surface-hover"
-                        : "border-l-transparent hover:bg-surface-hover"
-                  )}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-[12.5px] font-medium text-ink">
-                      <span
-                        className={cn(
-                          "font-mono mr-2 text-[11px]",
-                          isSelected ? "text-[#FF4D4F]" : "text-accent-text"
-                        )}
-                      >
-                        {sec.index}
-                      </span>
-                      {isZh ? sec.nameZh : sec.nameEn}
-                    </span>
-
-                    <div className="flex shrink-0 items-center gap-1">
-                      <span className="font-mono text-[10px] text-subtle">
-                        {isZh ? sec.layoutZh : sec.layoutEn}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label="Copy primitive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          void copy(copyPayload, `${sec.index} ${isZh ? sec.nameZh : sec.nameEn}`);
-                          setCopiedKey(copyId);
-                          window.setTimeout(() => {
-                            setCopiedKey((prev) => (prev === copyId ? null : prev));
-                          }, 1400);
-                        }}
-                        className="inline-flex h-5 w-5 cursor-pointer items-center justify-center text-muted opacity-0 transition-opacity group-hover:opacity-100 hover:text-ink"
-                      >
-                        {copiedKey === copyId ? (
-                          <Check className="h-3 w-3 text-accent-text" />
-                        ) : (
-                          <Copy className="h-3 w-3" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  {isSelected ? (
-                    <p className="mt-1.5 text-[11.5px] leading-[1.48] text-muted">
-                      {isZh ? sec.noteZh : sec.noteEn}
-                    </p>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
     </aside>
   );
 }

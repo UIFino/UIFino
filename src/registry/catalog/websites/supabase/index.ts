@@ -5,6 +5,7 @@ export const supabaseSpec: CatalogBrandSpec = {
   slug: "supabase.com",
   name: "Supabase",
   kind: "website",
+  defaultTheme: "dark",
   platformLabel: "Web · Postgres Cloud",
   category: "DevTools",
   tags: ["devtools", "dark", "emerald", "code"],

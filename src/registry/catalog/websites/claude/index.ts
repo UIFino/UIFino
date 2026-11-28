@@ -5,6 +5,7 @@ export const claudeSpec: CatalogBrandSpec = {
   slug: "claude.ai",
   name: "Claude",
   kind: "website",
+  defaultTheme: "light",
   platformLabel: "Web · AI Workspace",
   category: "AI & LLM",
   tags: ["ai", "warm", "editorial", "serif", "minimal"],

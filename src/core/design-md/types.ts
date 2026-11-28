@@ -1,4 +1,4 @@
-import type { BrandSkinContract } from "@/core/tokens";
+import type { BrandSkinContract, ThemeMode } from "@/core/tokens";
 
 export type CatalogPlatformKind = "website" | "app";
 export type CatalogDomainCategory =
@@ -108,6 +108,7 @@ export interface CatalogBrandSpec extends BrandSkinContract {
   readonly slug: string;
   readonly siteUrl?: string;
   readonly kind: CatalogPlatformKind;
+  readonly defaultTheme?: ThemeMode;
   readonly platformLabel: string;
   readonly category: CatalogDomainCategory;
   readonly tags: readonly string[];

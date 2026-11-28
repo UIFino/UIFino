@@ -5,6 +5,7 @@ export const resendSpec: CatalogBrandSpec = {
   slug: "resend.com",
   name: "Resend",
   kind: "website",
+  defaultTheme: "dark",
   platformLabel: "Web · Email API",
   category: "DevTools",
   tags: ["dark", "devtools", "minimal", "code"],

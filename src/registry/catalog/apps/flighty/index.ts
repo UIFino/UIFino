@@ -5,6 +5,7 @@ export const flightySpec: CatalogBrandSpec = {
   slug: "flighty.ios",
   name: "Flighty",
   kind: "app",
+  defaultTheme: "dark",
   platformLabel: "iOS · Aviation",
   category: "Consumer & Travel",
   tags: ["mobile", "ios", "dark", "telemetry", "emerald"],

@@ -22,8 +22,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "高度 73px，20px 背景模糊配 8% 透明度细底边，右侧放置实心银白胶囊注册按钮。",
           noteEn: "73px height, blur(20px) backdrop, 1px rgba(255,255,255,0.08) bottom rule, silver-white pill CTA.",
           bounds: {
-            desktop: { topPct: 0, heightPct: 0.78 },
-            mobile: { topPct: 0, heightPct: 1.15 }
+            desktop: { topPct: 0, heightPct: 2.5 },
+            mobile: { topPct: 0, heightPct: 3.1 }
           }
         },
         {
@@ -36,7 +36,7 @@ export const linearScrapedData: CatalogScrapedData = {
           noteEn: "64px Inter Variable headline (510 weight, -1.4px tracking) above a framed dark workspace + Agent PR drawer.",
           bounds: {
             desktop: { topPct: 2.5, heightPct: 10.6 },
-            mobile: { topPct: 3.1, heightPct: 12.2 }
+            mobile: { topPct: 3.1, heightPct: 12.3 }
           }
         },
         {
@@ -48,8 +48,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "纯白单色客户标志居中横排，下方以细线线框插画呈现三列产品哲学。",
           noteEn: "Monochrome white customer logos followed by a 3-column architectural wireframe illustration grid.",
           bounds: {
-            desktop: { topPct: 13.1, heightPct: 12.2 },
-            mobile: { topPct: 15.4, heightPct: 16.5 }
+            desktop: { topPct: 13.1, heightPct: 12.39 },
+            mobile: { topPct: 15.4, heightPct: 16.59 }
           }
         },
         {
@@ -61,8 +61,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "上左 48px 章节标题、上右正文导语，下方并排叠放 Slack 对话流与看板视图卡片。",
           noteEn: "2-column header (48px title left, copy right) above layered Slack thread and issue board surfaces.",
           bounds: {
-            desktop: { topPct: 25.49, heightPct: 24.67 },
-            mobile: { topPct: 31.99, heightPct: 19.66 }
+            desktop: { topPct: 25.49, heightPct: 24.77 },
+            mobile: { topPct: 31.99, heightPct: 19.83 }
           }
         },
         {
@@ -74,8 +74,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "采用 Berkeley Mono 等宽字体渲染红绿行级代码差异与 PR 状态。",
           noteEn: "Renders syntax-highlighted code review diffs and agent task timelines in Berkeley Mono.",
           bounds: {
-            desktop: { topPct: 50.26, heightPct: 24.64 },
-            mobile: { topPct: 51.82, heightPct: 19.47 }
+            desktop: { topPct: 50.26, heightPct: 39.97 },
+            mobile: { topPct: 51.82, heightPct: 27.95 }
           }
         },
         {
@@ -111,8 +111,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "Free / Basic / Business / Enterprise 四列仅靠 1px 竖向细线分隔，主推档采用实心浅白按钮与靛紫开关。",
           noteEn: "4 equal columns separated by 1px vertical hairlines; Business tier highlighted strictly via inverse white CTA.",
           bounds: {
-            desktop: { topPct: 1.15, heightPct: 15.7 },
-            mobile: { topPct: 0.83, heightPct: 31.91 }
+            desktop: { topPct: 0, heightPct: 17.49 },
+            mobile: { topPct: 0, heightPct: 33.13 }
           }
         },
         {
@@ -124,8 +124,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "左侧功能分组名，右侧四列勾选圆点对齐，无花哨背景底色干扰。",
           noteEn: "Clean 5-column check/cross feature table grouped by Core, AI Agents, Integrations, and Security.",
           bounds: {
-            desktop: { topPct: 17.49, heightPct: 66.8 },
-            mobile: { topPct: 33.13, heightPct: 51.2 }
+            desktop: { topPct: 17.49, heightPct: 66.93 },
+            mobile: { topPct: 33.13, heightPct: 51.3 }
           }
         },
         {
@@ -161,8 +161,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "简洁大号标题配极淡分割线，直入最近版本动态。",
           noteEn: "Clean editorial header leading directly into chronological product releases.",
           bounds: {
-            desktop: { topPct: 0, heightPct: 1.2 },
-            mobile: { topPct: 0, heightPct: 1.2 }
+            desktop: { topPct: 0, heightPct: 1.5 },
+            mobile: { topPct: 0, heightPct: 1.5 }
           }
         },
         {
@@ -174,8 +174,8 @@ export const linearScrapedData: CatalogScrapedData = {
           noteZh: "左侧固定等宽发布日期，右侧展示 16:10 功能配图与精炼更新正文。",
           noteEn: "Left monospace release date rail paired with wide dark product screenshots and release notes.",
           bounds: {
-            desktop: { topPct: 1.2, heightPct: 96.6 },
-            mobile: { topPct: 1.2, heightPct: 94.8 }
+            desktop: { topPct: 1.5, heightPct: 98.5 },
+            mobile: { topPct: 1.5, heightPct: 98.5 }
           }
         }
       ]

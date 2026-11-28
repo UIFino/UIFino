@@ -7,6 +7,7 @@ export const linearSpec: CatalogBrandSpec = {
   siteUrl: "https://linear.app",
   name: "Linear",
   kind: "website",
+  defaultTheme: "dark",
   platformLabel: "Web · SaaS",
   category: "Productivity",
   tags: ["dark", "minimal", "saas", "hairline", "indigo"],

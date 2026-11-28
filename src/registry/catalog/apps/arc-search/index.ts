@@ -5,6 +5,7 @@ export const arcSearchSpec: CatalogBrandSpec = {
   slug: "arc-search.ios",
   name: "Arc Search",
   kind: "app",
+  defaultTheme: "dark",
   platformLabel: "iOS · AI Browser",
   category: "AI & LLM",
   tags: ["mobile", "ios", "ai", "thumb-nav", "clean"],

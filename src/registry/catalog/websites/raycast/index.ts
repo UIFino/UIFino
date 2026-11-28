@@ -5,6 +5,7 @@ export const raycastSpec: CatalogBrandSpec = {
   slug: "raycast.com",
   name: "Raycast",
   kind: "website",
+  defaultTheme: "dark",
   platformLabel: "Web · Launcher",
   category: "DevTools",
   tags: ["dark", "devtools", "cmdk", "crimson"],

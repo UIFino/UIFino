@@ -5,6 +5,7 @@ export const vercelSpec: CatalogBrandSpec = {
   slug: "vercel.com",
   name: "Vercel",
   kind: "website",
+  defaultTheme: "dark",
   platformLabel: "Web · Cloud Infra",
   category: "DevTools",
   tags: ["devtools", "monochrome", "grid", "sharp", "dark"],

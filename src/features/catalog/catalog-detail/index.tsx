@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Badge } from "@/components/primitives/badge";
+import { SearchInput } from "@/components/primitives/input";
 import { SegmentedControl } from "@/components/primitives/segmented";
 import {
   type CatalogBrandSpec,
@@ -14,7 +15,14 @@ import { useClipboard } from "@/hooks/use-clipboard";
 import { useDownload } from "@/hooks/use-download";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
-import { APP_CATALOG_ITEMS, WEBSITE_CATALOG_ITEMS } from "@/registry/catalog";
+import {
+  APP_CATALOG_ITEMS,
+  CATALOG_CATEGORIES,
+  CATALOG_CATEGORY_LABELS,
+  CATALOG_ITEMS,
+  type CatalogCategoryFilter,
+  WEBSITE_CATALOG_ITEMS
+} from "@/registry/catalog";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
 import { getFallbackBlueprintPages } from "./blueprint-preview";
 import { CatalogRightInspector } from "./right-inspector";
@@ -41,13 +49,18 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
   const [tab, setTab] = useState<CatalogDetailTab>("pages");
   const [activePageId, setActivePageId] = useState<string>(pageTabs[0]?.id ?? "home");
   const [vp, setVp] = useState<CaptureViewport>("desktop");
-  const [blueprintMode, setBlueprintMode] = useState<ThemeMode>("dark");
+  const [blueprintMode, setBlueprintMode] = useState<ThemeMode>(item.defaultTheme ?? "dark");
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [scrollTrigger, setScrollTrigger] = useState(0);
 
+  // Left brand rail search & domain filter
+  const [railSearch, setRailSearch] = useState("");
+  const [railCategory, setRailCategory] = useState<CatalogCategoryFilter>("All");
+
   useEffect(() => {
     setActivePageId(pageTabs[0]?.id ?? "home");
+    setBlueprintMode(item.defaultTheme ?? "dark");
     setSelectedIdx(null);
     setHoveredIdx(null);
   }, [item.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -79,6 +92,25 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
     setScrollTrigger((n) => n + 1);
   };
 
+  // Prev / Next cycling across CATALOG_ITEMS
+  const currentIndex = CATALOG_ITEMS.findIndex((b) => b.id === item.id);
+  const prevBrand =
+    CATALOG_ITEMS[(currentIndex - 1 + CATALOG_ITEMS.length) % CATALOG_ITEMS.length]!;
+  const nextBrand = CATALOG_ITEMS[(currentIndex + 1) % CATALOG_ITEMS.length]!;
+
+  // Filtered left rail items
+  const q = railSearch.trim().toLowerCase();
+  const matchesRail = (b: CatalogBrandSpec) => {
+    const catOk = railCategory === "All" || b.category === railCategory;
+    const qOk =
+      !q ||
+      `${b.name} ${b.slug} ${b.category} ${b.tags.join(" ")}`.toLowerCase().includes(q);
+    return catOk && qOk;
+  };
+
+  const filteredWeb = WEBSITE_CATALOG_ITEMS.filter(matchesRail);
+  const filteredApps = APP_CATALOG_ITEMS.filter(matchesRail);
+
   const viewTabs: readonly { readonly id: CatalogDetailTab; readonly label: string }[] = [
     { id: "pages", label: t("tabPages") },
     { id: "sections", label: t("tabSections") },
@@ -88,77 +120,119 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
 
   return (
     <div className="band-full">
-      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[196px_minmax(0,1fr)]">
-        {/* Left Narrow Brand Switcher Rail */}
+      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[208px_minmax(0,1fr)]">
+        {/* Left Narrow Brand Switcher Rail (No LIVE badges, with Search & Domain Filter) */}
         <aside className="order-2 border-t border-hairline bg-canvas px-2.5 py-3 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
           <Link
             href="/catalog"
-            className="font-mono-ui mb-2 flex items-center px-2 py-1.5 text-[11px] text-muted hover:bg-surface-hover hover:text-ink"
+            className="font-mono-ui mb-2.5 flex items-center px-2 py-1 text-[11px] text-muted hover:bg-surface-hover hover:text-ink"
           >
             ← {t("allCatalog")}
           </Link>
 
-          <div className="eyebrow-mono px-2 py-1.5">
-            {isZh ? "桌面网站" : "WEBSITES"}
-          </div>
-          {WEBSITE_CATALOG_ITEMS.map((w) => {
-            const active = w.id === item.id;
-            return (
-              <Link
-                key={w.id}
-                href={`/catalog/${w.id}`}
-                className={cn(
-                  "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
-                  active
-                    ? "bg-elevated font-semibold text-ink"
-                    : "text-muted hover:bg-surface-hover hover:text-ink"
-                )}
-              >
-                <span className="truncate">{w.name}</span>
-                <span className="flex items-center gap-1.5">
-                  {w.scraped ? (
-                    <Badge variant="accent" className="h-4 px-1 text-[9px]">
-                      LIVE
-                    </Badge>
-                  ) : null}
-                  <span
-                    className="inline-block h-2 w-2 shrink-0"
-                    style={{ backgroundColor: w.dark.accent }}
-                  />
-                </span>
-              </Link>
-            );
-          })}
+          <div className="mb-2.5 grid gap-1.5 px-1">
+            <SearchInput
+              value={railSearch}
+              onChange={(e) => setRailSearch(e.target.value)}
+              placeholder={isZh ? "搜品牌 / 标签…" : "Filter specs…"}
+              wrapperClassName="h-7 px-2"
+              className="text-[11.5px]"
+            />
 
-          <div className="eyebrow-mono px-2 pt-3 pb-1.5">
-            {isZh ? "移动应用" : "APPS"}
+            <select
+              aria-label={isZh ? "按行业领域筛选" : "Filter by domain"}
+              value={railCategory}
+              onChange={(e) => setRailCategory(e.target.value as CatalogCategoryFilter)}
+              className="h-7 w-full cursor-pointer border border-hairline bg-surface px-2 text-[11px] text-ink"
+            >
+              {CATALOG_CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {isZh ? CATALOG_CATEGORY_LABELS[c].zh : CATALOG_CATEGORY_LABELS[c].en}
+                </option>
+              ))}
+            </select>
           </div>
-          {APP_CATALOG_ITEMS.map((a) => {
-            const active = a.id === item.id;
-            return (
-              <Link
-                key={a.id}
-                href={`/catalog/${a.id}`}
-                className={cn(
-                  "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
-                  active
-                    ? "bg-elevated font-semibold text-ink"
-                    : "text-muted hover:bg-surface-hover hover:text-ink"
-                )}
+
+          {filteredWeb.length === 0 && filteredApps.length === 0 ? (
+            <div className="px-2 py-4 text-center text-[11.5px] text-muted">
+              <div>{isZh ? "没有匹配图鉴" : "No matches"}</div>
+              <button
+                type="button"
+                onClick={() => {
+                  setRailSearch("");
+                  setRailCategory("All");
+                }}
+                className="mt-1.5 cursor-pointer font-mono text-[11px] text-accent-text hover:underline"
               >
-                <span className="truncate">{a.name}</span>
-                <span
-                  className="inline-block h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: a.dark.accent }}
-                />
-              </Link>
-            );
-          })}
+                {isZh ? "重置筛选" : "Reset"}
+              </button>
+            </div>
+          ) : null}
+
+          {filteredWeb.length > 0 ? (
+            <>
+              <div className="eyebrow-mono px-2 py-1.5">
+                {isZh ? "桌面网站" : "WEBSITES"}
+              </div>
+              {filteredWeb.map((w) => {
+                const active = w.id === item.id;
+                const dotCol = (w.defaultTheme ?? "dark") === "light" ? w.light.accent : w.dark.accent;
+                return (
+                  <Link
+                    key={w.id}
+                    href={`/catalog/${w.id}`}
+                    className={cn(
+                      "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
+                      active
+                        ? "bg-elevated font-semibold text-ink"
+                        : "text-muted hover:bg-surface-hover hover:text-ink"
+                    )}
+                  >
+                    <span className="truncate">{w.name}</span>
+                    <span
+                      className="inline-block h-2 w-2 shrink-0"
+                      style={{ backgroundColor: dotCol }}
+                    />
+                  </Link>
+                );
+              })}
+            </>
+          ) : null}
+
+          {filteredApps.length > 0 ? (
+            <>
+              <div className="eyebrow-mono px-2 pt-3 pb-1.5">
+                {isZh ? "移动应用" : "APPS"}
+              </div>
+              {filteredApps.map((a) => {
+                const active = a.id === item.id;
+                const dotCol = (a.defaultTheme ?? "dark") === "light" ? a.light.accent : a.dark.accent;
+                return (
+                  <Link
+                    key={a.id}
+                    href={`/catalog/${a.id}`}
+                    className={cn(
+                      "flex items-center justify-between gap-2 px-2 py-1.5 text-[12px] transition-colors",
+                      active
+                        ? "bg-elevated font-semibold text-ink"
+                        : "text-muted hover:bg-surface-hover hover:text-ink"
+                    )}
+                  >
+                    <span className="truncate">{a.name}</span>
+                    <span
+                      className="inline-block h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: dotCol }}
+                    />
+                  </Link>
+                );
+              })}
+            </>
+          ) : null}
         </aside>
 
         {/* Center + Right Workspace */}
         <div className="order-1 min-w-0 lg:order-2">
-          {/* Top 44px Minimal Borderless Tab Bar (inspired by getdesign.md) */}
+          {/* Top 44px Control Strip + Prev/Next Brand Switcher */}
           <div className="sticky top-[var(--header-h)] z-20 flex min-h-[44px] flex-wrap items-center justify-between gap-3 border-b border-hairline bg-canvas px-4">
             <div className="flex flex-wrap items-center gap-1">
               {viewTabs.map((vt) => {
@@ -194,32 +268,54 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
               ) : null}
             </div>
 
-            {tab === "pages" ? (
-              <div className="flex items-center gap-2">
-                {scrapedPages.length === 0 ? (
+            <div className="flex items-center gap-2">
+              {tab === "pages" ? (
+                <>
+                  {scrapedPages.length === 0 ? (
+                    <SegmentedControl
+                      options={[
+                        { value: "dark" as ThemeMode, label: "Dark" },
+                        { value: "light" as ThemeMode, label: "Light" }
+                      ]}
+                      value={blueprintMode}
+                      onChange={setBlueprintMode}
+                    />
+                  ) : null}
+
                   <SegmentedControl
                     options={[
-                      { value: "dark" as ThemeMode, label: "Dark" },
-                      { value: "light" as ThemeMode, label: "Light" }
+                      { value: "desktop" as CaptureViewport, label: t("vpDesktop") },
+                      { value: "mobile" as CaptureViewport, label: t("vpMobile") }
                     ]}
-                    value={blueprintMode}
-                    onChange={setBlueprintMode}
+                    value={vp}
+                    onChange={setVp}
                   />
-                ) : null}
+                </>
+              ) : null}
 
-                <SegmentedControl
-                  options={[
-                    { value: "desktop" as CaptureViewport, label: t("vpDesktop") },
-                    { value: "mobile" as CaptureViewport, label: t("vpMobile") }
-                  ]}
-                  value={vp}
-                  onChange={setVp}
-                />
+              {/* Previous / Next Brand Switcher */}
+              <div className="inline-flex items-stretch border border-hairline bg-code">
+                <Link
+                  href={`/catalog/${prevBrand.id}`}
+                  title={isZh ? `上一套：${prevBrand.name}` : `Previous: ${prevBrand.name}`}
+                  aria-label={`Previous: ${prevBrand.name}`}
+                  className="inline-flex h-[30px] w-[30px] items-center justify-center border-r border-hairline text-muted transition-colors hover:bg-surface-hover hover:text-ink"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  href={`/catalog/${nextBrand.id}`}
+                  title={isZh ? `下一套：${nextBrand.name}` : `Next: ${nextBrand.name}`}
+                  aria-label={`Next: ${nextBrand.name}`}
+                  className="inline-flex h-[30px] w-[30px] items-center justify-center text-muted transition-colors hover:bg-surface-hover hover:text-ink"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
-            ) : null}
+            </div>
           </div>
 
-          {/* 100% Edge-to-Edge Visual Stage + Concise Sticky Inspector */}
+          {/* 100% Edge-to-Edge Visual Stage (with Floating Right-Edge Directory) + Concise Sticky Inspector */}
           <div className="grid grid-cols-1 items-start xl:grid-cols-[minmax(0,1fr)_340px]">
             <div className="min-w-0">
               {tab === "pages" ? (
@@ -228,12 +324,15 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
                   isZh={isZh}
                   currentPage={currentScrapedPage}
                   activePageId={activePageId}
+                  activePagePath={activePagePath}
+                  anatomy={activeAnatomy}
                   vp={vp}
                   blueprintMode={blueprintMode}
                   selectedIdx={selectedIdx}
                   hoveredIdx={hoveredIdx}
                   scrollTrigger={scrollTrigger}
-                  onSelectFromImage={handleSelectSection}
+                  onSelectSection={handleSelectSection}
+                  onClearSelection={() => setSelectedIdx(null)}
                   onHoverChange={setHoveredIdx}
                 />
               ) : (
@@ -252,14 +351,6 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
             <CatalogRightInspector
               item={item}
               isZh={isZh}
-              anatomy={activeAnatomy}
-              activePagePath={activePagePath}
-              showAnatomy={tab === "pages"}
-              selectedIdx={selectedIdx}
-              hoveredIdx={hoveredIdx}
-              onSelectSection={handleSelectSection}
-              onHoverChange={setHoveredIdx}
-              onClearSelection={() => setSelectedIdx(null)}
               onCopyMd={() => void copy(rawMd, `Copied ${item.name} DESIGN.md`)}
               onCopyCss={() => void copy(rawCss, `Copied ${item.name} CSS tokens`)}
               onDownloadMd={() => downloadText(`${item.id}-DESIGN.md`, rawMd)}

@@ -5,6 +5,7 @@ export const lumaAppSpec: CatalogBrandSpec = {
   slug: "lu.ma.ios",
   name: "Luma",
   kind: "app",
+  defaultTheme: "dark",
   platformLabel: "iOS & Web · Events",
   category: "Content & Community",
   tags: ["mobile", "clean", "cards", "minimal"],

@@ -5,6 +5,7 @@ export const mercuryAppSpec: CatalogBrandSpec = {
   slug: "mercury.ios",
   name: "Mercury Banking",
   kind: "app",
+  defaultTheme: "light",
   platformLabel: "iOS · Treasury",
   category: "Fintech",
   tags: ["mobile", "fintech", "minimal", "light"],

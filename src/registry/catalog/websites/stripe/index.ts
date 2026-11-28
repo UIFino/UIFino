@@ -5,6 +5,7 @@ export const stripeSpec: CatalogBrandSpec = {
   slug: "stripe.com",
   name: "Stripe",
   kind: "website",
+  defaultTheme: "light",
   platformLabel: "Web · Payments",
   category: "Fintech",
   tags: ["fintech", "clean", "pricing", "light", "indigo"],

@@ -5,6 +5,7 @@ export const notionSpec: CatalogBrandSpec = {
   slug: "notion.so",
   name: "Notion",
   kind: "website",
+  defaultTheme: "light",
   platformLabel: "Web · Docs & Wiki",
   category: "Productivity",
   tags: ["light", "minimal", "productivity", "clean"],

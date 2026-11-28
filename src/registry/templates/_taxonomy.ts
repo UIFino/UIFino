@@ -1,3 +1,6 @@
+import type { ComponentType } from "react";
+import type { ThemeMode } from "@/core/tokens";
+
 export type TemplateKind = "starter" | "page";
 export type TemplateKindFilter = "all" | TemplateKind;
 
@@ -16,6 +19,48 @@ export type TemplateScene =
   | "settings";
 
 export type TemplateSceneFilter = "all" | TemplateScene;
+
+export type SandboxRouteKind =
+  "landing" | "pricing" | "docs" | "changelog" | "login" | "dashboard" | "chat" | "settings";
+
+export interface TemplateRoutePageSpec {
+  readonly path: string;
+  readonly labelZh: string;
+  readonly labelEn: string;
+  readonly summaryZh: string;
+  readonly summaryEn: string;
+  readonly kind?: SandboxRouteKind;
+}
+
+export interface TemplateIncludedBlock {
+  readonly id: string;
+  readonly href: string;
+  readonly nameZh: string;
+  readonly nameEn: string;
+  readonly roleZh: string;
+  readonly roleEn: string;
+}
+
+export interface TemplateDetailBundle {
+  readonly goodForZh: readonly string[];
+  readonly goodForEn: readonly string[];
+  readonly notForZh: readonly string[];
+  readonly notForEn: readonly string[];
+  readonly routePages: readonly TemplateRoutePageSpec[];
+  readonly includedBlocks: readonly TemplateIncludedBlock[];
+  readonly fontDisplay: string;
+  readonly fontBody: string;
+  readonly fontMono: string;
+  readonly licenseNoteZh: string;
+  readonly licenseNoteEn: string;
+  readonly directoryTree: string;
+  readonly cssVariables: string;
+  readonly aiPrompt: string;
+}
+
+export type TemplateDetailOverride = Partial<
+  Omit<TemplateDetailBundle, "cssVariables" | "aiPrompt">
+>;
 
 export const STARTER_SCENES: readonly TemplateScene[] = [
   "saas",
@@ -81,4 +126,13 @@ export interface StarterTemplateSpec {
   readonly routes: readonly string[];
   readonly descEn: string;
   readonly descZh: string;
+  readonly SandboxComponent?: ComponentType<{
+    readonly activePath: string;
+    readonly mode: ThemeMode;
+    readonly isZh: boolean;
+  }>;
+  readonly ThumbnailComponent?: ComponentType<{
+    readonly mode: ThemeMode;
+  }>;
+  readonly detailOverride?: TemplateDetailOverride;
 }

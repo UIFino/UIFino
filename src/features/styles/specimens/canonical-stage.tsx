@@ -20,6 +20,7 @@ export interface LiveStyleCanonicalStageProps {
   readonly template?: StyleStageTemplate;
   readonly radiusOverride?: RadiusStop;
   readonly fullBleed?: boolean;
+  readonly preferGeneric?: boolean;
 }
 
 export function LiveStyleCanonicalStage({
@@ -28,10 +29,30 @@ export function LiveStyleCanonicalStage({
   isZh,
   template = "dashboard",
   radiusOverride,
-  fullBleed = true
+  fullBleed = true,
+  preferGeneric = false
 }: LiveStyleCanonicalStageProps) {
   const p = resolveStylePlaygroundPhysics(style, mode, radiusOverride);
   const { palette } = p;
+  const CustomShowcase = !preferGeneric ? style.Showcase : undefined;
+
+  if (CustomShowcase) {
+    return (
+      <div
+        className={cn(
+          "relative min-h-[560px] overflow-hidden transition-colors duration-200",
+          fullBleed ? "" : "border-hairline border"
+        )}
+        style={{
+          backgroundColor: palette.canvas,
+          color: palette.ink,
+          fontFamily: p.fontBodyCss
+        }}
+      >
+        <CustomShowcase physics={p} isZh={isZh} />
+      </div>
+    );
+  }
 
   const cardStyle: CSSProperties = {
     backgroundColor: p.surfaceAlphaBg,

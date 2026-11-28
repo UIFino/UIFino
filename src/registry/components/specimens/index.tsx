@@ -24,10 +24,7 @@ import {
   SpotlightCardSpecimen,
   StatsKpiSpecimen
 } from "./extended-specimens";
-import {
-  SplitCliOrEditorialHeroSpecimen,
-  TelemetryHeroSpecimen
-} from "./hero-specimens";
+import { SplitCliOrEditorialHeroSpecimen, TelemetryHeroSpecimen } from "./hero-specimens";
 import { MotionLabSpecimen } from "./page-motion-specimens";
 
 export { BlockStateStage, CategoryMiniStack };
@@ -37,6 +34,7 @@ export interface AssetStageProps {
   readonly tokens: ResolvedWorkbenchTokens;
   readonly viewport?: ViewportSize;
   readonly compact?: boolean;
+  readonly stateView?: boolean;
   readonly replayKey?: number;
 }
 
@@ -45,8 +43,22 @@ export function AssetStage({
   tokens,
   viewport = "desktop",
   compact = false,
+  stateView = false,
   replayKey = 0
 }: AssetStageProps) {
+  if (item.DemoComponent) {
+    const CustomDemo = item.DemoComponent;
+    return (
+      <CustomDemo
+        tokens={tokens}
+        viewport={viewport}
+        compact={compact}
+        stateView={stateView}
+        replayKey={replayKey}
+      />
+    );
+  }
+
   const isMobile = !compact && viewport === "mobile";
   const shared = { item, tokens, isMobile, compact, replayKey };
 

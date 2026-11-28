@@ -54,9 +54,24 @@ function renderRouteBody(
 ) {
   if (kind === "pricing") {
     const tiers = [
-      { name: "Starter", price: billingYearly ? "$0" : "$0", desc: isZh ? "个人开发者与开源" : "Hobby & Open Source", featured: false },
-      { name: "Pro Team", price: billingYearly ? "$24" : "$29", desc: isZh ? "无限团队成员与日志" : "Unlimited seats & logs", featured: true },
-      { name: "Enterprise", price: billingYearly ? "$199" : "$249", desc: isZh ? "私有化与 SSO" : "Custom SLA & SAML SSO", featured: false }
+      {
+        name: "Starter",
+        price: billingYearly ? "$0" : "$0",
+        desc: isZh ? "个人开发者与开源" : "Hobby & Open Source",
+        featured: false
+      },
+      {
+        name: "Pro Team",
+        price: billingYearly ? "$24" : "$29",
+        desc: isZh ? "无限团队成员与日志" : "Unlimited seats & logs",
+        featured: true
+      },
+      {
+        name: "Enterprise",
+        price: billingYearly ? "$199" : "$249",
+        desc: isZh ? "私有化与 SSO" : "Custom SLA & SAML SSO",
+        featured: false
+      }
     ];
     return (
       <div className="grid gap-4">
@@ -79,7 +94,13 @@ function renderRouteBody(
               color: c.accent
             }}
           >
-            {billingYearly ? (isZh ? "已切年付 (-20%)" : "Yearly (-20%)") : (isZh ? "按月计费 · 切年付" : "Monthly · Switch Yearly")}
+            {billingYearly
+              ? isZh
+                ? "已切年付 (-20%)"
+                : "Yearly (-20%)"
+              : isZh
+                ? "按月计费 · 切年付"
+                : "Monthly · Switch Yearly"}
           </button>
         </div>
         <div className={cn("grid gap-3", isMobile ? "grid-cols-1" : "grid-cols-3")}>
@@ -93,18 +114,27 @@ function renderRouteBody(
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold" style={{ color: c.ink }}>{tier.name}</span>
+                <span className="text-xs font-semibold" style={{ color: c.ink }}>
+                  {tier.name}
+                </span>
                 {tier.featured ? (
-                  <span className="px-1.5 py-0.5 font-mono text-[10px]" style={{ backgroundColor: c.accent, color: c.accentFg }}>
+                  <span
+                    className="px-1.5 py-0.5 font-mono text-[10px]"
+                    style={{ backgroundColor: c.accent, color: c.accentFg }}
+                  >
                     PRO
                   </span>
                 ) : null}
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums" style={{ color: c.ink }}>
                 {tier.price}
-                <span className="text-xs font-normal" style={{ color: c.muted }}>/mo</span>
+                <span className="text-xs font-normal" style={{ color: c.muted }}>
+                  /mo
+                </span>
               </div>
-              <div className="text-[11.5px]" style={{ color: c.muted }}>{tier.desc}</div>
+              <div className="text-[11.5px]" style={{ color: c.muted }}>
+                {tier.desc}
+              </div>
               <span
                 className="mt-1 inline-flex h-7 items-center justify-center font-mono text-[11px] font-medium"
                 style={{
@@ -124,17 +154,28 @@ function renderRouteBody(
 
   if (kind === "login") {
     return (
-      <div className="mx-auto grid w-full max-w-[360px] gap-3 border p-5" style={{ backgroundColor: c.surface, borderColor: c.border }}>
+      <div
+        className="mx-auto grid w-full max-w-[360px] gap-3 border p-5"
+        style={{ backgroundColor: c.surface, borderColor: c.border }}
+      >
         <div className="text-base font-semibold" style={{ color: c.ink }}>
           {isZh ? `登录 ${template.nameZh}` : `Sign in to ${template.name}`}
         </div>
         <div className="text-xs" style={{ color: c.muted }}>
-          {isZh ? "支持硬件 Passkey 与工作邮箱无密登录" : "Continue with hardware passkey or work SSO"}
+          {isZh
+            ? "支持硬件 Passkey 与工作邮箱无密登录"
+            : "Continue with hardware passkey or work SSO"}
         </div>
-        <div className="border px-3 py-2 font-mono text-xs" style={{ backgroundColor: c.canvas, borderColor: c.border, color: c.muted }}>
+        <div
+          className="border px-3 py-2 font-mono text-xs"
+          style={{ backgroundColor: c.canvas, borderColor: c.border, color: c.muted }}
+        >
           founder@acme.dev
         </div>
-        <div className="flex h-8 items-center justify-center text-xs font-semibold" style={{ backgroundColor: c.accent, color: c.accentFg }}>
+        <div
+          className="flex h-8 items-center justify-center text-xs font-semibold"
+          style={{ backgroundColor: c.accent, color: c.accentFg }}
+        >
           {isZh ? "使用 Passkey 密钥登录" : "Sign in with Passkey"}
         </div>
       </div>
@@ -143,18 +184,37 @@ function renderRouteBody(
 
   if (kind === "docs") {
     return (
-      <div className={cn("grid gap-4", isMobile ? "grid-cols-1" : "grid-cols-[170px_minmax(0,1fr)]")}>
-        <div className="grid content-start gap-1 border p-3 text-xs" style={{ backgroundColor: c.surface, borderColor: c.border }}>
-          <div className="font-mono text-[10.5px] uppercase" style={{ color: c.accent }}>Quickstart</div>
-          <div className="py-1 font-medium" style={{ color: c.ink }}>Installation</div>
-          <div className="py-1" style={{ color: c.muted }}>Authentication</div>
-          <div className="py-1" style={{ color: c.muted }}>CSS Tokens</div>
+      <div
+        className={cn("grid gap-4", isMobile ? "grid-cols-1" : "grid-cols-[170px_minmax(0,1fr)]")}
+      >
+        <div
+          className="grid content-start gap-1 border p-3 text-xs"
+          style={{ backgroundColor: c.surface, borderColor: c.border }}
+        >
+          <div className="font-mono text-[10.5px] uppercase" style={{ color: c.accent }}>
+            Quickstart
+          </div>
+          <div className="py-1 font-medium" style={{ color: c.ink }}>
+            Installation
+          </div>
+          <div className="py-1" style={{ color: c.muted }}>
+            Authentication
+          </div>
+          <div className="py-1" style={{ color: c.muted }}>
+            CSS Tokens
+          </div>
         </div>
-        <div className="grid gap-3 border p-4" style={{ backgroundColor: c.surface, borderColor: c.border }}>
+        <div
+          className="grid gap-3 border p-4"
+          style={{ backgroundColor: c.surface, borderColor: c.border }}
+        >
           <div className="text-base font-semibold" style={{ color: c.ink }}>
             {isZh ? "快速初始化模板工程" : "Install & Configure SDK"}
           </div>
-          <div className="border p-3 font-mono text-xs" style={{ backgroundColor: c.canvas, borderColor: c.border, color: c.accent }}>
+          <div
+            className="border p-3 font-mono text-xs"
+            style={{ backgroundColor: c.canvas, borderColor: c.border, color: c.accent }}
+          >
             $ npx uifino@latest create {template.id}
           </div>
           <div className="text-xs leading-relaxed" style={{ color: c.muted }}>
@@ -169,18 +229,38 @@ function renderRouteBody(
 
   if (kind === "changelog") {
     const releases = [
-      { v: "v2.4.0", date: "Nov 27", text: isZh ? "新增多路由交互沙盒与 Passkey 鉴权组件。" : "Added interactive multi-route sandbox & passkey flows." },
-      { v: "v2.3.1", date: "Nov 18", text: isZh ? "优化深浅双色变量对比度并对齐 1px 细边框。" : "Calibrated Light/Dark token contrast & 1px hairlines." }
+      {
+        v: "v2.4.0",
+        date: "Nov 27",
+        text: isZh
+          ? "新增多路由交互沙盒与 Passkey 鉴权组件。"
+          : "Added interactive multi-route sandbox & passkey flows."
+      },
+      {
+        v: "v2.3.1",
+        date: "Nov 18",
+        text: isZh
+          ? "优化深浅双色变量对比度并对齐 1px 细边框。"
+          : "Calibrated Light/Dark token contrast & 1px hairlines."
+      }
     ];
     return (
       <div className="grid gap-3">
         {releases.map((rel) => (
-          <div key={rel.v} className="grid gap-1.5 border p-4" style={{ backgroundColor: c.surface, borderColor: c.border }}>
+          <div
+            key={rel.v}
+            className="grid gap-1.5 border p-4"
+            style={{ backgroundColor: c.surface, borderColor: c.border }}
+          >
             <div className="flex items-center justify-between font-mono text-xs">
-              <span className="font-semibold" style={{ color: c.accent }}>{rel.v}</span>
+              <span className="font-semibold" style={{ color: c.accent }}>
+                {rel.v}
+              </span>
               <span style={{ color: c.muted }}>{rel.date}</span>
             </div>
-            <div className="text-xs" style={{ color: c.ink }}>{rel.text}</div>
+            <div className="text-xs" style={{ color: c.ink }}>
+              {rel.text}
+            </div>
           </div>
         ))}
       </div>
@@ -196,9 +276,20 @@ function renderRouteBody(
             ["P99 Latency", "14ms"],
             ["Uptime", "99.98%"]
           ].map(([k, v]) => (
-            <div key={k} className="border p-3" style={{ backgroundColor: c.surface, borderColor: c.border }}>
-              <div className="text-[11px]" style={{ color: c.muted }}>{k}</div>
-              <div className="mt-1 font-mono text-lg font-bold tabular-nums" style={{ color: c.ink }}>{v}</div>
+            <div
+              key={k}
+              className="border p-3"
+              style={{ backgroundColor: c.surface, borderColor: c.border }}
+            >
+              <div className="text-[11px]" style={{ color: c.muted }}>
+                {k}
+              </div>
+              <div
+                className="mt-1 font-mono text-lg font-bold tabular-nums"
+                style={{ color: c.ink }}
+              >
+                {v}
+              </div>
             </div>
           ))}
         </div>
@@ -221,14 +312,28 @@ function renderRouteBody(
   if (kind === "chat") {
     return (
       <div className="grid gap-3">
-        <div className="border p-3.5 text-xs" style={{ backgroundColor: c.surface, borderColor: c.border, color: c.ink }}>
-          <span className="font-mono text-[10.5px]" style={{ color: c.accent }}>USER: </span>
-          {isZh ? "把定价页切到 Linear 1px 细线质感" : "Refactor pricing tiers using 1px architectural hairlines"}
+        <div
+          className="border p-3.5 text-xs"
+          style={{ backgroundColor: c.surface, borderColor: c.border, color: c.ink }}
+        >
+          <span className="font-mono text-[10.5px]" style={{ color: c.accent }}>
+            USER:{" "}
+          </span>
+          {isZh
+            ? "把定价页切到 Linear 1px 细线质感"
+            : "Refactor pricing tiers using 1px architectural hairlines"}
         </div>
-        <div className="grid gap-2 border p-3.5 text-xs" style={{ backgroundColor: c.surface, borderColor: c.border }}>
-          <div className="font-mono text-[10.5px]" style={{ color: c.accent }}>TOOL_CALL · read DESIGN.md (12ms)</div>
+        <div
+          className="grid gap-2 border p-3.5 text-xs"
+          style={{ backgroundColor: c.surface, borderColor: c.border }}
+        >
+          <div className="font-mono text-[10.5px]" style={{ color: c.accent }}>
+            TOOL_CALL · read DESIGN.md (12ms)
+          </div>
           <div style={{ color: c.muted }}>
-            {isZh ? "已读取 8 项明暗色彩令牌并替换 PricingCard 组件。" : "Loaded 8 palette tokens & updated PricingCard borders."}
+            {isZh
+              ? "已读取 8 项明暗色彩令牌并替换 PricingCard 组件。"
+              : "Loaded 8 palette tokens & updated PricingCard borders."}
           </div>
         </div>
       </div>
@@ -238,7 +343,10 @@ function renderRouteBody(
   // Default Landing route
   return (
     <div className="grid gap-4">
-      <div className="grid gap-2.5 border p-5" style={{ backgroundColor: c.surface, borderColor: c.border }}>
+      <div
+        className="grid gap-2.5 border p-5"
+        style={{ backgroundColor: c.surface, borderColor: c.border }}
+      >
         <span className="font-mono text-[11px] font-semibold" style={{ color: c.accent }}>
           {template.skinLabel} · {template.category}
         </span>
@@ -246,18 +354,30 @@ function renderRouteBody(
           {isZh ? template.descZh : template.descEn}
         </div>
         <div className="mt-1 flex flex-wrap gap-2">
-          <span className="inline-flex h-8 items-center px-3.5 text-xs font-semibold" style={{ backgroundColor: c.accent, color: c.accentFg }}>
+          <span
+            className="inline-flex h-8 items-center px-3.5 text-xs font-semibold"
+            style={{ backgroundColor: c.accent, color: c.accentFg }}
+          >
             {isZh ? "立即使用模板 →" : "Deploy Starter →"}
           </span>
-          <span className="inline-flex h-8 items-center border px-3.5 text-xs font-medium" style={{ borderColor: c.border, color: c.ink }}>
+          <span
+            className="inline-flex h-8 items-center border px-3.5 text-xs font-medium"
+            style={{ borderColor: c.border, color: c.ink }}
+          >
             {isZh ? "查看组件" : "Explore Blocks"}
           </span>
         </div>
       </div>
       <div className={cn("grid gap-2.5", isMobile ? "grid-cols-1" : "grid-cols-3")}>
         {routes.slice(0, 3).map((rp) => (
-          <div key={rp.path} className="border p-3" style={{ backgroundColor: c.surface, borderColor: c.border }}>
-            <div className="font-mono text-[10.5px]" style={{ color: c.accent }}>{rp.path}</div>
+          <div
+            key={rp.path}
+            className="border p-3"
+            style={{ backgroundColor: c.surface, borderColor: c.border }}
+          >
+            <div className="font-mono text-[10.5px]" style={{ color: c.accent }}>
+              {rp.path}
+            </div>
             <div className="mt-1 text-xs font-semibold" style={{ color: c.ink }}>
               {isZh ? rp.labelZh : rp.labelEn}
             </div>
@@ -284,6 +404,18 @@ export function TemplateLiveSandbox({
   const c = getSandboxPalette(template, mode);
   const isMobile = viewport === "mobile";
   const currentRoute = routes.find((r) => r.path === activePath) ?? routes[0]!;
+  const CustomSandbox = template.SandboxComponent;
+
+  if (CustomSandbox) {
+    return (
+      <div
+        className="min-h-[380px] transition-colors duration-200"
+        style={{ backgroundColor: c.canvas, color: c.ink }}
+      >
+        <CustomSandbox activePath={currentRoute.path} mode={mode} isZh={isZh} />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -325,7 +457,7 @@ export function TemplateLiveSandbox({
       {/* Rendered Subpage Content */}
       <div className="p-5">
         {renderRouteBody(
-          currentRoute.kind,
+          currentRoute.kind ?? "landing",
           template,
           routes,
           c,
@@ -358,8 +490,14 @@ export function TemplateRouteMiniThumb({
         <span className="h-1.5 w-6" style={{ backgroundColor: template.border }} />
       </div>
       <div className="grid grid-cols-3 gap-1.5">
-        <div className="col-span-2 h-8 border" style={{ backgroundColor: template.surface, borderColor: template.border }} />
-        <div className="h-8 border" style={{ backgroundColor: template.surface, borderColor: template.border }} />
+        <div
+          className="col-span-2 h-8 border"
+          style={{ backgroundColor: template.surface, borderColor: template.border }}
+        />
+        <div
+          className="h-8 border"
+          style={{ backgroundColor: template.surface, borderColor: template.border }}
+        />
       </div>
     </div>
   );

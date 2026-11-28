@@ -1,11 +1,29 @@
+import type { ThemeMode } from "@/core/tokens";
 import type { StarterTemplateSpec } from "./_taxonomy";
 
-export function TemplatePreviewFrame({ template }: { readonly template: StarterTemplateSpec }) {
+export interface TemplatePreviewFrameProps {
+  readonly template: StarterTemplateSpec;
+  readonly mode?: ThemeMode;
+}
+
+export function TemplatePreviewFrame({ template, mode = "dark" }: TemplatePreviewFrameProps) {
+  const CustomThumbnail = template.ThumbnailComponent;
+  if (CustomThumbnail) {
+    return (
+      <div
+        className="border-hairline relative h-[184px] overflow-hidden border"
+        style={{ backgroundColor: template.canvas }}
+      >
+        <CustomThumbnail mode={mode} />
+      </div>
+    );
+  }
+
   const secondaryRoute = (template.routes[1] ?? "pricing").toLowerCase().replace(/\s+/g, "-");
 
   return (
     <div
-      className="relative h-[184px] overflow-hidden border border-hairline px-4 pt-3.5"
+      className="border-hairline relative h-[184px] overflow-hidden border px-4 pt-3.5"
       style={{ backgroundColor: template.canvas }}
     >
       {/* Back Secondary Route Sheet */}
@@ -56,10 +74,7 @@ export function TemplatePreviewFrame({ template }: { readonly template: StarterT
           <div className="mt-2.5 text-[13px] leading-[1.2] font-semibold text-[#f4f4f6]">
             Multi-route starter wired with {template.skinLabel}.
           </div>
-          <div
-            className="mt-[7px] h-[5px] w-[72%]"
-            style={{ backgroundColor: template.border }}
-          />
+          <div className="mt-[7px] h-[5px] w-[72%]" style={{ backgroundColor: template.border }} />
         </div>
 
         <div className="grid grid-cols-3 gap-[5px] pb-2.5">
@@ -77,3 +92,5 @@ export function TemplatePreviewFrame({ template }: { readonly template: StarterT
     </div>
   );
 }
+
+export { TemplatePreviewFrame as TemplateSpecimen };

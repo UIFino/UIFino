@@ -1,6 +1,10 @@
 import type { ComponentAssetMeta, ComponentPropRow } from "../../types";
 
 export function getComponentDependencies(item: ComponentAssetMeta): readonly string[] {
+  if (item.dependencies !== undefined) {
+    return item.dependencies;
+  }
+
   const needsLucide =
     item.archetype === "telemetry-hero" ||
     item.archetype === "cli-hero" ||
@@ -86,6 +90,10 @@ const ARCHETYPE_SPECIFIC_PROPS: Partial<
 };
 
 export function getComponentPropsSpec(item: ComponentAssetMeta): readonly ComponentPropRow[] {
+  if (item.propsSpec !== undefined) {
+    return item.propsSpec;
+  }
+
   const custom = ARCHETYPE_SPECIFIC_PROPS[item.archetype] ?? [
     {
       name: "items",

@@ -18,9 +18,9 @@ import {
   TEMPLATE_KIND_LABELS,
   TEMPLATE_SCENE_LABELS,
   type TemplateKindFilter,
-  TemplatePreviewFrame,
   type TemplateScene,
-  type TemplateSceneFilter
+  type TemplateSceneFilter,
+  TemplateSpecimen
 } from "@/registry/templates";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
 
@@ -39,8 +39,7 @@ export function TemplatesListView() {
   const [sceneRaw, setScene] = useQueryState("scene", parseAsString.withDefault("all"));
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
 
-  const kind: TemplateKindFilter =
-    kindRaw === "starter" || kindRaw === "page" ? kindRaw : "all";
+  const kind: TemplateKindFilter = kindRaw === "starter" || kindRaw === "page" ? kindRaw : "all";
   const scene: TemplateSceneFilter = ALL_SCENES.includes(sceneRaw as TemplateScene)
     ? (sceneRaw as TemplateScene)
     : "all";
@@ -113,7 +112,7 @@ export function TemplatesListView() {
             </>
           }
           right={
-            <span className="font-mono-ui text-xs text-muted">
+            <span className="font-mono-ui text-muted text-xs">
               {t("kitsCount", { count: filtered.length })}
             </span>
           }
@@ -143,18 +142,18 @@ export function TemplatesListView() {
                 >
                   <div>
                     <Link href={`/templates/${tpl.id}`} className="block">
-                      <TemplatePreviewFrame template={tpl} />
+                      <TemplateSpecimen template={tpl} />
                     </Link>
                     <div className="mt-4 flex items-center justify-between gap-2.5">
                       <Link
                         href={`/templates/${tpl.id}`}
-                        className="text-base font-semibold text-ink hover:text-accent-text"
+                        className="text-ink hover:text-accent-text text-base font-semibold"
                       >
                         {isZh ? tpl.nameZh : tpl.name}
                       </Link>
                       <Badge>{tpl.stack}</Badge>
                     </div>
-                    <p className="mt-1.5 text-[13px] leading-[1.55] text-muted">
+                    <p className="text-muted mt-1.5 text-[13px] leading-[1.55]">
                       {isZh ? tpl.descZh : tpl.descEn}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-[5px]">
@@ -164,10 +163,10 @@ export function TemplatesListView() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-2.5 border-t border-hairline pt-3">
+                  <div className="border-hairline flex flex-wrap items-center justify-between gap-2.5 border-t pt-3">
                     <Link
                       href={skinHref}
-                      className="font-mono-ui text-xs text-muted hover:text-ink"
+                      className="font-mono-ui text-muted hover:text-ink text-xs"
                     >
                       Skin: <span className="text-accent-text">{tpl.skinLabel}</span> →
                     </Link>

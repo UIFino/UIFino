@@ -62,11 +62,20 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
     expressive: true
   });
 
+  const hasCustomShowcase = Boolean(item.Showcase);
   const tab: StyleDetailTab =
     tabParam === "palette" || tabParam === "guardrails" ? tabParam : "live";
-  const template: StyleStageTemplate = VALID_TEMPLATES.includes(tplParam as StyleStageTemplate)
+  const hasValidGenericTpl = VALID_TEMPLATES.includes(tplParam as StyleStageTemplate);
+  const activeStageChoice: "showcase" | StyleStageTemplate =
+    hasCustomShowcase && !hasValidGenericTpl
+      ? "showcase"
+      : hasValidGenericTpl
+        ? (tplParam as StyleStageTemplate)
+        : "dashboard";
+  const template: StyleStageTemplate = hasValidGenericTpl
     ? (tplParam as StyleStageTemplate)
     : "dashboard";
+  const preferGeneric = hasCustomShowcase && activeStageChoice !== "showcase";
   const mode: ThemeMode =
     modeParam === "dark" || modeParam === "light" ? modeParam : item.primaryTone;
   const parsedR = radiusParam !== null ? Number(radiusParam) : NaN;
@@ -75,7 +84,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
     : item.defaultRadius;
 
   const preservedQuery = new URLSearchParams();
-  if (template !== "dashboard") preservedQuery.set("tpl", template);
+  if (hasValidGenericTpl && tplParam) preservedQuery.set("tpl", tplParam);
   if (modeParam === "dark" || modeParam === "light") preservedQuery.set("mode", modeParam);
   if (radiusParam !== null && RADIUS_STOPS.includes(parsedR as RadiusStop)) {
     preservedQuery.set("r", radiusParam);
@@ -271,14 +280,28 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
                 <div className="border-hairline ml-2 border-l pl-3">
                   <SegmentedControl
                     options={[
-                      { value: "dashboard" as StyleStageTemplate, label: t("tplDashboard") },
-                      { value: "landing" as StyleStageTemplate, label: t("tplLanding") },
-                      { value: "cards" as StyleStageTemplate, label: t("tplCards") },
-                      { value: "typography" as StyleStageTemplate, label: t("tplType") }
+                      ...(hasCustomShowcase
+                        ? [
+                            {
+                              value: "showcase" as const,
+                              label: isZh ? "专属样板" : "Signature"
+                            }
+                          ]
+                        : []),
+                      { value: "dashboard" as const, label: t("tplDashboard") },
+                      { value: "landing" as const, label: t("tplLanding") },
+                      { value: "cards" as const, label: t("tplCards") },
+                      { value: "typography" as const, label: t("tplType") }
                     ]}
-                    value={template}
-                    onChange={(nextTpl) =>
-                      void setTplParam(nextTpl === "dashboard" ? null : nextTpl)
+                    value={activeStageChoice}
+                    onChange={(nextChoice) =>
+                      void setTplParam(
+                        nextChoice === "showcase"
+                          ? null
+                          : !hasCustomShowcase && nextChoice === "dashboard"
+                            ? null
+                            : nextChoice
+                      )
                     }
                     itemClassName="h-[28px] px-2 text-[11.5px]"
                   />
@@ -353,6 +376,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
                   template={template}
                   radiusOverride={liveRadius}
                   fullBleed
+                  preferGeneric={preferGeneric}
                 />
               ) : tab === "palette" ? (
                 <div className="grid gap-4">

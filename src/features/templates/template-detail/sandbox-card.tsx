@@ -1,5 +1,6 @@
 "use client";
 
+import { Monitor, Smartphone, Tablet } from "lucide-react";
 import type { ViewportSize } from "@/components/patterns/viewport-frame";
 import { ViewportFrame } from "@/components/patterns/viewport-frame";
 import { SegmentedControl } from "@/components/primitives/segmented";
@@ -37,7 +38,7 @@ export function TemplateSandboxCard({
   return (
     <section id="tpl-sandbox" className="grid gap-3">
       {/* Persistent Sandbox Control Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border border-hairline bg-surface px-3.5 py-2.5">
+      <div className="border-hairline bg-surface flex flex-wrap items-center justify-between gap-3 border px-3.5 py-2.5">
         {/* Left: Subpage Route Switcher */}
         <div className="flex flex-wrap items-center gap-1.5">
           {routes.map((rp) => {
@@ -61,22 +62,47 @@ export function TemplateSandboxCard({
           })}
         </div>
 
-        {/* Center + Right: Viewport Size & Dark/Light Switcher (kept persistent across route changes) */}
+        {/* Center + Right: Viewport Size & Dark/Light Switcher */}
         <div className="flex flex-wrap items-center gap-2">
           <SegmentedControl
-            ariaLabel="Template Sandbox Viewport"
+            ariaLabel={isZh ? "设备视口" : "Template Sandbox Viewport"}
             options={[
-              { value: "desktop" as ViewportSize, label: "Desktop" },
-              { value: "tablet" as ViewportSize, label: "Tablet" },
-              { value: "mobile" as ViewportSize, label: "Mobile" }
+              {
+                value: "desktop" as ViewportSize,
+                label: (
+                  <>
+                    <Monitor className="h-3.5 w-3.5 shrink-0" />
+                    <span>{isZh ? "电脑" : "Desktop"}</span>
+                  </>
+                )
+              },
+              {
+                value: "tablet" as ViewportSize,
+                label: (
+                  <>
+                    <Tablet className="h-3.5 w-3.5 shrink-0" />
+                    <span>{isZh ? "平板" : "Tablet"}</span>
+                  </>
+                )
+              },
+              {
+                value: "mobile" as ViewportSize,
+                label: (
+                  <>
+                    <Smartphone className="h-3.5 w-3.5 shrink-0" />
+                    <span>{isZh ? "手机" : "Mobile"}</span>
+                  </>
+                )
+              }
             ]}
             value={viewport}
             onChange={onViewportChange}
           />
           <SegmentedControl
+            ariaLabel={isZh ? "明暗主题" : "Theme Mode"}
             options={[
-              { value: "dark" as ThemeMode, label: "Dark" },
-              { value: "light" as ThemeMode, label: "Light" }
+              { value: "dark" as ThemeMode, label: isZh ? "深色" : "Dark" },
+              { value: "light" as ThemeMode, label: isZh ? "浅色" : "Light" }
             ]}
             value={mode}
             onChange={onModeChange}

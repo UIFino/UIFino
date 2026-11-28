@@ -1,4 +1,8 @@
-import { generateComponentSource, getComponentDependencies, toPascalCase } from "@/core/codegen";
+import {
+  generateComponentSource,
+  getComponentDependencies,
+  getComponentVirtualFiles
+} from "@/core/codegen";
 import { compileBrandDesignMd, compileBrandTokensCss } from "@/core/design-md";
 import { compileStyleCssVariables, compileStyleDesignMd } from "@/core/styles";
 import { resolveWorkbenchTokens } from "@/core/tokens";
@@ -135,10 +139,12 @@ export function buildShadcnRegistryIndex() {
     type: c.assetType === "section" ? "registry:block" : "registry:component",
     title: c.name,
     description: c.descEn,
-    files: [
-      { path: `components/uifino/${toPascalCase(c.id)}.tsx`, type: "registry:component" },
-      { path: `components/uifino/${toPascalCase(c.id)}Demo.tsx`, type: "registry:component" }
-    ]
+    files: getComponentVirtualFiles(c)
+      .filter((fname) => fname !== "tokens.css" && fname !== "DESIGN.md")
+      .map((fname) => ({
+        path: `components/uifino/${fname}`,
+        type: "registry:component"
+      }))
   }));
 
   const templates: ShadcnRegistryIndexItem[] = TEMPLATE_ITEMS.map((t) => ({
@@ -240,10 +246,7 @@ export function buildShadcnRegistryItem(name: string) {
   if (compFlat) {
     const cat = COMPONENT_CATEGORIES.find((c) => c.id === compFlat.categoryId)!;
     const tokens = resolveWorkbenchTokens({ radius: 8, density: "default", mode: "dark" });
-    const pascal = toPascalCase(compFlat.id);
-    const compCode = generateComponentSource(compFlat, cat, tokens, `${pascal}.tsx`);
-    const demoCode = generateComponentSource(compFlat, cat, tokens, `${pascal}Demo.tsx`);
-    const tokensCss = generateComponentSource(compFlat, cat, tokens, "tokens.css");
+    const vFiles = getComponentVirtualFiles(compFlat);
 
     return {
       $schema: "https://ui.shadcn.com/schema/registry-item.json",
@@ -252,24 +255,24 @@ export function buildShadcnRegistryItem(name: string) {
       title: compFlat.name,
       description: compFlat.descEn,
       dependencies: [...getComponentDependencies(compFlat)],
-      files: [
-        {
-          path: `components/uifino/${pascal}.tsx`,
-          type: "registry:component",
-          content: compCode
-        },
-        {
-          path: `components/uifino/${pascal}Demo.tsx`,
-          type: "registry:component",
-          content: demoCode
-        },
-        {
-          path: `styles/uifino-tokens.css`,
-          type: "registry:file",
-          target: "src/styles/uifino-tokens.css",
-          content: tokensCss
-        }
-      ]
+      files: vFiles
+        .filter((fname) => fname !== "DESIGN.md")
+        .map((fname) => {
+          const content = generateComponentSource(compFlat, cat, tokens, fname);
+          if (fname === "tokens.css") {
+            return {
+              path: "styles/uifino-tokens.css",
+              type: "registry:file",
+              target: "src/styles/uifino-tokens.css",
+              content
+            };
+          }
+          return {
+            path: `components/uifino/${fname}`,
+            type: "registry:component",
+            content
+          };
+        })
     };
   }
 

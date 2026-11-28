@@ -42,7 +42,7 @@ export function HomeStylesAndTemplatesStrip() {
             <div key={style.slug} className="lined-cell">
               <Link href={`/styles/${style.slug}`} className="group flex flex-col gap-2.5 p-5">
                 <div className="border-hairline group-hover:border-accent-border overflow-hidden border transition-colors">
-                  <StyleMiniPreview style={style} mode={style.primaryTone} />
+                  <StyleMiniPreview style={style} mode={style.primaryTone} isZh={isZh} />
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <span className="flex min-w-0 items-center gap-2">

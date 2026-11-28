@@ -13,7 +13,7 @@ import {
   getComponentVirtualFiles,
   toPascalCase
 } from "@/core/codegen";
-import { resolveWorkbenchTokens, serializeTokensCss } from "@/core/tokens";
+import { resolveWorkbenchTokens } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { getAllComponentsFlat } from "@/registry/components";
 import { ALL_WORKBENCH_SKINS } from "@/registry/skins";
@@ -107,9 +107,13 @@ export function ComponentWorkbenchView({ category, item }: ComponentWorkbenchVie
   const codeOutput = generateComponentSource(item, category, tokens, activeFile);
 
   const handleCopyAiPrompt = () => {
-    const componentCode = generateComponentSource(item, category, tokens, `${pascalName}.tsx`);
-    const demoCode = generateComponentSource(item, category, tokens, `${pascalName}Demo.tsx`);
-    const cssTokens = serializeTokensCss(tokens);
+    const mainFile =
+      files.find((f) => (f.endsWith(".tsx") || f.endsWith(".ts")) && !f.endsWith("Demo.tsx")) ??
+      `${pascalName}.tsx`;
+    const demoFile = files.find((f) => f.endsWith("Demo.tsx")) ?? `${pascalName}Demo.tsx`;
+    const componentCode = generateComponentSource(item, category, tokens, mainFile);
+    const demoCode = generateComponentSource(item, category, tokens, demoFile);
+    const cssTokens = generateComponentSource(item, category, tokens, "tokens.css");
     const dependencies = getComponentDependencies(item);
     const promptText = compileComponentAiPrompt({
       item,

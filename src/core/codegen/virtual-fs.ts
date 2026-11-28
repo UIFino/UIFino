@@ -10,10 +10,19 @@ export function toPascalCase(kebabId: string): string {
 }
 
 export function getComponentVirtualFiles(
-  item: Pick<ComponentAssetMeta, "id">
+  item: Pick<ComponentAssetMeta, "id" | "filesSource">
 ): readonly string[] {
   const pascal = toPascalCase(item.id);
-  return [`${pascal}.tsx`, `${pascal}Demo.tsx`, "tokens.css", "DESIGN.md"];
+  const customFiles = item.filesSource ? Object.keys(item.filesSource) : [];
+  const base = customFiles.length > 0 ? customFiles : [`${pascal}.tsx`, `${pascal}Demo.tsx`];
+  const result = [...base];
+  if (!result.includes("tokens.css")) {
+    result.push("tokens.css");
+  }
+  if (!result.includes("DESIGN.md")) {
+    result.push("DESIGN.md");
+  }
+  return result;
 }
 
 export function resolveFileCodeLang(filename: string): SupportedCodeLang {

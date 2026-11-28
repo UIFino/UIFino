@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import type { ResolvedWorkbenchTokens } from "@/core/tokens";
 
 export type AssetType = "section" | "block" | "motion";
@@ -59,6 +60,16 @@ export interface ComponentAssetMeta {
   readonly descZh: string;
   readonly contract: readonly string[];
   readonly contractZh?: readonly string[];
+  readonly DemoComponent?: ComponentType<{
+    readonly tokens: ResolvedWorkbenchTokens;
+    readonly viewport: "desktop" | "tablet" | "mobile";
+    readonly compact?: boolean;
+    readonly stateView?: boolean;
+    readonly replayKey?: number;
+  }>;
+  readonly filesSource?: Readonly<Record<string, string>>;
+  readonly dependencies?: readonly string[];
+  readonly propsSpec?: readonly ComponentPropRow[];
 }
 
 export interface ComponentCategoryMeta {

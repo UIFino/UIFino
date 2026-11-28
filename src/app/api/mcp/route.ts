@@ -4,6 +4,7 @@ import {
   generateComponentSource,
   getComponentDependencies,
   getComponentPropsSpec,
+  getComponentVirtualFiles,
   toPascalCase
 } from "@/core/codegen";
 import { compileBrandDesignMd, compileBrandTokensCss } from "@/core/design-md";
@@ -294,14 +295,19 @@ function executeTool(name: string, args: ToolArgs): unknown {
         skinId,
         brands: ALL_WORKBENCH_SKINS
       });
+      const files = getComponentVirtualFiles(resolved.item);
       const pascalName = toPascalCase(resolved.item.id);
-      const componentCode = generateComponentSource(resolved.item, resolved.category, tokens);
-      const demoCode = generateComponentSource(
+      const mainFile =
+        files.find((f) => (f.endsWith(".tsx") || f.endsWith(".ts")) && !f.endsWith("Demo.tsx")) ??
+        `${pascalName}.tsx`;
+      const demoFile = files.find((f) => f.endsWith("Demo.tsx")) ?? `${pascalName}Demo.tsx`;
+      const componentCode = generateComponentSource(
         resolved.item,
         resolved.category,
         tokens,
-        `${pascalName}Demo.tsx`
+        mainFile
       );
+      const demoCode = generateComponentSource(resolved.item, resolved.category, tokens, demoFile);
       const cssTokens = generateComponentSource(
         resolved.item,
         resolved.category,

@@ -94,7 +94,7 @@ export function WorkbenchStagePanel({
       <section id="wb-stage" className="min-w-0">
         {stageTab === "preview" ? (
           <ViewportFrame viewport={viewport} bgPattern={bgPattern}>
-            {category.assetType === "block" && stageVariant === "state" ? (
+            {!item.DemoComponent && category.assetType === "block" && stageVariant === "state" ? (
               <BlockStateStage
                 item={item}
                 tokens={tokens}
@@ -107,6 +107,7 @@ export function WorkbenchStagePanel({
                 tokens={tokens}
                 viewport={viewport}
                 compact={stageVariant === "compact"}
+                stateView={stageVariant === "state"}
                 replayKey={replayKey}
               />
             )}

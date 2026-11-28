@@ -9,6 +9,7 @@ import type { ThemeMode } from "@/core/tokens";
 export interface StyleMiniPreviewProps {
   readonly style: UiStyleSpec;
   readonly mode: ThemeMode;
+  readonly isZh?: boolean;
 }
 
 function getCardStyle(p: ResolvedStylePlaygroundPhysics): CSSProperties {
@@ -419,7 +420,7 @@ function renderDistinctMiniature(style: UiStyleSpec, p: ResolvedStylePlaygroundP
   }
 }
 
-export function StyleMiniPreview({ style, mode }: StyleMiniPreviewProps) {
+export function StyleMiniPreview({ style, mode, isZh = true }: StyleMiniPreviewProps) {
   const p = resolveStylePlaygroundPhysics(style, mode);
   const { palette } = p;
   const ribbon = [
@@ -429,6 +430,7 @@ export function StyleMiniPreview({ style, mode }: StyleMiniPreviewProps) {
     palette.border,
     palette.accent
   ];
+  const CustomThumb = style.Thumbnail;
 
   return (
     <div
@@ -463,9 +465,15 @@ export function StyleMiniPreview({ style, mode }: StyleMiniPreviewProps) {
         />
       ) : null}
 
-      <div className="relative z-10 flex flex-1 flex-col p-3.5">
-        {renderDistinctMiniature(style, p)}
-      </div>
+      {CustomThumb ? (
+        <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
+          <CustomThumb physics={p} isZh={isZh} />
+        </div>
+      ) : (
+        <div className="relative z-10 flex flex-1 flex-col p-3.5">
+          {renderDistinctMiniature(style, p)}
+        </div>
+      )}
 
       {/* Crisp Semantic 5-Token Palette Ribbon */}
       <div

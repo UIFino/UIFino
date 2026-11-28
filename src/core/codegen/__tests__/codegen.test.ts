@@ -3,6 +3,8 @@ import {
   type ComponentAssetMeta,
   type ComponentCategoryMeta,
   generateComponentSource,
+  getComponentDependencies,
+  getComponentPropsSpec,
   getComponentVirtualFiles
 } from "@/core/codegen";
 import { resolveWorkbenchTokens } from "@/core/tokens";
@@ -48,5 +50,43 @@ describe("core/codegen", () => {
     expect(tsxCode).toContain("rounded-none");
     expect(cssCode).toContain("--ui-radius-card: 0px;");
     expect(mdOut).toContain('asset: "hero-telemetry-counter"');
+  });
+
+  it("prioritizes self-contained filesSource, dependencies, and propsSpec overrides", () => {
+    const customItem: ComponentAssetMeta = {
+      ...ITEM,
+      filesSource: {
+        "HeroTelemetryCounter.tsx": "// custom handwritten component",
+        "HeroTelemetryCounterDemo.tsx": "// custom handwritten demo"
+      },
+      dependencies: ["lucide-react", "clsx"],
+      propsSpec: [
+        {
+          name: "customMetric",
+          type: "number",
+          defaultValue: "42",
+          descEn: "Custom telemetry readout.",
+          descZh: "自定义遥测读数。"
+        }
+      ]
+    };
+
+    expect(getComponentVirtualFiles(customItem)).toEqual([
+      "HeroTelemetryCounter.tsx",
+      "HeroTelemetryCounterDemo.tsx",
+      "tokens.css",
+      "DESIGN.md"
+    ]);
+    expect(
+      generateComponentSource(customItem, CATEGORY, undefined, "HeroTelemetryCounter.tsx")
+    ).toBe("// custom handwritten component");
+    expect(
+      generateComponentSource(customItem, CATEGORY, undefined, "HeroTelemetryCounterDemo.tsx")
+    ).toBe("// custom handwritten demo");
+    expect(generateComponentSource(customItem, CATEGORY, undefined, "tokens.css")).toContain(
+      "--ui-radius-card:"
+    );
+    expect(getComponentDependencies(customItem)).toEqual(["lucide-react", "clsx"]);
+    expect(getComponentPropsSpec(customItem)[0]?.name).toBe("customMetric");
   });
 });

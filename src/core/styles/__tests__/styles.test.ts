@@ -68,4 +68,17 @@ describe("core/styles engine", () => {
     expect(lightPhysics.cardShadow).toBe("4px 4px 0px #111111");
     expect(lightPhysics.palette.canvas).toBe("#FFFDF5");
   });
+
+  it("supports self-contained Showcase, Thumbnail, and references slot fields cleanly", () => {
+    const slottedStyle: UiStyleSpec = {
+      ...MOCK_BRUTAL_STYLE,
+      references: ["gumroad.com", "figma.com/brutal"],
+      Showcase: ({ physics, isZh }) => (isZh ? physics.palette.canvas : physics.palette.accent),
+      Thumbnail: ({ physics }) => physics.palette.surface
+    };
+
+    expect(slottedStyle.references).toEqual(["gumroad.com", "figma.com/brutal"]);
+    expect(slottedStyle.Showcase).toBeDefined();
+    expect(slottedStyle.Thumbnail).toBeDefined();
+  });
 });

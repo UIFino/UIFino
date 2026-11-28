@@ -4,10 +4,7 @@ import {
   resolveWorkbenchTokens,
   serializeTokensCss
 } from "@/core/tokens";
-import {
-  renderReactDemoSource,
-  renderReactSource
-} from "./adapters/react";
+import { renderReactDemoSource, renderReactSource } from "./adapters/react";
 import type { ComponentAssetMeta, ComponentCategoryMeta } from "./types";
 import { getComponentVirtualFiles, toPascalCase } from "./virtual-fs";
 
@@ -27,6 +24,13 @@ export function generateComponentSource(
   const pascal = toPascalCase(item.id);
   const targetFile =
     activeFile && files.includes(activeFile) ? activeFile : (files[0] ?? `${pascal}.tsx`);
+
+  if (item.filesSource && Object.prototype.hasOwnProperty.call(item.filesSource, targetFile)) {
+    const customSource = item.filesSource[targetFile];
+    if (customSource !== undefined) {
+      return customSource;
+    }
+  }
 
   if (targetFile === "tokens.css") {
     return serializeTokensCss(tk);

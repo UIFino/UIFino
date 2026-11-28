@@ -235,38 +235,55 @@ export function StyleRightInspector({
         </div>
       </div>
 
-      {/* Region 5: Compact Related Real Brand Catalog Entry */}
-      {relatedBrands.length > 0 ? (
+      {/* Region 5: References & Related Real Brand Catalog Entry */}
+      {(item.references && item.references.length > 0) || relatedBrands.length > 0 ? (
         <div className="grid gap-2.5 p-4">
-          <div className="flex items-center justify-between gap-2">
-            <span className="eyebrow-mono">{t("relatedBrandsTitle")}</span>
-            <Link
-              href="/catalog"
-              className="text-muted hover:text-accent-text font-mono text-[10.5px]"
-            >
-              {t("viewAllBrands")} →
-            </Link>
-          </div>
-          <div className="grid gap-1.5">
-            {relatedBrands.map((brand) => (
-              <Link
-                key={brand.id}
-                href={`/catalog/${brand.id}`}
-                className="group border-hairline bg-canvas hover:border-accent-border flex items-center justify-between gap-2.5 border px-2.5 py-2 transition-colors"
-              >
-                <div className="flex min-w-0 items-center gap-2">
-                  <BrandLogoMark item={brand} className="h-4 w-4 shrink-0" />
-                  <span className="text-ink group-hover:text-accent-text truncate text-xs font-semibold">
-                    {brand.name}
-                  </span>
-                </div>
-                <div className="text-muted flex shrink-0 items-center gap-1.5 font-mono text-[10px]">
-                  <span>{brand.defaultRadius}</span>
-                  <ArrowUpRight className="text-subtle group-hover:text-accent-text h-3 w-3" />
-                </div>
-              </Link>
-            ))}
-          </div>
+          {item.references && item.references.length > 0 ? (
+            <div className="grid gap-1.5 pb-1">
+              <div className="eyebrow-mono">{isZh ? "标杆参考站" : "REFERENCES"}</div>
+              <div className="flex flex-wrap gap-1.5">
+                {item.references.map((refName) => (
+                  <Badge key={refName} className="font-mono text-[10.5px]">
+                    {refName}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {relatedBrands.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between gap-2">
+                <span className="eyebrow-mono">{t("relatedBrandsTitle")}</span>
+                <Link
+                  href="/catalog"
+                  className="text-muted hover:text-accent-text font-mono text-[10.5px]"
+                >
+                  {t("viewAllBrands")} →
+                </Link>
+              </div>
+              <div className="grid gap-1.5">
+                {relatedBrands.map((brand) => (
+                  <Link
+                    key={brand.id}
+                    href={`/catalog/${brand.id}`}
+                    className="group border-hairline bg-canvas hover:border-accent-border flex items-center justify-between gap-2.5 border px-2.5 py-2 transition-colors"
+                  >
+                    <div className="flex min-w-0 items-center gap-2">
+                      <BrandLogoMark item={brand} className="h-4 w-4 shrink-0" />
+                      <span className="text-ink group-hover:text-accent-text truncate text-xs font-semibold">
+                        {brand.name}
+                      </span>
+                    </div>
+                    <div className="text-muted flex shrink-0 items-center gap-1.5 font-mono text-[10px]">
+                      <span>{brand.defaultRadius}</span>
+                      <ArrowUpRight className="text-subtle group-hover:text-accent-text h-3 w-3" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : null}
         </div>
       ) : null}
     </aside>

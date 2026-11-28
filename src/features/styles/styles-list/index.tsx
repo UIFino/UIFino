@@ -31,10 +31,7 @@ export function StylesListView() {
   const isZh = locale === "zh";
 
   const [toneRaw, setTone] = useQueryState("tone", parseAsString.withDefault("all"));
-  const [scenarioRaw, setScenario] = useQueryState(
-    "scenario",
-    parseAsString.withDefault("all")
-  );
+  const [scenarioRaw, setScenario] = useQueryState("scenario", parseAsString.withDefault("all"));
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
   const [modeRaw, setMode] = useQueryState("mode", parseAsString.withDefault("auto"));
 
@@ -52,8 +49,7 @@ export function StylesListView() {
   const q = search.trim().toLowerCase();
   const filtered = STYLE_ITEMS.filter((item) => {
     const toneOk = tone === "all" || item.primaryTone === tone;
-    const scenarioOk =
-      scenario === "all" || item.scenarios.includes(scenario);
+    const scenarioOk = scenario === "all" || item.scenarios.includes(scenario);
     const qOk =
       !q ||
       [
@@ -95,9 +91,7 @@ export function StylesListView() {
               <SegmentedControl
                 options={STYLE_SCENARIO_FILTERS.map((sf) => ({
                   value: sf,
-                  label: isZh
-                    ? STYLE_SCENARIO_LABELS[sf].zh
-                    : STYLE_SCENARIO_LABELS[sf].en
+                  label: isZh ? STYLE_SCENARIO_LABELS[sf].zh : STYLE_SCENARIO_LABELS[sf].en
                 }))}
                 value={scenario}
                 onChange={(v) => void setScenario(v)}
@@ -113,7 +107,7 @@ export function StylesListView() {
           }
           right={
             <>
-              <span className="font-mono-ui text-xs text-muted">
+              <span className="font-mono-ui text-muted text-xs">
                 {filtered.length} {t("countUnit")}
               </span>
               <SegmentedControl
@@ -138,43 +132,40 @@ export function StylesListView() {
         ) : (
           <div className="grid grid-cols-1 gap-x-6 gap-y-8 px-6 py-7 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {filtered.map((item) => {
-              const cardMode: ThemeMode =
-                modeSetting === "auto" ? item.primaryTone : modeSetting;
+              const cardMode: ThemeMode = modeSetting === "auto" ? item.primaryTone : modeSetting;
               return (
                 <Link
                   key={item.slug}
                   href={`/styles/${item.slug}`}
                   className="group flex min-w-0 flex-col gap-3"
                 >
-                  <div className="relative overflow-hidden border border-hairline bg-surface transition-colors duration-160 group-hover:border-accent-border">
-                    <StyleMiniPreview style={item} mode={cardMode} />
+                  <div className="border-hairline bg-surface group-hover:border-accent-border relative overflow-hidden border transition-colors duration-160">
+                    <StyleMiniPreview style={item} mode={cardMode} isZh={isZh} />
                   </div>
 
                   <div className="px-0.5">
                     <div className="flex items-center justify-between gap-2">
                       <span className="flex min-w-0 items-center gap-2">
                         <DualSwatch swatch={item.swatch} />
-                        <span className="truncate text-[15px] font-semibold text-ink">
+                        <span className="text-ink truncate text-[15px] font-semibold">
                           {isZh ? item.nameZh : item.name}
                         </span>
                       </span>
-                      <span className="font-mono-ui shrink-0 text-[11.5px] text-subtle">
+                      <span className="font-mono-ui text-subtle shrink-0 text-[11.5px]">
                         {isZh
                           ? STYLE_GROUP_LABELS[item.group].zh
                           : STYLE_GROUP_LABELS[item.group].en}
                       </span>
                     </div>
 
-                    <p className="mt-1.5 line-clamp-2 text-[12.5px] leading-[1.48] text-muted">
+                    <p className="text-muted mt-1.5 line-clamp-2 text-[12.5px] leading-[1.48]">
                       {isZh ? item.summaryZh : item.summaryEn}
                     </p>
 
                     <div className="mt-2.5 flex flex-wrap gap-1.5">
                       {item.scenarios.map((sc) => (
-                        <Badge key={sc} className="text-[10.5px] text-muted">
-                          {isZh
-                            ? STYLE_SCENARIO_LABELS[sc].zh
-                            : STYLE_SCENARIO_LABELS[sc].en}
+                        <Badge key={sc} className="text-muted text-[10.5px]">
+                          {isZh ? STYLE_SCENARIO_LABELS[sc].zh : STYLE_SCENARIO_LABELS[sc].en}
                         </Badge>
                       ))}
                     </div>

@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import type {
   BrandSkinContract,
   BrandTypography,
@@ -53,6 +54,15 @@ export interface UiStyleSpec extends BrandSkinContract {
   readonly notForEn?: readonly string[];
   readonly notForZh?: readonly string[];
   readonly tags: readonly string[];
+  readonly references?: readonly string[];
+  readonly Showcase?: ComponentType<{
+    readonly physics: ResolvedStylePlaygroundPhysics;
+    readonly isZh: boolean;
+  }>;
+  readonly Thumbnail?: ComponentType<{
+    readonly physics: ResolvedStylePlaygroundPhysics;
+    readonly isZh: boolean;
+  }>;
 }
 
 export interface ResolvedStylePlaygroundPhysics {

@@ -1,9 +1,10 @@
 {
-  "bannerTitle": "Parameterized visual & token studios.",
-  "bannerDesc": "Tune background textures, layered shadows, WCAG color scales, and modular type ladders with live CSS & Tailwind output.",
+  "bannerTitle": "Five Core Visual & Token Studios.",
+  "bannerDesc": "Tune CSS backgrounds, 3-tier elevation shadows, OKLCH color contrast, fluid clamp() typography, and native linear() spring motion.",
   "studioBg": "Backgrounds",
   "studioShadow": "Shadows",
   "studioColors": "Colors",
   "studioType": "Typography",
-  "sampleOverlay": "Sample hero overlay"
+  "studioMotion": "Motion",
+  "sampleOverlay": "Hero contrast overlay"
 }

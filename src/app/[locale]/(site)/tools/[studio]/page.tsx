@@ -5,10 +5,11 @@ import { PageBanner } from "@/components/patterns/page-banner";
 import { LoadingGridSkeleton } from "@/components/patterns/state-views";
 import { BackgroundStudioView } from "@/features/tools/background-studio";
 import { ColorsStudioView } from "@/features/tools/colors-studio";
+import { MotionStudioView } from "@/features/tools/motion-studio";
 import { ShadowStudioView } from "@/features/tools/shadow-studio";
 import { TypographyStudioView } from "@/features/tools/typography-studio";
 
-const VALID_STUDIOS = ["background", "shadow", "colors", "typography"] as const;
+const VALID_STUDIOS = ["background", "shadow", "colors", "typography", "motion"] as const;
 
 export function generateStaticParams() {
   return VALID_STUDIOS.map((studio) => ({ studio }));
@@ -44,6 +45,8 @@ export default async function ToolsStudioPage({
           <ColorsStudioView />
         ) : studio === "typography" ? (
           <TypographyStudioView />
+        ) : studio === "motion" ? (
+          <MotionStudioView />
         ) : (
           <BackgroundStudioView />
         )}

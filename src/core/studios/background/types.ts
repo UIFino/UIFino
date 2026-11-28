@@ -10,6 +10,8 @@ export interface BackgroundStudioParams {
   readonly opacity: number;
   readonly spread: number;
   readonly noise: number;
+  readonly maskFade?: boolean;
+  readonly maskRadius?: number;
 }
 
 export interface BackgroundPreset extends BackgroundStudioParams {
@@ -27,6 +29,7 @@ export interface BackgroundStudioOutput {
   readonly canvas: string;
   readonly backgroundImage: string;
   readonly backgroundSize: string;
+  readonly maskImage?: string;
   readonly inlineStyle: string;
   readonly code: string;
 }

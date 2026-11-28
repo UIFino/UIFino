@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { parseAsString, useQueryState } from "nuqs";
 import { CodeViewer } from "@/components/patterns/code-viewer";
 import { Button } from "@/components/primitives/button";
@@ -18,19 +18,27 @@ import { StudioShell } from "../studio-shell";
 
 export function BackgroundStudioView() {
   const t = useTranslations("tools");
+  const locale = useLocale();
+  const isZh = locale === "zh";
   const [presetQuery, setPresetQuery] = useQueryState("preset", parseAsString.withDefault(""));
 
   const [format, setFormat] = useState<StudioCodeFormat>("css");
   const [showSample, setShowSample] = useState(true);
-  const [params, setParams] = useState<BackgroundStudioParams>(
-    () => BG_PRESETS[0] as BackgroundStudioParams
-  );
+  const [params, setParams] = useState<BackgroundStudioParams>(() => ({
+    ...(BG_PRESETS[0] as BackgroundStudioParams),
+    maskFade: true,
+    maskRadius: 74
+  }));
 
   useEffect(() => {
     if (presetQuery) {
       const matched = BG_PRESETS.find((pr) => pr.id === presetQuery);
       if (matched) {
-        setParams(matched);
+        setParams((prev) => ({
+          ...matched,
+          maskFade: prev.maskFade ?? true,
+          maskRadius: prev.maskRadius ?? 74
+        }));
       }
     }
   }, [presetQuery]);
@@ -43,6 +51,13 @@ export function BackgroundStudioView() {
       format={format}
       currentCode={result.code}
       onFormatChange={setFormat}
+      onLoadSkin={(skin) =>
+        setParams((prev) => ({
+          ...prev,
+          canvas: skin.dark.canvas,
+          accent: skin.dark.accent
+        }))
+      }
     >
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[1.2fr_0.8fr]">
         {/* Left: Live Canvas + Presets + Code Output */}
@@ -51,43 +66,71 @@ export function BackgroundStudioView() {
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-hairline px-3.5 py-2.5">
               <SegmentedControl
                 options={[
-                  { value: "grid" as BackgroundEngineType, label: "Grid" },
-                  { value: "dots" as BackgroundEngineType, label: "Dot Matrix" },
-                  { value: "aurora" as BackgroundEngineType, label: "Aurora" },
-                  { value: "grain" as BackgroundEngineType, label: "Film Grain" }
+                  { value: "grid" as BackgroundEngineType, label: isZh ? "细线网格" : "Grid" },
+                  { value: "dots" as BackgroundEngineType, label: isZh ? "点阵矩阵" : "Dot Matrix" },
+                  { value: "aurora" as BackgroundEngineType, label: isZh ? "极光聚光" : "Aurora" },
+                  { value: "grain" as BackgroundEngineType, label: isZh ? "胶片噪点" : "Film Grain" }
                 ]}
                 value={params.engine}
                 onChange={(engine) => setParams((prev) => ({ ...prev, engine }))}
               />
 
-              <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs text-muted">
-                <input
-                  type="checkbox"
-                  checked={showSample}
-                  onChange={(e) => setShowSample(e.target.checked)}
-                />
-                <span>{t("sampleOverlay")}</span>
-              </label>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    checked={params.maskFade ?? true}
+                    onChange={(e) =>
+                      setParams((prev) => ({ ...prev, maskFade: e.target.checked }))
+                    }
+                  />
+                  <span>{isZh ? "径向渐隐遮罩" : "Radial Mask"}</span>
+                </label>
+                <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    checked={showSample}
+                    onChange={(e) => setShowSample(e.target.checked)}
+                  />
+                  <span>{t("sampleOverlay")}</span>
+                </label>
+              </div>
             </div>
 
             <div
-              className="relative flex h-[300px] items-center justify-center overflow-hidden p-6"
-              style={{
-                backgroundColor: result.canvas,
-                backgroundImage: result.backgroundImage,
-                backgroundSize: result.backgroundSize
-              }}
+              className="relative flex h-[320px] items-center justify-center overflow-hidden p-6"
+              style={{ backgroundColor: result.canvas }}
             >
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  backgroundImage: result.backgroundImage,
+                  backgroundSize: result.backgroundSize,
+                  maskImage: result.maskImage,
+                  WebkitMaskImage: result.maskImage
+                }}
+              />
               {showSample ? (
-                <div className="max-w-[420px] border border-white/16 bg-[#111113]/72 px-6 py-5 text-center text-[#f4f4f6] backdrop-blur-[6px]">
+                <div className="relative z-10 max-w-[460px] border border-white/15 bg-[#111113]/75 px-6 py-5 text-center text-[#f4f4f6] backdrop-blur-[6px]">
                   <div className="font-mono-ui text-[10px] tracking-[0.1em] text-[#ceff00]">
-                    LIVE SURFACE
+                    HERO READABILITY CHECK
                   </div>
-                  <div className="mt-1.5 text-[22px] font-bold tracking-[-0.025em]">
-                    Engineered background layer
+                  <div className="mt-1.5 text-[23px] font-bold tracking-[-0.025em]">
+                    {isZh ? "高对比首屏字体叠层压测" : "Engineered background layer"}
                   </div>
-                  <div className="mt-3 inline-flex bg-white px-3.5 py-1.5 text-xs font-semibold text-black">
-                    Copy Snippet
+                  <p className="mt-1.5 text-xs leading-relaxed text-[#b8b8bf]">
+                    {isZh
+                      ? "验证网格与极光亮度是否喧宾夺主，确保正文与行动按钮清晰可读。"
+                      : "Stress-test headline, muted copy, and primary CTA contrast against the pattern."}
+                  </p>
+                  <div className="mt-3.5 flex items-center justify-center gap-2">
+                    <span className="inline-flex bg-white px-3.5 py-1.5 text-xs font-semibold text-black">
+                      {isZh ? "立即使用" : "Get Started"}
+                    </span>
+                    <span className="inline-flex border border-white/20 px-3.5 py-1.5 text-xs text-white/85">
+                      {isZh ? "查看规范" : "Read Spec"}
+                    </span>
                   </div>
                 </div>
               ) : null}
@@ -103,7 +146,11 @@ export function BackgroundStudioView() {
                   variant="hairline"
                   size="sm"
                   onClick={() => {
-                    setParams(preset);
+                    setParams((prev) => ({
+                      ...preset,
+                      maskFade: prev.maskFade ?? true,
+                      maskRadius: prev.maskRadius ?? 74
+                    }));
                     void setPresetQuery(preset.id);
                   }}
                   className="h-[34px] justify-start gap-2"
@@ -128,11 +175,11 @@ export function BackgroundStudioView() {
 
         {/* Right: Parameter Sliders & Color Controls */}
         <div className="grid gap-4 border border-hairline bg-surface p-5">
-          <div className="eyebrow-mono text-accent-text">PARAMETERS</div>
+          <div className="eyebrow-mono text-accent-text">LAYER PARAMETERS</div>
 
           <div className="grid grid-cols-2 gap-3">
             <label className="grid gap-1.5 text-xs">
-              <span className="text-muted">Base Canvas</span>
+              <span className="text-muted">{isZh ? "画布底色" : "Base Canvas"}</span>
               <div className="flex items-center gap-2 border border-hairline bg-code px-2 py-1">
                 <input
                   type="color"
@@ -145,7 +192,7 @@ export function BackgroundStudioView() {
             </label>
 
             <label className="grid gap-1.5 text-xs">
-              <span className="text-muted">Primary Accent</span>
+              <span className="text-muted">{isZh ? "网格/光效色" : "Primary Accent"}</span>
               <div className="flex items-center gap-2 border border-hairline bg-code px-2 py-1">
                 <input
                   type="color"
@@ -159,7 +206,7 @@ export function BackgroundStudioView() {
           </div>
 
           <RangeSlider
-            label="Pattern Pitch / Scale"
+            label={isZh ? "网格/点阵间距" : "Pattern Pitch / Scale"}
             valueDisplay={`${params.cellSize}px`}
             min={12}
             max={80}
@@ -169,7 +216,7 @@ export function BackgroundStudioView() {
           />
 
           <RangeSlider
-            label="Stroke / Glow Intensity"
+            label={isZh ? "线条/光晕强度" : "Stroke / Glow Intensity"}
             valueDisplay={`${params.opacity}%`}
             min={4}
             max={75}
@@ -179,7 +226,7 @@ export function BackgroundStudioView() {
           />
 
           <RangeSlider
-            label="Radial Mask Spread"
+            label={isZh ? "光晕扩散范围" : "Radial Glow Spread"}
             valueDisplay={`${params.spread}%`}
             min={25}
             max={95}
@@ -189,7 +236,17 @@ export function BackgroundStudioView() {
           />
 
           <RangeSlider
-            label="Grain Density"
+            label={isZh ? "边缘渐隐遮罩半径" : "Edge Mask Fade Radius"}
+            valueDisplay={`${params.maskRadius ?? 74}%`}
+            min={35}
+            max={95}
+            step={1}
+            value={params.maskRadius ?? 74}
+            onChange={(maskRadius) => setParams((prev) => ({ ...prev, maskRadius }))}
+          />
+
+          <RangeSlider
+            label={isZh ? "胶片噪点密度" : "Grain Density"}
             valueDisplay={`${params.noise}%`}
             min={0}
             max={60}

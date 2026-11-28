@@ -1,9 +1,10 @@
 {
-  "bannerTitle": "参数化视觉与令牌工具箱",
-  "bannerDesc": "可视化调节背景纹理、多层阴影、无障碍色阶对比与字号排版阶梯，一键导出 CSS 变量或 Tailwind 代码。",
+  "bannerTitle": "五大视觉参数与令牌工作室",
+  "bannerDesc": "专注现代界面的背景纹理、三档阴影、OKLCH 配色对比、流体字号排版与原生弹簧动效，并与站内图鉴、风格及组件库双向互通。",
   "studioBg": "背景纹理",
   "studioShadow": "多层阴影",
   "studioColors": "配色对比",
   "studioType": "字号排版",
-  "sampleOverlay": "叠加示例内容"
+  "studioMotion": "交互动效",
+  "sampleOverlay": "叠加首屏压测内容"
 }

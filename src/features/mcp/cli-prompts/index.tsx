@@ -1,16 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { Badge } from "@/components/primitives/badge";
 import { Button } from "@/components/primitives/button";
+import { SegmentedControl } from "@/components/primitives/segmented";
 import { useClipboard } from "@/hooks/use-clipboard";
 
-const CLI_COMMANDS = [
-  { cmd: "npx uifino@latest add design/linear", descZh: "拉取品牌 DESIGN.md 规范", descEn: "Pull brand DESIGN.md spec" },
-  { cmd: "npx uifino@latest add style/hairline-grid", descZh: "拉取流派风格 DESIGN.md", descEn: "Pull UI style genre spec" },
-  { cmd: "npx uifino@latest add section/hero-telemetry-counter", descZh: "安装局部组件源码", descEn: "Add component block (.tsx)" },
-  { cmd: "npx uifino@latest create obsidian-saas-kit", descZh: "初始化整站工程模板", descEn: "Scaffold starter template" }
-] as const;
+type CliFlavor = "uifino" | "shadcn";
 
 const PROMPT_RECIPES = [
   {
@@ -34,20 +31,99 @@ export function McpCliAndPromptsSection() {
   const isZh = locale === "zh";
   const { copy } = useClipboard();
 
+  const [flavor, setFlavor] = useState<CliFlavor>("shadcn");
+  const [origin, setOrigin] = useState("http://localhost:3000");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location?.origin) {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
+  const cliList =
+    flavor === "shadcn"
+      ? [
+          {
+            cmd: `npx shadcn@latest add ${origin}/r/style-hairline-grid.json`,
+            descZh: "直接用 shadcn CLI 写入细线网格 CSS 变量 + DESIGN.md",
+            descEn: "Install Hairline Grid CSS vars + DESIGN.md via shadcn registry"
+          },
+          {
+            cmd: `npx shadcn@latest add ${origin}/r/hero-telemetry-counter.json`,
+            descZh: "安装纯组件与 Demo 分离代码 + tokens.css",
+            descEn: "Add component + Demo.tsx + tokens.css into local components/"
+          },
+          {
+            cmd: `npx shadcn@latest add ${origin}/r/design-linear.json`,
+            descZh: "写入 Linear 标杆 DESIGN.md 与明暗令牌",
+            descEn: "Install Linear DESIGN.md & dual-mode CSS variables"
+          },
+          {
+            cmd: `npx shadcn@latest add ${origin}/r/tpl-obsidian-saas-kit.json`,
+            descZh: "拉取整站工程令牌与路由结构指南",
+            descEn: "Install Obsidian SaaS starter tokens & blueprint"
+          }
+        ]
+      : [
+          {
+            cmd: `node scripts/uifino-cli.mjs init --brand linear --url ${origin}`,
+            descZh: "一键写入项目 DESIGN.md 与 .mcp.json 接入配置",
+            descEn: "Write root DESIGN.md + .mcp.json locally in one step"
+          },
+          {
+            cmd: `node scripts/uifino-cli.mjs add style/hairline-grid --url ${origin}`,
+            descZh: "拉取流派风格 CSS 变量与 DESIGN.md",
+            descEn: "Install UI style genre CSS variables & DESIGN.md"
+          },
+          {
+            cmd: `node scripts/uifino-cli.mjs add hero-telemetry-counter --url ${origin}`,
+            descZh: "安装局部组件源码与演示文件",
+            descEn: "Install component + Demo.tsx + tokens.css"
+          },
+          {
+            cmd: `npx uifino@latest create obsidian-saas-kit`,
+            descZh: "初始化整站工程模板",
+            descEn: "Scaffold full Next.js starter template"
+          }
+        ];
+
   return (
     <div className="band-full">
       <section className="shell-wrap grid grid-cols-1 gap-6 px-7 py-7 lg:grid-cols-2">
-        {/* CLI Reference */}
+        {/* Ring 02: CLI & shadcn Registry */}
         <div id="cli" className="border border-hairline bg-surface p-5">
-          <div className="mb-3.5 flex items-center justify-between">
-            <h2 className="heading-section m-0 text-base">
-              {isZh ? "CLI 命令行速查" : "CLI Quick Reference"}
-            </h2>
-            <Badge>npx uifino@latest</Badge>
+          <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div className="eyebrow-mono text-accent-text">
+                {isZh ? "第 2 环 · 注册表与命令行" : "RING 02 · SHADCN REGISTRY & CLI"}
+              </div>
+              <h2 className="heading-section mt-0.5 text-base">
+                {isZh ? "兼容 shadcn 注册表与命令行" : "Registry & CLI Quick Reference"}
+              </h2>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <SegmentedControl
+                options={[
+                  { value: "shadcn" as CliFlavor, label: "shadcn /r" },
+                  { value: "uifino" as CliFlavor, label: "uifino CLI" }
+                ]}
+                value={flavor}
+                onChange={setFlavor}
+              />
+              <a
+                href="/r/registry.json"
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono text-xs text-accent-text hover:underline"
+              >
+                /r/registry.json ↗
+              </a>
+            </div>
           </div>
 
           <div className="grid gap-2.5">
-            {CLI_COMMANDS.map((item) => (
+            {cliList.map((item) => (
               <div
                 key={item.cmd}
                 className="flex items-center justify-between gap-3 border border-hairline bg-code px-3.5 py-2.5"
@@ -73,18 +149,18 @@ export function McpCliAndPromptsSection() {
         {/* Ready-to-Use AI Prompts */}
         <div id="prompts" className="border border-hairline bg-surface p-5">
           <div className="mb-3.5 flex items-center justify-between">
-            <h2 className="heading-section m-0 text-base">
-              {isZh ? "复刻提示词库" : "Agent Prompt Recipes"}
-            </h2>
+            <div>
+              <div className="eyebrow-mono text-accent-text">PROMPT RECIPES</div>
+              <h2 className="heading-section mt-0.5 text-base">
+                {isZh ? "复刻提示词库" : "Agent Prompt Recipes"}
+              </h2>
+            </div>
             <Badge variant="accent">Prompts</Badge>
           </div>
 
           <div className="grid gap-3">
             {PROMPT_RECIPES.map((pr) => (
-              <div
-                key={pr.tag}
-                className="grid gap-2 border border-hairline bg-code p-3.5"
-              >
+              <div key={pr.tag} className="grid gap-2 border border-hairline bg-code p-3.5">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-semibold text-ink">
                     {isZh ? pr.titleZh : pr.titleEn}

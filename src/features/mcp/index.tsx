@@ -1,6 +1,7 @@
 import { McpCliAndPromptsSection } from "./cli-prompts";
 import { McpClientSetup } from "./client-setup";
 import { McpQuerySandbox } from "./query-sandbox";
+import { McpSkillGuardrailsSection } from "./skill-guardrails";
 
 export function McpFeatureView() {
   return (
@@ -9,11 +10,15 @@ export function McpFeatureView() {
       <div className="wireframe-spacer">
         <div className="wireframe-spacer-inner" />
       </div>
-      <McpQuerySandbox />
+      <McpCliAndPromptsSection />
       <div className="wireframe-spacer">
         <div className="wireframe-spacer-inner" />
       </div>
-      <McpCliAndPromptsSection />
+      <McpSkillGuardrailsSection />
+      <div className="wireframe-spacer">
+        <div className="wireframe-spacer-inner" />
+      </div>
+      <McpQuerySandbox />
     </div>
   );
 }

@@ -109,6 +109,9 @@ export interface CatalogBrandSpec extends BrandSkinContract {
   readonly siteUrl?: string;
   readonly kind: CatalogPlatformKind;
   readonly defaultTheme?: ThemeMode;
+  readonly coverImg?: string;
+  readonly logoSvg?: string;
+  readonly logoUrl?: string;
   readonly platformLabel: string;
   readonly category: CatalogDomainCategory;
   readonly tags: readonly string[];

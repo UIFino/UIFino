@@ -13,13 +13,92 @@ export function buildDesignMdSections(spec: CatalogBrandSpec): string {
     .map((rule) => `- **DON'T**: ${rule}`)
     .join("\n");
 
-  const pageAnatomyBlock = spec.scraped?.pages.length
-    ? `\n## 4. Reference Page Anatomy (${spec.scraped.pages[0]!.path})\n` +
-      spec.scraped.pages[0]!.anatomy
-        .map((sec) => `- **${sec.index} ${sec.nameEn}** (${sec.layoutEn}): ${sec.noteEn}`)
-        .join("\n") +
-      "\n"
-    : "";
+  const scraped = spec.scraped;
+  let measuredSections = "";
+
+  if (scraped) {
+    const colorTable =
+      scraped.measuredColors.length > 0
+        ? [
+            "### Measured Color Area Share",
+            "| Role | CSS Variable | Hex | Share |",
+            "| :--- | :--- | :--- | :--- |",
+            ...scraped.measuredColors.map(
+              (c) => `| ${c.roleEn} | \`${c.cssVar}\` | \`${c.hex}\` | ${c.share} |`
+            )
+          ].join("\n")
+        : "";
+
+    const typeTable =
+      scraped.measuredTypography.length > 0
+        ? [
+            "### Measured Typography & Free Open-Source Alternatives",
+            "| Level | Detected Font | Free Alternative | Size / Weight / Line-Height / Tracking |",
+            "| :--- | :--- | :--- | :--- |",
+            ...scraped.measuredTypography.map(
+              (t) =>
+                `| ${t.level} | ${t.detectedFamily} | \`${t.freeAlternative}\` | ${t.size} · ${t.weight} · ${t.lineHeight} · ${t.tracking} |`
+            )
+          ].join("\n")
+        : "";
+
+    const geometryList =
+      scraped.measuredGeometry.length > 0
+        ? [
+            `### Component Geometry & Surface Physics (Container Max Width: \`${scraped.containerMaxWidth}\`)`,
+            ...scraped.measuredGeometry.map(
+              (g) =>
+                `- **${g.targetEn}**: radius \`${g.radius}\` · border \`${g.border}\` · shadow \`${g.shadow}\`${g.extra ? ` · ${g.extra}` : ""}`
+            )
+          ].join("\n")
+        : "";
+
+    const hoverList =
+      scraped.hoverDiffs.length > 0
+        ? [
+            "### Interactive Hover Transitions",
+            ...scraped.hoverDiffs.map(
+              (h) =>
+                `- **${h.targetEn}**: Rest (\`${h.restBg}\` / border \`${h.restBorder}\` / text \`${h.restColor}\`) → Hover (\`${h.hoverBg}\` / border \`${h.hoverBorder}\` / text \`${h.hoverColor}\`) · \`${h.transition}\``
+            )
+          ].join("\n")
+        : "";
+
+    const pagesAnatomy =
+      scraped.pages.length > 0
+        ? [
+            "## 5. Multi-Page Section Anatomy",
+            ...scraped.pages.map((pg) => {
+              const items = pg.anatomy
+                .map((sec) => {
+                  const range = sec.bounds
+                    ? ` [${sec.bounds.desktop.topPct}%–${(
+                        sec.bounds.desktop.topPct + sec.bounds.desktop.heightPct
+                      ).toFixed(1)}%]`
+                    : "";
+                  return `- **${sec.index} ${sec.nameEn}** (${sec.layoutEn}${range}): ${sec.noteEn}`;
+                })
+                .join("\n");
+              return `### Page: ${pg.titleEn} (\`${pg.path}\`)\n${items}`;
+            })
+          ].join("\n\n")
+        : "";
+
+    measuredSections = [
+      "## 4. Measured Live DOM Audit",
+      colorTable,
+      typeTable,
+      geometryList,
+      hoverList,
+      pagesAnatomy
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+  }
+
+  const guardrailHeading = scraped
+    ? "## 6. Signature Rules & Anti-AI Slop Guardrails"
+    : "## 4. Signature Rules & Anti-AI Slop Guardrails";
 
   return `# ${spec.name} — DESIGN.md Protocol
 
@@ -37,8 +116,8 @@ ${spec.summaryEn}
 - **Display / Body**: \`${spec.fonts.display}\` (Open-source alternative: \`${spec.openFontAlt ?? "Inter / Geist"}\`), tracking \`${spec.fonts.tracking}\`.
 - **Monospace**: \`${spec.fonts.mono}\` with \`font-variant-numeric: tabular-nums\`.
 - **Radius & Rhythm**: Default radius \`${spec.defaultRadius}\` (ladder: ${spec.radiusScale.join(", ")}), spacing \`${spacingLadder}\`.
-${pageAnatomyBlock}
-## 5. Signature Rules & Anti-AI Slop Guardrails
+${measuredSections ? `\n${measuredSections}\n` : ""}
+${guardrailHeading}
 ${mustKeep}
 ${antiAi}
 `;

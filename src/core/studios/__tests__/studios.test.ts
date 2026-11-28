@@ -3,6 +3,7 @@ import { computeBackgroundStudio } from "@/core/studios/background";
 import { computeWcagContrast, generateColorShadeScale } from "@/core/studios/colors";
 import { computeShadowStudio } from "@/core/studios/shadow";
 import { computeTypeScale } from "@/core/studios/typography";
+import { MOTION_STUDIO_PRESETS, synthesizeSpringLinear } from "@/core/studios/motion";
 
 describe("core/studios", () => {
   it("computes background CSS and Tailwind snippets across engines", () => {
@@ -21,7 +22,17 @@ describe("core/studios", () => {
 
     const elevated = computeShadowStudio({ yOffset: 16, blur: 36, opacity: 45, rimLight: 12 }, "css");
     expect(elevated.boxShadow).toContain("inset 0 1px 0 0");
-    expect(elevated.code).toContain("--surface-shadow:");
+    expect(elevated.code).toContain("--shadow-card:");
+    expect(elevated.code).toContain("--shadow-dropdown:");
+    expect(elevated.code).toContain("--shadow-modal:");
+    expect(elevated.tiers).toHaveLength(3);
+  });
+
+  it("synthesizes CSS native linear() spring timing strings", () => {
+    const spring = synthesizeSpringLinear(280, 22);
+    expect(spring.startsWith("linear(0,")).toBe(true);
+    expect(spring.endsWith(", 1)")).toBe(true);
+    expect(MOTION_STUDIO_PRESETS.length).toBeGreaterThanOrEqual(4);
   });
 
   it("generates 11-stop shade ladders and WCAG 2.1 contrast ratios", () => {

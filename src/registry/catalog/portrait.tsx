@@ -1,5 +1,37 @@
 import type { CatalogBrandSpec } from "@/core/design-md";
 import type { ThemeMode } from "@/core/tokens";
+import { cn } from "@/lib/cn";
+
+export interface BrandLogoMarkProps {
+  readonly item: CatalogBrandSpec;
+  readonly className?: string;
+}
+
+export function BrandLogoMark({ item, className }: BrandLogoMarkProps) {
+  if (item.logoSvg) {
+    return (
+      <span
+        aria-hidden="true"
+        className={cn("inline-flex h-4 w-4 shrink-0 items-center justify-center text-ink [&>svg]:h-full [&>svg]:w-full", className)}
+        dangerouslySetInnerHTML={{ __html: item.logoSvg }}
+      />
+    );
+  }
+
+  if (item.logoUrl) {
+    return (
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img
+        src={item.logoUrl}
+        alt=""
+        aria-hidden="true"
+        className={cn("h-4 w-4 shrink-0 object-contain", className)}
+      />
+    );
+  }
+
+  return null;
+}
 
 export interface BrandPortraitProps {
   readonly item: CatalogBrandSpec;
@@ -9,6 +41,34 @@ export interface BrandPortraitProps {
 export function BrandPortrait({ item, mode = "dark" }: BrandPortraitProps) {
   const p = mode === "light" ? item.light : item.dark;
   const fontFam = item.fonts.serif ? "var(--font-serif)" : "var(--font-sans)";
+  const coverSrc = item.coverImg ?? item.scraped?.pages[0]?.desktopImg;
+
+  if (coverSrc) {
+    return (
+      <div className="relative h-full w-full overflow-hidden" style={{ backgroundColor: p.canvas }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={coverSrc}
+          alt={`${item.name} hero cover`}
+          loading="lazy"
+          className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
+        />
+        <div className="absolute inset-x-2.5 bottom-2.5 flex gap-1">
+          {[p.canvas, p.surface, p.border, p.ink, p.accent].map((hex, i) => (
+            <span
+              key={`${hex}-${i}`}
+              className="inline-block h-1.5 flex-1 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
+              style={{ backgroundColor: hex }}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (item.kind === "app") {
     return (

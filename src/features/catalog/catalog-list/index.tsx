@@ -10,6 +10,7 @@ import { SegmentedControl } from "@/components/primitives/segmented";
 import type { ThemeMode } from "@/core/tokens";
 import { Link } from "@/i18n/navigation";
 import {
+  BrandLogoMark,
   BrandPortrait,
   CATALOG_CATEGORIES,
   CATALOG_CATEGORY_LABELS,
@@ -123,35 +124,46 @@ export function CatalogListView() {
           />
         ) : (
           <div className="grid grid-cols-1 gap-x-[22px] gap-y-7 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5">
-            {filtered.map((item) => (
-              <Link
-                key={item.id}
-                href={`/catalog/${item.id}`}
-                className="group flex min-w-0 flex-col gap-2.5"
-              >
-                <div className="relative aspect-[3/4] w-full overflow-hidden border border-hairline bg-surface transition-colors duration-160 group-hover:border-accent-border">
-                  <BrandPortrait item={item} mode={previewMode} />
-                  <Badge variant="pillOverlay" className="absolute top-2.5 left-2.5">
-                    {item.kind === "app" ? "APP SPEC" : "DESIGN.md"}
-                  </Badge>
-                </div>
-                <div className="px-0.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-[14.5px] font-semibold text-ink">
-                      {item.name}
-                    </span>
-                    <span className="font-mono-ui shrink-0 text-[11.5px] text-subtle">
-                      {isZh
-                        ? CATALOG_CATEGORY_LABELS[item.category].zh
-                        : CATALOG_CATEGORY_LABELS[item.category].en}
-                    </span>
+            {filtered.map((item) => {
+              const hasRealCover = Boolean(item.coverImg ?? item.scraped?.pages[0]?.desktopImg);
+              return (
+                <Link
+                  key={item.id}
+                  href={`/catalog/${item.id}`}
+                  className="group flex min-w-0 flex-col gap-2.5"
+                >
+                  <div className="relative aspect-[3/4] w-full overflow-hidden border border-hairline bg-surface transition-colors duration-160 group-hover:border-accent-border">
+                    <BrandPortrait item={item} mode={previewMode} />
+                    <Badge
+                      variant="pillOverlay"
+                      className={
+                        hasRealCover ? "absolute bottom-6 left-2.5" : "absolute top-2.5 left-2.5"
+                      }
+                    >
+                      {item.kind === "app" ? "APP SPEC" : "DESIGN.md"}
+                    </Badge>
                   </div>
-                  <div className="mt-1 line-clamp-2 text-[12.5px] leading-[1.45] text-muted">
-                    {isZh ? item.summaryZh : item.summaryEn}
+                  <div className="px-0.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <BrandLogoMark item={item} />
+                        <span className="truncate text-[14.5px] font-semibold text-ink">
+                          {item.name}
+                        </span>
+                      </span>
+                      <span className="font-mono-ui shrink-0 text-[11.5px] text-subtle">
+                        {isZh
+                          ? CATALOG_CATEGORY_LABELS[item.category].zh
+                          : CATALOG_CATEGORY_LABELS[item.category].en}
+                      </span>
+                    </div>
+                    <div className="mt-1 line-clamp-2 text-[12.5px] leading-[1.45] text-muted">
+                      {isZh ? item.summaryZh : item.summaryEn}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

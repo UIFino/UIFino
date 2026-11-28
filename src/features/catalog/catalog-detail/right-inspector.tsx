@@ -9,7 +9,7 @@ import { SegmentedControl } from "@/components/primitives/segmented";
 import type { CatalogBrandSpec } from "@/core/design-md";
 import type { ThemeMode } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
-import { CATALOG_CATEGORY_LABELS } from "@/registry/catalog";
+import { BrandLogoMark, CATALOG_CATEGORY_LABELS } from "@/registry/catalog";
 
 export interface CatalogRightInspectorProps {
   readonly item: CatalogBrandSpec;
@@ -83,6 +83,7 @@ export function CatalogRightInspector({
         <div className="flex items-start justify-between gap-2">
           <div>
             <div className="flex items-center gap-2">
+              <BrandLogoMark item={item} className="h-[18px] w-[18px]" />
               <h1 className="m-0 text-lg font-semibold tracking-tight text-ink">
                 {item.name}
               </h1>

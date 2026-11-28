@@ -35,6 +35,7 @@ describe("core/codegen", () => {
   it("generates clean React + Tailwind source, tokens.css, and DESIGN.md", () => {
     expect(getComponentVirtualFiles(ITEM)).toEqual([
       "HeroTelemetryCounter.tsx",
+      "HeroTelemetryCounterDemo.tsx",
       "tokens.css",
       "DESIGN.md"
     ]);

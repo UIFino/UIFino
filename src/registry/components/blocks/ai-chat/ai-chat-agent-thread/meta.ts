@@ -13,5 +13,9 @@ export const aiChatAgentThreadMeta: ComponentAssetMeta = {
   contract: [
     "Keep prompt input anchored without obscuring latest streamed tokens.",
     "Render code and tool outputs in monospace containers with horizontal scroll."
+  ],
+  contractZh: [
+    "底部输入框保持固定吸底，不遮挡最新流式输出的对话内容。",
+    "代码片段与工具调用输出放入等宽容器并支持横向滚动。"
   ]
 };

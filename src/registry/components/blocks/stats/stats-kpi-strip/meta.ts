@@ -13,5 +13,9 @@ export const statsKpiStripMeta: ComponentAssetMeta = {
   contract: [
     "Format all currency and latency numbers with tabular-nums.",
     "Pair color delta indicators with explicit + or - signs."
+  ],
+  contractZh: [
+    "所有金额与延迟数值强制开启等宽数字（tabular-nums）对齐。",
+    "涨跌幅颜色指示器必须配合明确的 + / - 符号，不只靠色差区分。"
   ]
 };

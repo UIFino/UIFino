@@ -13,5 +13,9 @@ export const formWebhookModalMeta: ComponentAssetMeta = {
   contract: [
     "Trap keyboard focus inside open modal and dismiss cleanly on Escape.",
     "Associate every input with an explicit label."
+  ],
+  contractZh: [
+    "弹窗打开期间锁定键盘焦点在弹层内部，按下 Escape 键平稳关闭并归还焦点。",
+    "所有表单输入域绑定明确的可点击标签。"
   ]
 };

@@ -13,5 +13,9 @@ export const emptyWireframeStateMeta: ComponentAssetMeta = {
   contract: [
     "Always pair empty states with an actionable reset or creation button.",
     "Keep message concise without blaming the user."
+  ],
+  contractZh: [
+    "空状态面板必须配有明确的重置筛选或新建引导动作按钮，不可只有一句干文案。",
+    "提示语保持客观清晰，不使用指责或迷惑用户的措辞。"
   ]
 };

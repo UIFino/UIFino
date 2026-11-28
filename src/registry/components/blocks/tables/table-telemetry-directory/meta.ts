@@ -13,5 +13,9 @@ export const tableTelemetryDirectoryMeta: ComponentAssetMeta = {
   contract: [
     "Enable horizontal scroll wrapper on narrow screens without clipping columns.",
     "Right-align numeric latency and cost columns with tabular-nums."
+  ],
+  contractZh: [
+    "窄屏容器外层包裹横向滚动区，避免列内容被强行裁切挤压。",
+    "延迟与费用数值列统一右对齐并应用等宽数字。"
   ]
 };

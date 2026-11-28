@@ -13,5 +13,9 @@ export const motionStaggerRevealMeta: ComponentAssetMeta = {
   contract: [
     "Animate transform and opacity only; never animate height or margin.",
     "Cap total stagger sequence under 360ms so content feels immediate."
+  ],
+  contractZh: [
+    "只对 transform 与 opacity 合成属性加动画，严禁直接过渡 height 或 margin。",
+    "整组交错入场的总耗时封顶在 360ms 内，确保首屏呼之欲出。"
   ]
 };

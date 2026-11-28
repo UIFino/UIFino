@@ -13,5 +13,9 @@ export const ctaCliLaunchpadMeta: ComponentAssetMeta = {
   contract: [
     "Keep primary action button and copyable CLI snippet on a single row above 640px.",
     "Stack full-width cleanly on mobile viewports."
+  ],
+  contractZh: [
+    "640px 以上桌面宽度将命令行条与主转化按钮维持在单行内水平对齐。",
+    "手机窄屏下命令框与按钮各自撑满一行垂直堆叠。"
   ]
 };

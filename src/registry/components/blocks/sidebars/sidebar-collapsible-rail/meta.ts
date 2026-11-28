@@ -9,9 +9,13 @@ export const sidebarCollapsibleRailMeta: ComponentAssetMeta = {
   archetype: "sidebar-nav",
   tags: ["sidebar", "navigation", "workspace", "dashboard"],
   descEn: "Keyboard-toggleable (⌘B) multi-group workspace rail with active border indicator.",
-  descZh: "支持 ⌘B 快捷键收起的分租工作台侧边目录栏。",
+  descZh: "支持 ⌘B 快捷键收起的分组工作台侧边目录栏。",
   contract: [
     "Preserve scroll position across route transitions.",
     "Truncate long workspace and item names cleanly with ellipsis."
+  ],
+  contractZh: [
+    "在目录树内切换不同页面时保持侧边栏当前滚动条位置不跳回顶部。",
+    "较长的工作区与菜单条目使用省略号截断，防止撑宽侧栏布局。"
   ]
 };

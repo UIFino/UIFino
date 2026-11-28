@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import type { ViewportSize } from "@/components/patterns/viewport-frame";
-import { Button } from "@/components/primitives/button";
 import { DualSwatch } from "@/components/primitives/dual-swatch";
 import { SegmentedControl } from "@/components/primitives/segmented";
 import type { DensityMode, RadiusStop, ResolvedWorkbenchTokens } from "@/core/tokens";
@@ -20,8 +20,19 @@ export interface WorkbenchParamsPanelProps {
   readonly onDensityChange: (d: DensityMode) => void;
   readonly onSkinChange: (skinId: string) => void;
   readonly onReset: () => void;
-  readonly onCopyCode: () => void;
 }
+
+const VIEWPORT_ZH: Record<ViewportSize, string> = {
+  desktop: "电脑",
+  tablet: "平板",
+  mobile: "手机"
+};
+
+const DENSITY_ZH: Record<DensityMode, string> = {
+  compact: "紧凑",
+  default: "标准",
+  spacious: "舒展"
+};
 
 export function WorkbenchParamsPanel({
   tokens,
@@ -32,39 +43,70 @@ export function WorkbenchParamsPanel({
   onRadiusChange,
   onDensityChange,
   onSkinChange,
-  onReset,
-  onCopyCode
+  onReset
 }: WorkbenchParamsPanelProps) {
   const t = useTranslations("library");
   const locale = useLocale();
   const isZh = locale === "zh";
 
+  const [expandBrands, setExpandBrands] = useState(false);
+
   const brandChoices = [
-    ["default", "uifino"] as const,
-    ...CATALOG_ITEMS.slice(0, 5).map((b) => [b.id, b.name] as const)
+    { id: "default", name: "uifino", swatch: ["#111318", "#9EFF00"] as const },
+    ...CATALOG_ITEMS.map((b) => ({
+      id: b.id,
+      name: b.name,
+      swatch: [b.dark.canvas, b.dark.accent] as const
+    }))
   ];
 
-  const tocItems = [
-    ["#wb-overview", "Overview & Stack"],
-    ["#wb-stage", `Live Stage (${viewport})`],
-    ["#wb-install", "Install & Deps"],
-    ["#wb-tokens", "Active Token Contract"],
-    ["#wb-rules", "Layout & Motion Rules"],
-    ["#wb-props", "Props API Table"]
-  ] as const;
+  // Show all brands smoothly when expanded, or ensure selected brand stays visible when collapsed
+  const visibleBrands = expandBrands
+    ? brandChoices
+    : brandChoices.filter((b, idx) => idx < 6 || b.id === skin);
+
+  const tocItems = isZh
+    ? ([
+        ["#wb-overview", "概览与操作"],
+        ["#wb-stage", `实时预览舞台 (${VIEWPORT_ZH[viewport]})`],
+        ["#wb-install", "安装与依赖"],
+        ["#wb-rules", "布局与动效护栏"],
+        ["#wb-props", "Props 参数表"]
+      ] as const)
+    : ([
+        ["#wb-overview", "Overview & Stack"],
+        ["#wb-stage", `Live Stage (${viewport})`],
+        ["#wb-install", "Install & Deps"],
+        ["#wb-rules", "Layout & Motion Rules"],
+        ["#wb-props", "Props API Table"]
+      ] as const);
 
   return (
-    <aside className="order-2 grid content-start gap-[22px] border-t border-hairline bg-canvas px-4 py-[18px] lg:sticky lg:top-[var(--header-h)] lg:order-3 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-l">
-      <div className="grid gap-3.5 border-b border-hairline pb-[18px]">
+    <aside className="border-hairline bg-canvas order-2 grid content-start gap-[22px] border-t px-4 py-[18px] lg:sticky lg:top-[var(--header-h)] lg:order-3 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-l">
+      <div className="border-hairline grid gap-3.5 border-b pb-[18px]">
         <div className="flex items-center justify-between">
           <span className="eyebrow-mono text-accent-text">{t("wbParamsTitle")}</span>
           <button
             type="button"
             onClick={onReset}
-            className="font-mono-ui cursor-pointer text-[11px] text-subtle underline hover:text-ink"
+            className="font-mono-ui text-subtle hover:text-ink cursor-pointer text-[11px] underline"
           >
             {t("wbReset")}
           </button>
+        </div>
+
+        {/* Active Skin & Accent Indicator */}
+        <div className="border-hairline bg-surface flex items-center justify-between border px-2.5 py-1.5 text-xs">
+          <span className="text-muted">{isZh ? "当前皮肤" : "Active Skin"}</span>
+          <span className="text-ink inline-flex items-center gap-1.5 font-mono text-[11.5px] font-semibold">
+            <span
+              className="border-hairline inline-block h-2.5 w-2.5 border"
+              style={{ backgroundColor: tokens.accent }}
+              title={tokens.accent}
+            />
+            <span>{tokens.skinName}</span>
+            <span className="text-subtle text-[10.5px]">{tokens.accent}</span>
+          </span>
         </div>
 
         <div>
@@ -84,13 +126,15 @@ export function WorkbenchParamsPanel({
         <div>
           <div className="mb-1.5 flex justify-between text-xs">
             <span className="text-muted">{t("wbDensity")}</span>
-            <span className="font-mono-ui text-ink">{tokens.density}</span>
+            <span className="font-mono-ui text-ink">
+              {isZh ? DENSITY_ZH[tokens.density] : tokens.density} · {tokens.padCard}
+            </span>
           </div>
           <SegmentedControl
             options={[
-              { value: "compact" as DensityMode, label: "Compact" },
-              { value: "default" as DensityMode, label: "Default" },
-              { value: "spacious" as DensityMode, label: "Spacious" }
+              { value: "compact" as DensityMode, label: isZh ? "紧凑" : "Compact" },
+              { value: "default" as DensityMode, label: isZh ? "标准" : "Default" },
+              { value: "spacious" as DensityMode, label: isZh ? "舒展" : "Spacious" }
             ]}
             value={density}
             onChange={onDensityChange}
@@ -99,31 +143,53 @@ export function WorkbenchParamsPanel({
           />
         </div>
 
+        {/* All Brand Catalog Skins (Expandable) */}
         <div>
-          <div className="mb-1.5 text-xs text-muted">{t("wbBrandSkin")}</div>
-          <div className="grid grid-cols-2 gap-[5px]">
-            {brandChoices.map(([id, name]) => (
+          <div className="mb-1.5 flex items-center justify-between text-xs">
+            <span className="text-muted">
+              {t("wbBrandSkin")} ({CATALOG_ITEMS.length})
+            </span>
+            <button
+              type="button"
+              onClick={() => setExpandBrands((v) => !v)}
+              className="text-accent-text cursor-pointer font-mono text-[10.5px] hover:underline"
+            >
+              {expandBrands
+                ? isZh
+                  ? "收起"
+                  : "Less"
+                : isZh
+                  ? `全部 ${brandChoices.length} ▾`
+                  : `All ${brandChoices.length} ▾`}
+            </button>
+          </div>
+          <div className="grid max-h-[164px] grid-cols-2 gap-[5px] overflow-y-auto pr-0.5">
+            {visibleBrands.map((b) => (
               <button
-                key={id}
+                key={b.id}
                 type="button"
-                onClick={() => onSkinChange(id)}
+                onClick={() => onSkinChange(b.id)}
                 className={cn(
-                  "flex h-7 cursor-pointer items-center justify-start border px-2 text-[11.5px] font-medium transition-colors",
-                  skin === id
+                  "flex h-7 cursor-pointer items-center gap-1.5 border px-2 text-[11.5px] font-medium transition-colors",
+                  skin === b.id
                     ? "border-accent-border bg-accent-soft text-accent-text"
                     : "border-hairline bg-surface text-ink hover:bg-gray-100"
                 )}
               >
-                <span className="truncate">{name}</span>
+                <DualSwatch swatch={b.swatch} />
+                <span className="truncate">{b.name}</span>
               </button>
             ))}
           </div>
         </div>
 
+        {/* All 10 UI Style Presets */}
         <div>
-          <div className="mb-1.5 text-xs text-muted">{isZh ? "风格流派" : "UI Styles"}</div>
+          <div className="text-muted mb-1.5 text-xs">
+            {isZh ? `风格流派 (${STYLE_ITEMS.length})` : `UI Styles (${STYLE_ITEMS.length})`}
+          </div>
           <div className="grid grid-cols-2 gap-[5px]">
-            {STYLE_ITEMS.slice(0, 6).map((st) => (
+            {STYLE_ITEMS.map((st) => (
               <button
                 key={st.id}
                 type="button"
@@ -141,15 +207,6 @@ export function WorkbenchParamsPanel({
             ))}
           </div>
         </div>
-
-        <Button
-          variant="contrast"
-          size="md"
-          onClick={onCopyCode}
-          className="h-[34px] w-full text-xs"
-        >
-          {t("wbCopyCode")}
-        </Button>
       </div>
 
       <div>

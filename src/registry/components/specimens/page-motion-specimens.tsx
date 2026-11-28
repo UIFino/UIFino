@@ -91,7 +91,7 @@ export function PageShellSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
                 color: tk.muted
               }}
             >
-              ✓ All sections aligned to {tk.skinName} token contract ({tk.card} radius)
+              ✓ Cluster health nominal · {tk.card} radius · 14.2ms global P99
             </div>
           </div>
         </div>

@@ -45,20 +45,25 @@ export function LibraryCategoryView({
         <FilterToolbar
           left={
             <SegmentedControl
-              options={subcats.map((sc) => ({ value: sc, label: sc }))}
+              options={subcats.map((sc) => ({
+                value: sc,
+                label: sc === "All" && isZh ? "全部" : sc
+              }))}
               value={subfilter}
               onChange={setSubfilter}
             />
           }
           right={
             <>
-              <span className="font-mono-ui text-xs text-muted">
-                {visibleItems.length} shown · {category.totalCount} in registry
+              <span className="font-mono-ui text-muted text-xs">
+                {isZh
+                  ? `${visibleItems.length} 项展示 · 分类共 ${category.totalCount} 套`
+                  : `${visibleItems.length} shown · ${category.totalCount} in registry`}
               </span>
               <SegmentedControl
                 options={[
-                  { value: 3 as const, label: "3-Col" },
-                  { value: 2 as const, label: "2-Col" }
+                  { value: 3 as const, label: isZh ? "三列" : "3-Col" },
+                  { value: 2 as const, label: isZh ? "双列" : "2-Col" }
                 ]}
                 value={cols}
                 onChange={setCols}
@@ -74,19 +79,19 @@ export function LibraryCategoryView({
                 href={`/components/${category.id}/${item.id}`}
                 className="group flex w-full flex-col p-[18px] text-left"
               >
-                <div className="relative aspect-[16/10] w-full overflow-hidden border border-hairline bg-code opacity-88 transition-all duration-180 group-hover:border-accent-border group-hover:opacity-100">
+                <div className="border-hairline bg-code group-hover:border-accent-border relative aspect-[16/10] w-full overflow-hidden border opacity-88 transition-all duration-180 group-hover:opacity-100">
                   <div className="flex h-full w-full flex-col justify-center">
                     <AssetStage item={item} tokens={previewTokens} viewport="desktop" compact />
                   </div>
                 </div>
                 <div className="mt-3 w-full">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-[14.5px] font-semibold text-ink">
-                      {item.name}
+                    <span className="text-ink truncate text-[14.5px] font-semibold">
+                      {isZh && item.nameZh ? item.nameZh : item.name}
                     </span>
                     <Badge>{item.subcat}</Badge>
                   </div>
-                  <p className="mt-[5px] line-clamp-2 text-[12.5px] leading-[1.45] text-muted">
+                  <p className="text-muted mt-[5px] line-clamp-2 text-[12.5px] leading-[1.45]">
                     {isZh ? item.descZh : item.descEn}
                   </p>
                 </div>

@@ -13,5 +13,9 @@ export const motionSpringCounterMeta: ComponentAssetMeta = {
   contract: [
     "Enforce font-variant-numeric: tabular-nums to prevent horizontal jitter.",
     "Respect prefers-reduced-motion: reduce."
+  ],
+  contractZh: [
+    "数字滚动过程严格启用等宽数字（tabular-nums），消除位数变更造成的左右抖动。",
+    "响应系统 prefers-reduced-motion 减弱动态偏好，需要时直接展示终值。"
   ]
 };

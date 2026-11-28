@@ -10,6 +10,7 @@ import {
   PricingTiersSpecimen
 } from "./block-specimens";
 import { CategoryMiniStack } from "./category-mini-stack";
+import { BlockStateStage } from "./block-state-specimens";
 import {
   AiChatThreadSpecimen,
   CtaBannerSpecimen,
@@ -29,7 +30,7 @@ import {
 } from "./hero-specimens";
 import { MotionLabSpecimen } from "./page-motion-specimens";
 
-export { CategoryMiniStack };
+export { BlockStateStage, CategoryMiniStack };
 
 export interface AssetStageProps {
   readonly item: ComponentAssetMeta;

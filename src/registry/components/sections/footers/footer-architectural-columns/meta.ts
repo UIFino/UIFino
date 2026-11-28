@@ -13,5 +13,9 @@ export const footerArchitecturalColumnsMeta: ComponentAssetMeta = {
   contract: [
     "Collapse 4 link columns into 2x2 grid on mobile screens.",
     "Maintain 4.5:1 contrast on secondary footer links."
+  ],
+  contractZh: [
+    "移动端下将四列页脚目录收折为规整的 2×2 双列网格。",
+    "次要页脚链接文字对比度始终满足至少 4.5:1 可读标准。"
   ]
 };

@@ -6,9 +6,9 @@ export function PricingTiersSpecimen({ tokens: tk, isMobile, compact }: Specimen
   const gap = compact ? "8px" : tk.gap;
 
   const tiers = [
-    { tier: "Starter", price: "$0", note: "Public DESIGN.md & core blocks", hot: false },
-    { tier: "Pro", price: "$24", note: "Full MCP server + 10 UI style skins", hot: true },
-    { tier: "Team", price: "$79", note: "Private brand tokens & CI sync", hot: false }
+    { tier: "Starter", price: "$0", note: "Up to 100k requests/mo & 3 seats", hot: false },
+    { tier: "Pro", price: "$24", note: "Unlimited edge PoPs & SAML SSO", hot: true },
+    { tier: "Team", price: "$79", note: "Dedicated clusters & 90d audit logs", hot: false }
   ] as const;
 
   return (
@@ -173,7 +173,7 @@ export function CmdkPaletteSpecimen({ tokens: tk, isMobile, compact }: SpecimenR
           className="flex items-center justify-between border-b px-3.5 py-2.5 text-xs"
           style={{ borderColor: tk.border, color: tk.muted }}
         >
-          <span>Jump to DESIGN.md, block, or tool…</span>
+          <span>Search workspace, deploy, or trace…</span>
           <span
             className="font-mono-ui border px-[5px] py-px text-[10px]"
             style={{ borderColor: tk.border, borderRadius: tk.badge }}
@@ -186,25 +186,25 @@ export function CmdkPaletteSpecimen({ tokens: tk, isMobile, compact }: SpecimenR
             className="flex items-center justify-between px-2.5 py-[7px]"
             style={{ backgroundColor: tk.elevated, borderRadius: tk.ctrl }}
           >
-            <span>Linear DESIGN.md Protocol</span>
+            <span>Production Gateway · iad1</span>
             <span className="font-mono-ui text-[10.5px]" style={{ color: tk.accent }}>
-              Catalog ↵
+              Route ↵
             </span>
           </div>
           <div
             className="flex items-center justify-between px-2.5 py-[7px]"
             style={{ color: tk.muted }}
           >
-            <span>Telemetry Counter Hero</span>
-            <span className="font-mono-ui text-[10.5px]">Section</span>
+            <span>Invite Team Member</span>
+            <span className="font-mono-ui text-[10.5px]">Workspace</span>
           </div>
           {!compact ? (
             <div
               className="flex items-center justify-between px-2.5 py-[7px]"
               style={{ color: tk.muted }}
             >
-              <span>Chartreuse Aurora Studio</span>
-              <span className="font-mono-ui text-[10.5px]">Tool</span>
+              <span>Open Billing &amp; Usage</span>
+              <span className="font-mono-ui text-[10.5px]">Settings</span>
             </div>
           ) : null}
         </div>
@@ -244,9 +244,9 @@ export function DataTableSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
           <tbody>
             {(
               [
-                ["linear.app/design-md", "Catalog", "Verified", "11ms"],
-                ["hero-telemetry-counter", "Section", "Synced", "14ms"],
-                ["auth-passkey-card", "Block", "Synced", "09ms"]
+                ["api-gateway-prod", "Router", "Healthy", "11ms"],
+                ["billing-webhook-worker", "Worker", "Active", "14ms"],
+                ["passkey-auth-edge", "Auth", "Healthy", "09ms"]
               ] as const
             ).map(([res, tp, st, lat]) => (
               <tr key={res} className="border-b" style={{ borderColor: tk.border }}>
@@ -292,7 +292,7 @@ export function EmptyStateSpecimen({ tokens: tk, isMobile, compact }: SpecimenRe
         </div>
         {!compact ? (
           <div className="text-xs" style={{ color: tk.muted }}>
-            Reset active filters or import your first DESIGN.md protocol via CLI.
+            Clear active filters or connect a repository to trigger your first deploy.
           </div>
         ) : null}
         <div className="mt-1 flex justify-center gap-2">
@@ -348,13 +348,13 @@ export function BentoGridSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
         >
           <div>
             <span className="font-mono-ui text-[10px]" style={{ color: tk.accent }}>
-              01 · PROTOCOL MATRIX
+              01 · EDGE COMPUTE
             </span>
             <div
               className="mt-1.5 font-semibold"
               style={{ fontSize: compact ? "14px" : "18px" }}
             >
-              Zero-drift design tokens
+              Sub-15ms global cold starts
             </div>
           </div>
           <div
@@ -366,7 +366,7 @@ export function BentoGridSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
               color: tk.muted
             }}
           >
-            radius: {tk.card} · density: {tk.density}
+            iad1 · v8-isolate · 11.4ms p99
           </div>
         </div>
         <div className="grid min-w-0" style={{ gap }}>
@@ -380,10 +380,10 @@ export function BentoGridSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
             }}
           >
             <span className="font-mono-ui text-[10px]" style={{ color: tk.muted }}>
-              02 · STACK
+              02 · RUNTIME
             </span>
             <div className="mt-1 font-mono text-xs font-semibold">
-              React 19 · Tailwind v4
+              Node 22 · Web Streams
             </div>
           </div>
           <div
@@ -396,10 +396,10 @@ export function BentoGridSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
             }}
           >
             <span className="font-mono-ui text-[10px]" style={{ color: tk.muted }}>
-              03 · MCP READY
+              03 · OBSERVABILITY
             </span>
             <div className="mt-1 font-mono text-xs" style={{ color: tk.accent }}>
-              14ms retrieval
+              OpenTelemetry Traces
             </div>
           </div>
         </div>

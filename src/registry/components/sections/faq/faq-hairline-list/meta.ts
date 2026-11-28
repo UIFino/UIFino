@@ -13,5 +13,9 @@ export const faqHairlineListMeta: ComponentAssetMeta = {
   contract: [
     "Use native button triggers with aria-expanded state.",
     "Prevent layout jump when answers expand or collapse."
+  ],
+  contractZh: [
+    "折叠标题行使用原生 button 元素承载，并声明 aria-expanded 展开状态。",
+    "展开或收起答案正文时保证边框线宽不叠加且页面不产生抖动。"
   ]
 };

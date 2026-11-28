@@ -13,5 +13,9 @@ export const cmdkProtocolPaletteMeta: ComponentAssetMeta = {
   contract: [
     "Auto-focus search input on open and cycle items with ArrowUp / ArrowDown.",
     "Display explicit ESC and Enter keyboard hints."
+  ],
+  contractZh: [
+    "弹层打开后自动聚焦检索框，并支持上下方向键循环切换命中条目。",
+    "在面板显眼位置标明 ESC 关闭与 Enter 回车跳转快捷键提示。"
   ]
 };

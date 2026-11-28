@@ -13,5 +13,9 @@ export const motionHairlineSpotlightMeta: ComponentAssetMeta = {
   contract: [
     "Update pointer coordinates via CSS variables without triggering React re-renders.",
     "Disable pointer listeners on coarse touch devices."
+  ],
+  contractZh: [
+    "通过 CSS 自定义变量实时更新鼠标坐标，避免引发 React 状态频繁重渲染。",
+    "在粗精度触摸设备上自动关闭指针追踪监听以节省电量。"
   ]
 };

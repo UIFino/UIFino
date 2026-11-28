@@ -6,8 +6,8 @@ export function QuotesWallSpecimen({ tokens: tk, isMobile, compact }: SpecimenRe
   const gap = compact ? "8px" : tk.gap;
 
   const quotes = [
-    { author: "Maya Lin · Staff UI", quote: "Unified our DESIGN.md tokens in 20 minutes." },
-    { author: "Alex Chen · Infra Lead", quote: "Zero layout drift across AI-generated PRs." }
+    { author: "Maya Lin · Staff Engineer", quote: "Cut edge tail latency by 42% in a single sprint." },
+    { author: "Alex Chen · Infra Lead", quote: "Zero cold-start regressions after switching workers." }
   ] as const;
 
   return (
@@ -45,8 +45,8 @@ export function FaqAccordionSpecimen({ tokens: tk, isMobile, compact }: Specimen
   const pad = compact ? "16px" : isMobile ? "18px" : tk.padStage;
 
   const items = [
-    { q: "How does DESIGN.md sync with AI coding agents?", a: "Drop DESIGN.md in your repo root or connect via MCP.", open: true },
-    { q: "Can I customize border radius and surface tokens?", a: "Yes, every block binds directly to CSS variables.", open: false }
+    { q: "How are multi-region edge failovers handled?", a: "Traffic reroutes automatically within 150ms across healthy PoPs.", open: true },
+    { q: "Can teams enforce SAML SSO and immutable logs?", a: "Yes, every workspace role binds directly to policy rules.", open: false }
   ] as const;
 
   return (
@@ -103,7 +103,7 @@ export function CtaBannerSpecimen({ tokens: tk, isMobile, compact }: SpecimenRen
           </div>
           {!compact ? (
             <div className="mt-1 font-mono text-[11px]" style={{ color: tk.muted }}>
-              $ npx uifino@latest init
+              $ npx acme-cloud@latest init
             </div>
           ) : null}
         </div>
@@ -139,16 +139,16 @@ export function FooterGridSpecimen({ tokens: tk, isMobile, compact }: SpecimenRe
         }}
       >
         <div>
-          <div className="font-mono text-xs font-bold">uifino</div>
+          <div className="font-mono text-xs font-bold">acme cloud</div>
           <div className="mt-1 text-[10.5px]" style={{ color: tk.muted }}>
-            DESIGN.md &amp; UI blocks
+            Edge compute &amp; runtime
           </div>
         </div>
         {(
           [
-            ["Catalog", ["Linear", "Claude"]],
-            ["Blocks", ["Navbars", "Tables"]],
-            ["Tools", ["Surface", "MCP"]]
+            ["Product", ["Docs", "Changelog"]],
+            ["Compute", ["Gateways", "Workers"]],
+            ["Company", ["Security", "Status"]]
           ] as const
         ).map(([col, links]) => (
           <div key={col} className="text-[10.5px]">
@@ -263,7 +263,7 @@ export function AiChatThreadSpecimen({ tokens: tk, isMobile, compact }: Specimen
             borderRadius: tk.ctrl
           }}
         >
-          Generate a pricing grid with 0px hairline borders
+          Inspect P99 latency spikes in eu-west over the last 1h
         </div>
         <div
           className="border px-3 py-2 text-xs"
@@ -277,7 +277,7 @@ export function AiChatThreadSpecimen({ tokens: tk, isMobile, compact }: Specimen
             ● Agent · 14ms
           </span>
           <div className="mt-1" style={{ color: tk.muted }}>
-            Matched DESIGN.md tokens and generated PricingGrid.tsx.
+            Queried 42 edge traces · Peak latency 28.4ms on fra1.
           </div>
         </div>
       </div>

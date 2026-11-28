@@ -58,6 +58,7 @@ export interface ComponentAssetMeta {
   readonly descEn: string;
   readonly descZh: string;
   readonly contract: readonly string[];
+  readonly contractZh?: readonly string[];
 }
 
 export interface ComponentCategoryMeta {

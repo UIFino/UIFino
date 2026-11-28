@@ -35,7 +35,7 @@ export function TelemetryHeroSpecimen({
           className="inline-block h-1.5 w-1.5 rounded-full"
           style={{ backgroundColor: tk.accent }}
         />
-        DESIGN.MD VERIFIED
+        Release v2.4 · Edge Telemetry
       </span>
       <h3
         className="mx-auto leading-[1.08] font-bold tracking-[-0.03em]"
@@ -46,12 +46,12 @@ export function TelemetryHeroSpecimen({
           fontSize: compact ? "16px" : isMobile ? "24px" : "34px"
         }}
       >
-        Ship authentic interfaces without generic AI templates.
+        Observe every edge request in real time.
       </h3>
       {!compact ? (
         <p className="mx-auto mt-2.5 max-w-[480px] text-[13.5px]" style={{ color: tk.muted }}>
-          Synchronized color tokens, radius ladders, and tabular telemetry ready for React &amp;
-          Tailwind CSS.
+          Sub-second latency tracking, error budgets, and instant rollouts across 48 global edge
+          regions.
         </p>
       ) : null}
       <div
@@ -68,7 +68,7 @@ export function TelemetryHeroSpecimen({
             fontSize: compact ? "10.5px" : "12.5px"
           }}
         >
-          Explore Catalog →
+          Deploy Workspace →
         </span>
         <span
           className="inline-flex items-center border px-3.5"
@@ -81,7 +81,7 @@ export function TelemetryHeroSpecimen({
             fontSize: compact ? "10.5px" : "12.5px"
           }}
         >
-          Copy CLI
+          Live Docs
         </span>
       </div>
 
@@ -98,10 +98,10 @@ export function TelemetryHeroSpecimen({
       >
         {(
           [
-            ["550", "+", "Web Specs"],
-            ["180", "+", "Mobile Apps"],
-            ["99.9", "%", "Token Fidelity"],
-            ["14", "ms", "MCP Lookup"]
+            ["128", "M", "Monthly Requests"],
+            ["99.98", "%", "Uptime SLA"],
+            ["14", "ms", "Global P99"],
+            ["48", "", "Edge PoPs"]
           ] as const
         ).map(([num, suf, lbl], idx) => (
           <div
@@ -168,7 +168,7 @@ export function SplitCliOrEditorialHeroSpecimen({
             fontSize: compact ? "17px" : isMobile ? "25px" : "32px"
           }}
         >
-          {isSerif ? "Software crafted with editorial calm." : "One protocol file. Zero visual drift."}
+          {isSerif ? "Publishing tools built for deep reading." : "Deploy edge workers from one command."}
         </h3>
         <div
           className="mt-3 flex items-center justify-between gap-2 border px-3 py-2 font-mono"
@@ -180,7 +180,7 @@ export function SplitCliOrEditorialHeroSpecimen({
           }}
         >
           <span className="truncate">
-            <span style={{ color: tk.accent }}>$</span> npx uifino@latest add {item.id}
+            <span style={{ color: tk.accent }}>$</span> npx acme-edge@latest deploy --prod
           </span>
           <span className="text-[10px]" style={{ color: tk.muted }}>
             COPY
@@ -202,15 +202,15 @@ export function SplitCliOrEditorialHeroSpecimen({
             className="flex justify-between border-b pb-2"
             style={{ borderColor: tk.border, color: tk.muted }}
           >
-            <span>DESIGN.md</span>
-            <span style={{ color: tk.accent }}>radius: {tk.card}</span>
+            <span>edge.config.ts</span>
+            <span style={{ color: tk.accent }}>p99: 11.4ms</span>
           </div>
           <div className="mt-2 leading-[1.6]" style={{ color: tk.muted }}>
-            canvas: <span style={{ color: tk.ink }}>{tk.canvas}</span>
+            region: <span style={{ color: tk.ink }}>iad1 (prod)</span>
             <br />
-            accent: <span style={{ color: tk.accent }}>{tk.accent}</span>
+            runtime: <span style={{ color: tk.accent }}>v8-isolate</span>
             <br />
-            density: <span style={{ color: tk.ink }}>{tk.density}</span>
+            cache: <span style={{ color: tk.ink }}>global-kv</span>
           </div>
         </div>
       ) : null}

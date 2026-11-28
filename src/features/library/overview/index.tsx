@@ -32,10 +32,8 @@ export function LibraryOverviewView() {
   const assetType: AssetTypeFilter = ASSET_TYPES.some((tp) => tp.id === typeRaw)
     ? (typeRaw as AssetTypeFilter)
     : "all";
-  const sort: SortMode =
-    sortRaw === "count" || sortRaw === "az" ? sortRaw : "popular";
-  const cardSize: CardSizeMode =
-    sizeRaw === "large" || sizeRaw === "list" ? sizeRaw : "small";
+  const sort: SortMode = sortRaw === "count" || sortRaw === "az" ? sortRaw : "popular";
+  const cardSize: CardSizeMode = sizeRaw === "large" || sizeRaw === "list" ? sizeRaw : "small";
 
   const q = search.trim().toLowerCase();
   let list = COMPONENT_CATEGORIES.filter((cat) => {
@@ -63,11 +61,7 @@ export function LibraryOverviewView() {
 
   const totalAssets = list.reduce((sum, cat) => sum + cat.totalCount, 0);
   const gridCls =
-    cardSize === "large"
-      ? "lined-grid-3"
-      : cardSize === "list"
-        ? "lined-grid-2"
-        : "lined-grid-4";
+    cardSize === "large" ? "lined-grid-3" : cardSize === "list" ? "lined-grid-2" : "lined-grid-4";
 
   return (
     <div className="band-full">
@@ -93,13 +87,15 @@ export function LibraryOverviewView() {
           }
           right={
             <>
-              <span className="font-mono-ui text-xs text-muted">
-                {list.length} categories · {totalAssets} assets
+              <span className="font-mono-ui text-muted text-xs">
+                {isZh
+                  ? `${list.length} 类 · 共 ${totalAssets} 项资产`
+                  : `${list.length} categories · ${totalAssets} assets`}
               </span>
               <SegmentedControl
                 options={[
-                  { value: "popular" as SortMode, label: "Popular" },
-                  { value: "count" as SortMode, label: "Count" },
+                  { value: "popular" as SortMode, label: isZh ? "热门" : "Popular" },
+                  { value: "count" as SortMode, label: isZh ? "数量" : "Count" },
                   { value: "az" as SortMode, label: "A–Z" }
                 ]}
                 value={sort}
@@ -107,9 +103,9 @@ export function LibraryOverviewView() {
               />
               <SegmentedControl
                 options={[
-                  { value: "small" as CardSizeMode, label: "4-Col" },
-                  { value: "large" as CardSizeMode, label: "3-Col" },
-                  { value: "list" as CardSizeMode, label: "List" }
+                  { value: "small" as CardSizeMode, label: isZh ? "四列" : "4-Col" },
+                  { value: "large" as CardSizeMode, label: isZh ? "三列" : "3-Col" },
+                  { value: "list" as CardSizeMode, label: isZh ? "列表" : "List" }
                 ]}
                 value={cardSize}
                 onChange={(v) => void setSize(v)}
@@ -138,16 +134,24 @@ export function LibraryOverviewView() {
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <Badge>{cat.assetType.toUpperCase()}</Badge>
+                        <Badge>
+                          {isZh
+                            ? cat.assetType === "section"
+                              ? "官网区块"
+                              : cat.assetType === "block"
+                                ? "功能模块"
+                                : "交互动效"
+                            : cat.assetType.toUpperCase()}
+                        </Badge>
                         <span className="text-[15px] font-semibold">
                           {isZh ? cat.nameZh : cat.name}
                         </span>
                       </div>
-                      <div className="mt-[5px] truncate text-[13px] text-muted">
+                      <div className="text-muted mt-[5px] truncate text-[13px]">
                         {isZh ? cat.descZh : cat.descEn}
                       </div>
                     </div>
-                    <span className="font-mono-ui shrink-0 text-xs text-accent-text">
+                    <span className="font-mono-ui text-accent-text shrink-0 text-xs">
                       {cat.totalCount} →
                     </span>
                   </Link>
@@ -160,13 +164,21 @@ export function LibraryOverviewView() {
                   >
                     <div className="w-full">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="truncate text-[14.5px] font-semibold text-ink">
+                        <span className="text-ink truncate text-[14.5px] font-semibold">
                           {isZh ? cat.nameZh : cat.name}
                         </span>
-                        <Badge>{cat.assetType.toUpperCase()}</Badge>
+                        <Badge>
+                          {isZh
+                            ? cat.assetType === "section"
+                              ? "官网区块"
+                              : cat.assetType === "block"
+                                ? "功能模块"
+                                : "交互动效"
+                            : cat.assetType.toUpperCase()}
+                        </Badge>
                       </div>
-                      <div className="font-mono-ui mt-[3px] text-xs text-subtle">
-                        {cat.totalCount} assets
+                      <div className="font-mono-ui text-subtle mt-[3px] text-xs">
+                        {isZh ? `${cat.totalCount} 项资产` : `${cat.totalCount} assets`}
                       </div>
                     </div>
                     <CategoryMiniStack miniKind={cat.miniKind} />

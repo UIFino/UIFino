@@ -13,5 +13,9 @@ export const motionMicroLiftHoverMeta: ComponentAssetMeta = {
   contract: [
     "Scope hover transforms under @media (hover: hover) to avoid sticky touch states.",
     "Keep hover transition between 140ms and 180ms."
+  ],
+  contractZh: [
+    "将悬停位移动画限制在 @media (hover: hover) 环境，防止触摸屏产生粘滞状态。",
+    "单次微抬升交互过渡时长控制在 140ms–180ms 之间。"
   ]
 };

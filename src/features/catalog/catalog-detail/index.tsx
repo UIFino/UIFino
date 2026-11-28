@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, Monitor, Smartphone } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { SearchInput } from "@/components/primitives/input";
 import { SegmentedControl } from "@/components/primitives/segmented";
@@ -126,15 +126,23 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
     <div className="band-full">
       <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[208px_minmax(0,1fr)]">
         {/* Left Narrow Brand Switcher Rail (Collapsible shadcn-style Tree + Right Accent Indicator) */}
-        <aside className="order-2 border-t border-hairline bg-canvas py-3 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
-          <Link
-            href="/catalog"
-            className="font-mono-ui mb-2.5 flex items-center px-3 py-1 text-[11px] text-muted hover:bg-surface-hover hover:text-ink"
-          >
-            ← {t("allCatalog")}
-          </Link>
+        <aside className="order-2 border-t border-hairline bg-canvas pb-3 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
+          <div className="flex min-h-[44px] items-center border-b border-hairline px-3">
+            <Link
+              href="/catalog"
+              className="group flex h-7 w-full items-center justify-between border border-hairline bg-surface px-2.5 text-xs font-medium text-ink transition-colors hover:border-strong hover:bg-gray-100"
+            >
+              <span className="flex items-center gap-1.5">
+                <ArrowLeft className="h-3.5 w-3.5 text-muted transition-transform group-hover:-translate-x-0.5 group-hover:text-ink" />
+                <span>{t("allCatalog")}</span>
+              </span>
+              <span className="font-mono text-[10.5px] text-subtle group-hover:text-muted">
+                {CATALOG_ITEMS.length}
+              </span>
+            </Link>
+          </div>
 
-          <div className="mb-3 grid gap-1.5 px-3">
+          <div className="my-3 grid gap-1.5 px-3">
             <SearchInput
               value={railSearch}
               onChange={(e) => setRailSearch(e.target.value)}
@@ -329,9 +337,26 @@ export function CatalogDetailView({ item }: { readonly item: CatalogBrandSpec })
                   ) : null}
 
                   <SegmentedControl
+                    ariaLabel={isZh ? "视口尺寸" : "Viewport"}
                     options={[
-                      { value: "desktop" as CaptureViewport, label: t("vpDesktop") },
-                      { value: "mobile" as CaptureViewport, label: t("vpMobile") }
+                      {
+                        value: "desktop" as CaptureViewport,
+                        label: (
+                          <>
+                            <Monitor className="h-3.5 w-3.5 shrink-0" />
+                            <span>{t("vpDesktop")}</span>
+                          </>
+                        )
+                      },
+                      {
+                        value: "mobile" as CaptureViewport,
+                        label: (
+                          <>
+                            <Smartphone className="h-3.5 w-3.5 shrink-0" />
+                            <span>{t("vpMobile")}</span>
+                          </>
+                        )
+                      }
                     ]}
                     value={vp}
                     onChange={setVp}

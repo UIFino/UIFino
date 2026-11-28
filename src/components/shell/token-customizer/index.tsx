@@ -46,7 +46,7 @@ export function TokenCustomizerPopover({ onOpenTrigger }: { readonly onOpenTrigg
   return (
     <Popover onOpenChange={(open) => open && onOpenTrigger?.()}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 px-2.5 text-muted hover:text-ink">
+        <Button variant="hairline" size="sm" className="h-8 px-2.5">
           <SlidersHorizontal className="h-3.5 w-3.5 text-accent-text" />
           <span className="hidden sm:inline">{t("customizeBtn")}</span>
         </Button>
@@ -91,10 +91,10 @@ export function TokenCustomizerPopover({ onOpenTrigger }: { readonly onOpenTrigg
                   type="button"
                   onClick={() => setSkin(id)}
                   className={cn(
-                    "flex h-7 cursor-pointer items-center justify-center px-2 text-[11.5px] font-medium transition-colors",
+                    "flex h-7 cursor-pointer items-center justify-center border px-2 text-[11.5px] font-medium transition-colors",
                     skin === id
-                      ? "bg-accent-soft font-semibold text-accent-text"
-                      : "bg-elevated/70 text-ink hover:bg-gray-100"
+                      ? "border-accent-border bg-accent-soft text-accent-text"
+                      : "border-hairline bg-surface text-ink hover:bg-gray-100"
                   )}
                 >
                   <span className="truncate">{label}</span>

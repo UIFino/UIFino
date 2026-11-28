@@ -29,22 +29,21 @@ export function SegmentedControl<T extends string | number>({
     <div
       role="group"
       aria-label={ariaLabel}
-      className={cn(
-        "inline-flex max-w-full flex-wrap items-center gap-0.5 bg-elevated/70 p-0.5",
-        className
-      )}
+      className={cn("inline-flex max-w-full flex-wrap items-stretch border border-hairline bg-code", className)}
     >
-      {options.map((opt) => {
+      {options.map((opt, idx) => {
         const active = opt.value === value;
+        const isLast = idx === options.length - 1;
         return (
           <button
             key={String(opt.value)}
             type="button"
             onClick={() => onChange(opt.value)}
             className={cn(
-              "inline-flex h-7 cursor-pointer items-center gap-1.5 whitespace-nowrap px-2.5 text-xs transition-colors duration-130",
+              "inline-flex h-[30px] cursor-pointer items-center gap-1.5 whitespace-nowrap px-2.5 text-xs transition-colors duration-130",
+              !isLast && "border-r border-hairline",
               active
-                ? "bg-surface font-semibold text-ink shadow-[0_1px_2px_rgba(0,0,0,0.12)]"
+                ? "bg-gray-100 font-semibold text-ink"
                 : "bg-transparent font-medium text-muted hover:bg-surface-hover hover:text-ink",
               itemClassName
             )}

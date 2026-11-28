@@ -12,7 +12,6 @@ export const buttonVariants = cva(
         lime: "border border-accent-fill bg-accent-fill text-accent-ink font-semibold hover:brightness-95",
         hairline:
           "border border-hairline bg-surface text-ink hover:bg-gray-100 hover:border-strong",
-        soft: "border border-transparent bg-elevated/75 text-ink hover:bg-gray-100",
         ghost: "border border-transparent bg-transparent text-muted hover:bg-surface-hover hover:text-ink"
       },
       size: {

@@ -1,40 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { parseAsString, useQueryState } from "nuqs";
-import { CodeViewer } from "@/components/patterns/code-viewer";
-import { Badge } from "@/components/primitives/badge";
-import { Button } from "@/components/primitives/button";
 import { DualSwatch } from "@/components/primitives/dual-swatch";
+import { SearchInput } from "@/components/primitives/input";
 import { SegmentedControl } from "@/components/primitives/segmented";
-import {
-  compileStyleCssVariables,
-  compileStyleDesignMd,
-  type UiStyleSpec
-} from "@/core/styles";
+import { compileStyleCssVariables, compileStyleDesignMd, type UiStyleSpec } from "@/core/styles";
 import type { RadiusStop, ThemeMode } from "@/core/tokens";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { useDownload } from "@/hooks/use-download";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
-import { findCatalogBrandById } from "@/registry/catalog";
 import {
   EXPRESSIVE_STYLE_ITEMS,
-  getStyleFitAndRefs,
   MINIMAL_STYLE_ITEMS,
   STYLE_GROUP_LABELS,
-  STYLE_TONE_LABELS
+  STYLE_ITEMS,
+  STYLE_SCENARIO_FILTERS,
+  STYLE_SCENARIO_LABELS,
+  type StyleScenarioFilter
 } from "@/registry/styles";
 import { useWorkbenchPresetStore } from "@/stores/workbench-preset.store";
-import {
-  LiveStyleCanonicalStage,
-  type StyleStageTemplate
-} from "../specimens/canonical-stage";
+import { LiveStyleCanonicalStage, type StyleStageTemplate } from "../specimens/canonical-stage";
 import { StylePalettePanel } from "./palette-panel";
+import { StyleRightInspector } from "./right-inspector";
+import { StyleGuardrailsTab } from "./tab-guardrails";
 
-type StyleDetailTab = "live" | "palette" | "md";
+type StyleDetailTab = "live" | "palette" | "guardrails";
 
 const RADIUS_STOPS: readonly RadiusStop[] = [0, 4, 8, 16];
 const VALID_TEMPLATES: readonly StyleStageTemplate[] = [
@@ -46,7 +40,6 @@ const VALID_TEMPLATES: readonly StyleStageTemplate[] = [
 
 export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
   const t = useTranslations("styles");
-  const tCommon = useTranslations("common");
   const locale = useLocale();
   const isZh = locale === "zh";
   const router = useRouter();
@@ -59,31 +52,62 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
   const [tabParam, setTabParam] = useQueryState("tab", parseAsString);
   const [tplParam, setTplParam] = useQueryState("tpl", parseAsString);
   const [modeParam, setModeParam] = useQueryState("mode", parseAsString);
-  const [liveRadius, setLiveRadius] = useState<RadiusStop>(item.defaultRadius);
+  const [radiusParam, setRadiusParam] = useQueryState("r", parseAsString);
 
-  const tab: StyleDetailTab = tabParam === "palette" || tabParam === "md" ? tabParam : "live";
+  // Left style rail search, scenario filter & collapsible directory state
+  const [railSearch, setRailSearch] = useState("");
+  const [railScenario, setRailScenario] = useState<StyleScenarioFilter>("all");
+  const [openGroups, setOpenGroups] = useState<{ minimal: boolean; expressive: boolean }>({
+    minimal: true,
+    expressive: true
+  });
+
+  const tab: StyleDetailTab =
+    tabParam === "palette" || tabParam === "guardrails" ? tabParam : "live";
   const template: StyleStageTemplate = VALID_TEMPLATES.includes(tplParam as StyleStageTemplate)
     ? (tplParam as StyleStageTemplate)
     : "dashboard";
   const mode: ThemeMode =
     modeParam === "dark" || modeParam === "light" ? modeParam : item.primaryTone;
+  const parsedR = radiusParam !== null ? Number(radiusParam) : NaN;
+  const liveRadius: RadiusStop = RADIUS_STOPS.includes(parsedR as RadiusStop)
+    ? (parsedR as RadiusStop)
+    : item.defaultRadius;
 
   const preservedQuery = new URLSearchParams();
   if (template !== "dashboard") preservedQuery.set("tpl", template);
   if (modeParam === "dark" || modeParam === "light") preservedQuery.set("mode", modeParam);
+  if (radiusParam !== null && RADIUS_STOPS.includes(parsedR as RadiusStop)) {
+    preservedQuery.set("r", radiusParam);
+  }
   if (tab !== "live") preservedQuery.set("tab", tab);
   const preservedQs = preservedQuery.toString();
   const buildStyleHref = (slug: string) =>
     preservedQs ? `/styles/${slug}?${preservedQs}` : `/styles/${slug}`;
 
-  const displayName = isZh ? item.nameZh : item.name;
+  const q = railSearch.trim().toLowerCase();
+  const matchesRail = (s: UiStyleSpec) => {
+    const scenOk = railScenario === "all" || s.scenarios.includes(railScenario);
+    const qOk =
+      !q ||
+      `${s.name} ${s.nameZh} ${s.slug} ${s.defaultRadius}px ${s.tags.join(" ")}`
+        .toLowerCase()
+        .includes(q);
+    return scenOk && qOk;
+  };
+
+  const filteredMinimal = MINIMAL_STYLE_ITEMS.filter(matchesRail);
+  const filteredExpressive = EXPRESSIVE_STYLE_ITEMS.filter(matchesRail);
+
+  const currentIdx = Math.max(
+    0,
+    STYLE_ITEMS.findIndex((s) => s.slug === item.slug)
+  );
+  const prevStyle = STYLE_ITEMS[(currentIdx - 1 + STYLE_ITEMS.length) % STYLE_ITEMS.length] ?? item;
+  const nextStyle = STYLE_ITEMS[(currentIdx + 1) % STYLE_ITEMS.length] ?? item;
+
   const rawMd = compileStyleDesignMd(item);
   const rawCss = compileStyleCssVariables(item, liveRadius);
-  const fit = getStyleFitAndRefs(item.slug);
-
-  const relatedBrands = fit.relatedBrandIds
-    .map((id) => findCatalogBrandById(id))
-    .filter((b): b is NonNullable<typeof b> => Boolean(b));
 
   const handleApplyToWorkbench = () => {
     applyBrandSkin(item.id, liveRadius);
@@ -91,341 +115,265 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
     router.push(`/components/hero/hero-telemetry-counter?skin=${item.id}`);
   };
 
-  const goodForList = isZh
-    ? (item.goodForZh ?? fit.goodForZh)
-    : (item.goodForEn ?? fit.goodForEn);
-  const notForList = isZh
-    ? (item.notForZh ?? fit.notForZh)
-    : (item.notForEn ?? fit.notForEn);
-
-  const dosList = isZh ? item.dosZh : item.dosEn;
-  const dontsList = isZh ? item.dontsZh : item.dontsEn;
+  const viewTabs: readonly { readonly id: StyleDetailTab; readonly label: string }[] = [
+    { id: "live", label: t("tabLive") },
+    { id: "palette", label: t("tabPalette") },
+    { id: "guardrails", label: t("tabGuardrails") }
+  ];
 
   return (
     <div className="band-full">
-      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)]">
-        {/* Left Contextual Styles Rail */}
-        <aside className="order-2 border-t border-hairline bg-canvas px-3.5 py-4 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
-          <Link
-            href="/styles"
-            className="font-mono-ui mb-3 flex items-center px-2.5 py-1.5 text-[11.5px] text-muted hover:bg-surface-hover hover:text-ink"
-          >
-            ← {t("allStyles")}
-          </Link>
-
-          <div className="eyebrow-mono px-2.5 py-1.5">
-            {isZh ? STYLE_GROUP_LABELS.minimal.zh : STYLE_GROUP_LABELS.minimal.en}
+      <div className="shell-wrap grid grid-cols-1 lg:grid-cols-[208px_minmax(0,1fr)]">
+        {/* Left Sticky Styles Tree Rail (208px aligned 1:1 with Catalog) */}
+        <aside className="border-hairline bg-canvas order-2 border-t pb-3 lg:sticky lg:top-[var(--header-h)] lg:order-1 lg:h-[calc(100dvh-var(--header-h))] lg:overflow-y-auto lg:border-t-0 lg:border-r">
+          <div className="border-hairline flex min-h-[44px] items-center border-b px-3">
+            <Link
+              href="/styles"
+              className="group border-hairline bg-surface text-ink hover:border-strong flex h-7 w-full items-center justify-between border px-2.5 text-xs font-medium transition-colors hover:bg-gray-100"
+            >
+              <span className="flex items-center gap-1.5">
+                <ArrowLeft className="text-muted group-hover:text-ink h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+                <span>{t("allStyles")}</span>
+              </span>
+              <span className="text-subtle group-hover:text-muted font-mono text-[10.5px]">
+                {STYLE_ITEMS.length}
+              </span>
+            </Link>
           </div>
-          {MINIMAL_STYLE_ITEMS.map((s) => {
-            const active = s.slug === item.slug;
-            return (
-              <Link
-                key={s.slug}
-                href={buildStyleHref(s.slug)}
-                className={cn(
-                  "flex items-center justify-between gap-2 border-l-2 px-2.5 py-1.5 text-[12.5px] transition-colors",
-                  active
-                    ? "border-l-accent-text bg-surface font-semibold text-ink"
-                    : "border-l-transparent text-muted hover:bg-surface-hover hover:text-ink"
-                )}
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <DualSwatch swatch={s.swatch} />
-                  <span className="truncate">{isZh ? s.nameZh : s.name}</span>
-                </span>
-                <span className="font-mono-ui shrink-0 text-[10.5px] text-subtle">
-                  {s.defaultRadius}px
-                </span>
-              </Link>
-            );
-          })}
 
-          <div className="eyebrow-mono px-2.5 pt-3.5 pb-1.5">
-            {isZh ? STYLE_GROUP_LABELS.expressive.zh : STYLE_GROUP_LABELS.expressive.en}
+          <div className="my-3 grid gap-1.5 px-3">
+            <SearchInput
+              value={railSearch}
+              onChange={(e) => setRailSearch(e.target.value)}
+              placeholder={isZh ? "搜流派 / 标签…" : "Filter styles…"}
+              wrapperClassName="h-7 px-2"
+              className="text-[11.5px]"
+            />
+
+            <select
+              aria-label={isZh ? "按适用场景筛选" : "Filter by scenario"}
+              value={railScenario}
+              onChange={(e) => setRailScenario(e.target.value as StyleScenarioFilter)}
+              className="border-hairline bg-surface text-ink h-7 w-full cursor-pointer border px-2 text-[11px]"
+            >
+              {STYLE_SCENARIO_FILTERS.map((sc) => (
+                <option key={sc} value={sc}>
+                  {isZh ? STYLE_SCENARIO_LABELS[sc].zh : STYLE_SCENARIO_LABELS[sc].en}
+                </option>
+              ))}
+            </select>
           </div>
-          {EXPRESSIVE_STYLE_ITEMS.map((s) => {
-            const active = s.slug === item.slug;
-            return (
-              <Link
-                key={s.slug}
-                href={buildStyleHref(s.slug)}
-                className={cn(
-                  "flex items-center justify-between gap-2 border-l-2 px-2.5 py-1.5 text-[12.5px] transition-colors",
-                  active
-                    ? "border-l-accent-text bg-surface font-semibold text-ink"
-                    : "border-l-transparent text-muted hover:bg-surface-hover hover:text-ink"
-                )}
+
+          {filteredMinimal.length === 0 && filteredExpressive.length === 0 ? (
+            <div className="text-muted px-3 py-4 text-center text-[11.5px]">
+              <div>{isZh ? "没有匹配流派" : "No matches"}</div>
+              <button
+                type="button"
+                onClick={() => {
+                  setRailSearch("");
+                  setRailScenario("all");
+                }}
+                className="text-accent-text mt-1.5 cursor-pointer font-mono text-[11px] hover:underline"
               >
-                <span className="flex min-w-0 items-center gap-2">
-                  <DualSwatch swatch={s.swatch} />
-                  <span className="truncate">{isZh ? s.nameZh : s.name}</span>
-                </span>
-                <span className="font-mono-ui shrink-0 text-[10.5px] text-subtle">
-                  {s.defaultRadius}px
-                </span>
-              </Link>
+                {isZh ? "重置筛选" : "Reset"}
+              </button>
+            </div>
+          ) : null}
+
+          {[
+            { id: "minimal" as const, items: filteredMinimal },
+            { id: "expressive" as const, items: filteredExpressive }
+          ].map((group) => {
+            if (group.items.length === 0) return null;
+            const expanded = Boolean(q || railScenario !== "all" || openGroups[group.id]);
+            const groupLabel = isZh
+              ? STYLE_GROUP_LABELS[group.id].zh
+              : STYLE_GROUP_LABELS[group.id].en;
+
+            return (
+              <div key={group.id} className="mb-1.5">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOpenGroups((prev) => ({ ...prev, [group.id]: !prev[group.id] }))
+                  }
+                  aria-expanded={expanded}
+                  className="hover:bg-surface-hover flex w-full cursor-pointer items-center justify-between px-3 py-1.5 text-left text-[12.5px] transition-colors"
+                >
+                  <span
+                    className={cn(
+                      "flex items-center gap-1.5",
+                      expanded ? "text-ink font-semibold" : "text-muted font-medium"
+                    )}
+                  >
+                    {expanded ? (
+                      <ChevronDown className="text-muted h-3.5 w-3.5 shrink-0" />
+                    ) : (
+                      <ChevronRight className="text-subtle h-3.5 w-3.5 shrink-0" />
+                    )}
+                    <span>{groupLabel}</span>
+                  </span>
+                  <span className="text-subtle font-mono text-[11px]">{group.items.length}</span>
+                </button>
+
+                {expanded ? (
+                  <div className="border-hairline ml-[19px] border-l py-0.5">
+                    {group.items.map((s) => {
+                      const active = s.slug === item.slug;
+                      return (
+                        <Link
+                          key={s.slug}
+                          href={buildStyleHref(s.slug)}
+                          className={cn(
+                            "flex items-center gap-2 border-r-2 py-1.5 pr-3 pl-3.5 text-[12.5px] transition-colors",
+                            active
+                              ? "border-r-accent-text bg-elevated text-ink font-semibold"
+                              : "text-muted hover:bg-surface-hover hover:text-ink border-r-transparent"
+                          )}
+                        >
+                          <DualSwatch swatch={s.swatch} />
+                          <span className="truncate">{isZh ? s.nameZh : s.name}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
             );
           })}
         </aside>
 
-        {/* Main Style Protocol Content */}
+        {/* Center + Right Golden Workbench */}
         <div className="order-1 min-w-0 lg:order-2">
-          <div className="detail-center-frame">
-            {/* Compact Header Aligned with /catalog/[slug] */}
-            <div className="border-b border-hairline px-7 pt-7 pb-6">
-              <nav className="font-mono-ui flex flex-wrap items-center gap-1.5 text-xs text-muted">
-                <Link href="/styles" className="hover:text-ink">
-                  {tCommon("navStyles")}
-                </Link>
-                <span>/</span>
-                <span>
-                  {isZh
-                    ? STYLE_GROUP_LABELS[item.group].zh
-                    : STYLE_GROUP_LABELS[item.group].en}
-                </span>
-                <span>/</span>
-                <span className="text-ink">{displayName}</span>
-              </nav>
-
-              <div className="mt-3 flex flex-col justify-between gap-4 xl:flex-row xl:items-start">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <DualSwatch swatch={item.swatch} size="md" />
-                    <h1 className="m-0 text-[clamp(24px,2.6vw,32px)] font-semibold tracking-[-0.02em] text-ink">
-                      {displayName}
-                    </h1>
-                    <Badge>
-                      {isZh
-                        ? STYLE_TONE_LABELS[item.primaryTone].zh
-                        : STYLE_TONE_LABELS[item.primaryTone].en}
-                    </Badge>
-                    <Badge>{liveRadius}px</Badge>
-                  </div>
-                  <p className="mt-2.5 max-w-[780px] text-[14.5px] leading-[1.6] text-body">
-                    {isZh ? item.summaryZh : item.summaryEn}
-                  </p>
-                </div>
-
-                {/* 4 Action Buttons */}
-                <div className="flex shrink-0 flex-wrap items-center gap-2">
-                  <Button
-                    variant="contrast"
-                    size="md"
-                    onClick={() => void copy(rawCss, `Copied ${item.name} CSS tokens`)}
+          {/* Top 44px Sticky Control Strip */}
+          <div className="border-hairline bg-canvas sticky top-[var(--header-h)] z-20 flex min-h-[44px] flex-wrap items-center justify-between gap-2 border-b px-4">
+            <div className="flex flex-wrap items-center gap-1">
+              {viewTabs.map((vt) => {
+                const active = tab === vt.id;
+                return (
+                  <button
+                    key={vt.id}
+                    type="button"
+                    onClick={() => void setTabParam(vt.id === "live" ? null : vt.id)}
+                    className={cn(
+                      "relative inline-flex h-[43px] cursor-pointer items-center px-2.5 text-xs transition-colors",
+                      active
+                        ? "text-ink after:bg-accent-text font-semibold after:absolute after:inset-x-2 after:bottom-0 after:h-[2px]"
+                        : "text-muted hover:text-ink"
+                    )}
                   >
-                    {t("copyCss")}
-                  </Button>
-                  <Button
-                    variant="hairline"
-                    size="md"
-                    onClick={() => void copy(rawMd, `Copied ${item.name} DESIGN.md`)}
-                  >
-                    {t("copyMd")}
-                  </Button>
-                  <Button
-                    variant="hairline"
-                    size="md"
-                    onClick={() => downloadText(`${item.slug}-DESIGN.md`, rawMd)}
-                  >
-                    {t("downloadMd")}
-                  </Button>
-                  <Button variant="lime" size="md" onClick={handleApplyToWorkbench}>
-                    {t("applySkinShort")}
-                  </Button>
-                </div>
-              </div>
+                    {vt.label}
+                  </button>
+                );
+              })}
 
-              {/* Positive / Negative Fit Bar */}
-              <div className="mt-5 grid grid-cols-1 gap-2.5 lg:grid-cols-2">
-                <div className="flex flex-wrap items-center gap-2 border border-hairline bg-surface px-3.5 py-2.5 text-xs">
-                  <span className="font-mono-ui shrink-0 font-semibold text-accent-text">
-                    ✓ {t("fitGood")}
-                  </span>
-                  <span className="text-ink">{goodForList.join(" · ")}</span>
+              {tab === "live" ? (
+                <div className="border-hairline ml-2 border-l pl-3">
+                  <SegmentedControl
+                    options={[
+                      { value: "dashboard" as StyleStageTemplate, label: t("tplDashboard") },
+                      { value: "landing" as StyleStageTemplate, label: t("tplLanding") },
+                      { value: "cards" as StyleStageTemplate, label: t("tplCards") },
+                      { value: "typography" as StyleStageTemplate, label: t("tplType") }
+                    ]}
+                    value={template}
+                    onChange={(nextTpl) =>
+                      void setTplParam(nextTpl === "dashboard" ? null : nextTpl)
+                    }
+                    itemClassName="h-[28px] px-2 text-[11.5px]"
+                  />
                 </div>
-                <div className="flex flex-wrap items-center gap-2 border border-hairline bg-surface px-3.5 py-2.5 text-xs">
-                  <span className="font-mono-ui shrink-0 font-semibold text-subtle">
-                    ✕ {t("fitAvoid")}
-                  </span>
-                  <span className="text-muted">{notForList.join(" · ")}</span>
-                </div>
-              </div>
+              ) : null}
             </div>
 
-            {/* Interactive Stage + Controls + Palettes + Contrast Audit */}
-            <div className="grid gap-5 px-7 py-6">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-4">
-                <SegmentedControl
-                  options={[
-                    { value: "live" as StyleDetailTab, label: t("tabLive") },
-                    { value: "palette" as StyleDetailTab, label: t("tabPalette") },
-                    { value: "md" as StyleDetailTab, label: t("tabMd") }
-                  ]}
-                  value={tab}
-                  onChange={(nextTab) =>
-                    void setTabParam(nextTab === "live" ? null : nextTab)
-                  }
-                />
+            <div className="flex flex-wrap items-center gap-2">
+              {tab === "live" ? (
+                <>
+                  <SegmentedControl
+                    ariaLabel={isZh ? "圆角档位" : "Radius"}
+                    options={RADIUS_STOPS.map((r) => ({
+                      value: r,
+                      label: `${r}px`
+                    }))}
+                    value={liveRadius}
+                    onChange={(nextR) => void setRadiusParam(String(nextR))}
+                    itemClassName="h-[28px] px-2 text-[11px]"
+                  />
 
-                {tab === "live" ? (
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <SegmentedControl
-                      options={[
-                        { value: "dashboard" as StyleStageTemplate, label: t("tplDashboard") },
-                        { value: "landing" as StyleStageTemplate, label: t("tplLanding") },
-                        { value: "cards" as StyleStageTemplate, label: t("tplCards") },
-                        { value: "typography" as StyleStageTemplate, label: t("tplType") }
-                      ]}
-                      value={template}
-                      onChange={(nextTpl) =>
-                        void setTplParam(nextTpl === "dashboard" ? null : nextTpl)
-                      }
-                    />
-                    <SegmentedControl
-                      options={RADIUS_STOPS.map((r) => ({
-                        value: r,
-                        label: `${r}px`
-                      }))}
-                      value={liveRadius}
-                      onChange={setLiveRadius}
-                    />
-                    <SegmentedControl
-                      options={[
-                        { value: "dark" as ThemeMode, label: "Dark" },
-                        { value: "light" as ThemeMode, label: "Light" }
-                      ]}
-                      value={mode}
-                      onChange={(nextMode) => void setModeParam(nextMode)}
-                    />
-                  </div>
-                ) : null}
+                  <SegmentedControl
+                    ariaLabel={isZh ? "明暗主题" : "Theme Mode"}
+                    options={[
+                      { value: "dark" as ThemeMode, label: "Dark" },
+                      { value: "light" as ThemeMode, label: "Light" }
+                    ]}
+                    value={mode}
+                    onChange={(nextMode) => void setModeParam(nextMode)}
+                    itemClassName="h-[28px] px-2 text-[11.5px]"
+                  />
+                </>
+              ) : null}
+
+              {/* Previous / Next Style Switcher */}
+              <div className="border-hairline bg-code inline-flex items-stretch border">
+                <Link
+                  href={buildStyleHref(prevStyle.slug)}
+                  title={isZh ? `上一套：${prevStyle.nameZh}` : `Previous: ${prevStyle.name}`}
+                  aria-label={`Previous: ${prevStyle.name}`}
+                  className="border-hairline text-muted hover:bg-surface-hover hover:text-ink inline-flex h-[30px] w-[30px] items-center justify-center border-r transition-colors"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  href={buildStyleHref(nextStyle.slug)}
+                  title={isZh ? `下一套：${nextStyle.nameZh}` : `Next: ${nextStyle.name}`}
+                  aria-label={`Next: ${nextStyle.name}`}
+                  className="text-muted hover:bg-surface-hover hover:text-ink inline-flex h-[30px] w-[30px] items-center justify-center transition-colors"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
+            </div>
+          </div>
 
-              {tab === "md" ? (
-                <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                  <CodeViewer
-                    code={rawCss}
-                    lang="css"
-                    title={`styles/${item.slug}/tokens.css`}
-                    copyLabel={t("copyCss")}
-                  />
-                  <CodeViewer
-                    code={rawMd}
-                    lang="markdown"
-                    title={`styles/${item.slug}/DESIGN.md`}
-                    copyLabel={t("copyMd")}
-                  />
-                </div>
+          {/* Main 100% Full-Bleed Center Stage + 340px Sticky Inspector */}
+          <div className="grid grid-cols-1 items-start xl:grid-cols-[minmax(0,1fr)_340px]">
+            <div
+              className={cn(
+                "min-w-0",
+                tab === "live"
+                  ? "xl:max-h-[calc(100dvh-var(--header-h)-44px)] xl:overflow-y-auto"
+                  : "p-5"
+              )}
+            >
+              {tab === "live" ? (
+                <LiveStyleCanonicalStage
+                  style={item}
+                  mode={mode}
+                  isZh={isZh}
+                  template={template}
+                  radiusOverride={liveRadius}
+                  fullBleed
+                />
               ) : tab === "palette" ? (
-                <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+                <div className="grid gap-4">
                   <StylePalettePanel modeLabel="DARK" palette={item.dark} isZh={isZh} />
                   <StylePalettePanel modeLabel="LIGHT" palette={item.light} isZh={isZh} />
                 </div>
               ) : (
-                <div className="grid gap-4">
-                  <LiveStyleCanonicalStage
-                    style={item}
-                    mode={mode}
-                    isZh={isZh}
-                    template={template}
-                    radiusOverride={liveRadius}
-                  />
-                  <StylePalettePanel
-                    modeLabel={mode.toUpperCase()}
-                    palette={mode === "light" ? item.light : item.dark}
-                    isZh={isZh}
-                  />
-                </div>
+                <StyleGuardrailsTab item={item} rawCss={rawCss} rawMd={rawMd} isZh={isZh} />
               )}
-
-              {/* Physics + Guardrails */}
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="border border-hairline bg-surface p-[18px]">
-                  <div className="eyebrow-mono">{t("physicsTitle")}</div>
-                  <div className="mt-3.5 grid gap-3 text-[13px]">
-                    <div className="flex items-center justify-between gap-3 border-b border-hairline pb-2.5">
-                      <span className="text-muted">{t("labelRadius")}</span>
-                      <span className="font-mono-ui font-semibold text-ink">
-                        {isZh ? item.radiusLabelZh : item.radiusLabelEn}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 border-b border-hairline pb-2.5">
-                      <span className="text-muted">{t("labelBorder")}</span>
-                      <span className="font-mono-ui truncate text-ink">{item.borderSpec}</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 border-b border-hairline pb-2.5">
-                      <span className="text-muted">{t("labelShadow")}</span>
-                      <span className="font-mono-ui truncate text-ink">{item.shadowSpec}</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-muted">{t("labelFonts")}</span>
-                      <span className="font-mono-ui truncate text-ink">
-                        {item.fonts.display} / {item.fonts.mono}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border border-hairline bg-surface p-[18px]">
-                  <div className="eyebrow-mono">{t("guardrailsTitle")}</div>
-                  <ul className="m-0 mt-3.5 grid list-none gap-2.5 p-0 text-[13px] leading-[1.5]">
-                    {dosList.map((rule) => (
-                      <li key={rule} className="flex items-start gap-2 text-ink">
-                        <span className="font-mono-ui mt-0.5 shrink-0 text-[11px] font-bold text-accent-text">
-                          [{t("doPrefix")}]
-                        </span>
-                        <span>{rule}</span>
-                      </li>
-                    ))}
-                    {dontsList.map((rule) => (
-                      <li key={rule} className="flex items-start gap-2 text-muted">
-                        <span className="font-mono-ui mt-0.5 shrink-0 text-[11px] text-subtle">
-                          [{t("dontPrefix")}]
-                        </span>
-                        <span>{rule}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Related Real Products from Catalog */}
-              {relatedBrands.length > 0 ? (
-                <div className="border border-hairline bg-surface p-[18px]">
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="eyebrow-mono">{t("relatedBrandsTitle")}</span>
-                    <Link
-                      href="/catalog"
-                      className="font-mono-ui text-xs text-muted hover:text-accent-text"
-                    >
-                      {t("viewAllBrands")} →
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {relatedBrands.map((brand) => (
-                      <Link
-                        key={brand.id}
-                        href={`/catalog/${brand.id}`}
-                        className="group flex items-center justify-between gap-3 border border-hairline bg-canvas p-3.5 transition-colors hover:border-accent-border"
-                      >
-                        <div className="flex min-w-0 items-center gap-3">
-                          <DualSwatch swatch={[brand.dark.canvas, brand.dark.accent]} size="md" />
-                          <div className="min-w-0">
-                            <div className="truncate text-sm font-semibold text-ink group-hover:text-accent-text">
-                              {brand.name}
-                            </div>
-                            <div className="truncate text-xs text-muted">
-                              {brand.platformLabel} · {brand.defaultRadius}px
-                            </div>
-                          </div>
-                        </div>
-                        <ArrowUpRight className="h-4 w-4 shrink-0 text-subtle transition-colors group-hover:text-accent-text" />
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
             </div>
+
+            <StyleRightInspector
+              item={item}
+              isZh={isZh}
+              stageMode={mode}
+              liveRadius={liveRadius}
+              onCopyMd={() => void copy(rawMd, `Copied ${item.name} DESIGN.md`)}
+              onCopyCss={() => void copy(rawCss, `Copied ${item.name} CSS tokens`)}
+              onDownloadMd={() => downloadText(`${item.slug}-DESIGN.md`, rawMd)}
+              onApplySkin={handleApplyToWorkbench}
+            />
           </div>
         </div>
       </div>

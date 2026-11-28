@@ -45,6 +45,7 @@ function getSandboxPalette(template: StarterTemplateSpec, mode: ThemeMode) {
 function renderRouteBody(
   kind: SandboxRouteKind,
   template: StarterTemplateSpec,
+  routes: readonly TemplateRoutePageSpec[],
   c: ReturnType<typeof getSandboxPalette>,
   isMobile: boolean,
   isZh: boolean,
@@ -326,6 +327,7 @@ export function TemplateLiveSandbox({
         {renderRouteBody(
           currentRoute.kind,
           template,
+          routes,
           c,
           isMobile,
           isZh,

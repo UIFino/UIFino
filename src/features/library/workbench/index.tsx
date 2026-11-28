@@ -47,7 +47,7 @@ export function ComponentWorkbenchView({
   const setDensity = useWorkbenchPresetStore((s) => s.setDensity);
   const setSkin = useWorkbenchPresetStore((s) => s.setSkin);
   const setStageMode = useWorkbenchPresetStore((s) => s.setStageMode);
-  const resetPreset = useWorkbenchPresetStore((s) => s.reset);
+  const resetPreset = useWorkbenchPresetStore((s) => s.resetPreset);
 
   const [tabRaw, setTabQuery] = useQueryState("tab", parseAsString.withDefault("preview"));
   const [vpRaw, setVpQuery] = useQueryState("vp", parseAsString.withDefault("desktop"));

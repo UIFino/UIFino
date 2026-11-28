@@ -389,7 +389,7 @@ export function StyleDetailView({ item }: { readonly item: UiStyleSpec }) {
                         className="group flex items-center justify-between gap-3 border border-hairline bg-canvas p-3.5 transition-colors hover:border-accent-border"
                       >
                         <div className="flex min-w-0 items-center gap-3">
-                          <DualSwatch swatch={brand.swatch} size="md" />
+                          <DualSwatch swatch={[brand.dark.canvas, brand.dark.accent]} size="md" />
                           <div className="min-w-0">
                             <div className="truncate text-sm font-semibold text-ink group-hover:text-accent-text">
                               {brand.name}
